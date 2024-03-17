@@ -1,7 +1,9 @@
 
 import 'package:allo/utils/bottom_round_clipper.dart';
+import 'package:allo/widgets/login_page.dart';
 import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
+import 'package:allo/constants/app_colors.dart';
 
 class WelcomePage extends StatelessWidget {
   @override
@@ -17,7 +19,7 @@ class WelcomePage extends StatelessWidget {
                 ClipPath(
                   clipper: BottomRoundClipper(),
                   child: Container(
-                    color: Color(0xFFD9D9D9),
+                    color: AppColors.light,
                     child: Transform.translate(
                       offset: Offset(10, -55), // décale l'image de 50 pixels vers le haut
                       child: Transform.scale(
@@ -38,7 +40,7 @@ class WelcomePage extends StatelessWidget {
                     child: Text(
                       'Bienvenue sur All\'O',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.light,
                         fontSize: 28.0,
                         fontFamily: "NeueRegrade",
                         fontWeight: FontWeight.bold,
@@ -56,27 +58,28 @@ class WelcomePage extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.center,
-                  child: SizedBox(
-                    width: 259,
-                    height: 55,
-                    child: ElevatedButton(
+                  child: ElevatedButton(
                       onPressed: () {
-                        print('Button 1');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color(0xFFD4D7EC)),
+                        backgroundColor: MaterialStateProperty.all(AppColors.primary),
+                        elevation: MaterialStateProperty.all(0.0),
+                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(70, 16, 70, 16)),
                       ),
                       child: Text(
                         'Me connecter',
                         style: TextStyle(
-                          color: Color(0xFF0F0D11),
+                          color: AppColors.dark,
                           fontSize: 18.0,
                           fontFamily: "NeueRegrade",
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -91,7 +94,7 @@ class WelcomePage extends StatelessWidget {
                   child: Text(
                     'Créer mon compte',
                     style: TextStyle(
-                      color: Color(0xFF0F0D11),
+                      color: AppColors.dark,
                       fontSize: 14.0,
                     ),
                   ),
