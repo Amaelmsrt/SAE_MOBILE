@@ -1,6 +1,7 @@
-import 'package:allo/components/CustomTextField.dart';
+import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
+import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,8 +54,14 @@ class LoginPage extends StatelessWidget {
                           SizedBox(
                               height:
                                   32.0), // espace entre le titre et le premier champ de texte
-                          CustomTextField(label: "Nom d'utilisateur", hint: "Nom d'utilisateur...", iconPath: "assets/icons/user.svg"),
-                          CustomTextField(label: "Mot de passe", hint: "Mot de passe...", iconPath: "assets/icons/key.svg"),
+                          CustomTextField(
+                              label: "Nom d'utilisateur",
+                              hint: "Nom d'utilisateur...",
+                              iconPath: "assets/icons/user.svg"),
+                          CustomTextField(
+                              label: "Mot de passe",
+                              hint: "Mot de passe...",
+                              iconPath: "assets/icons/key.svg"),
                         ],
                       ),
                     ),
@@ -108,7 +115,11 @@ class LoginPage extends StatelessWidget {
                                 10, // Le bouton de droite est 20% plus grand que le bouton de gauche
                             child: ElevatedButton(
                               onPressed: () {
-                                print('Button 2');
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => Home()),
+                                  (Route<dynamic> route) => false,
+                                );
                               },
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(

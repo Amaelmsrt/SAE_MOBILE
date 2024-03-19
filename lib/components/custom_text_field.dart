@@ -3,31 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
 
 class CustomTextField extends StatelessWidget {
-  final String label;
+  final String? label;
   final String hint;
   final String iconPath;
 
-  CustomTextField({required this.label, required this.hint, required this.iconPath});
+  CustomTextField({this.label, required this.hint, required this.iconPath});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.dark,
-            fontSize: 18.0,
-            fontFamily: "NeueRegrade",
-            fontWeight: FontWeight.w600,
+        if (label != null)
+          Text(
+            label!,
+            style: TextStyle(
+              color: AppColors.dark,
+              fontSize: 18.0,
+              fontFamily: "NeueRegrade",
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        SizedBox(height: 16.0),
+        if (label != null) SizedBox(height: 16.0),
         TextField(
           style: TextStyle(color: AppColors.dark),
           decoration: InputDecoration(
             hintText: hint,
+            contentPadding: EdgeInsets.symmetric(vertical: 17.0, horizontal: 20.0),
             hintStyle: TextStyle(color: AppColors.darkSecondary),
             prefixIcon: Padding(
               padding: EdgeInsets.only(left: 20.0, right: 12.0),

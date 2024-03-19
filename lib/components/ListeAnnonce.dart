@@ -1,0 +1,57 @@
+import 'dart:ffi';
+
+import 'package:allo/components/card_annonce.dart';
+import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/annonce.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
+
+class ListeAnnonce extends StatelessWidget {
+  final String titre;
+  final List<Annonce> annonces;
+
+  ListeAnnonce({required this.titre, required this.annonces});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                titre,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "NeueRegrade",
+                ),
+              ),
+            ),
+            Container(
+              height: 215, // adjust this height to fit your needs
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: annonces.length,
+                itemBuilder: (context, index) {
+                  Annonce annonce = annonces[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        right: 12), // adjust this padding to fit your needs
+                    child: CardAnnonce(
+                      titre: annonce.titre,
+                      imagePath: annonce.imageLink,
+                      isSaved: annonce.isSaved,
+                      prix: annonce.prix,
+                      niveauUrgence: annonce.niveauUrgence,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ));
+  }
+}

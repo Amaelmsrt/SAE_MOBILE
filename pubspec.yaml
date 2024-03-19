@@ -55,9 +55,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/main.png
-    - assets/login.png
-    - assets/register.png
+    - assets/
     - assets/icons/
     
   fonts:

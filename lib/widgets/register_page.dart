@@ -1,4 +1,4 @@
-import 'package:allo/components/CustomTextField.dart';
+import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/login_page.dart';
