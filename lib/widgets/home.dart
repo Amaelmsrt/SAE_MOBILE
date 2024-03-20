@@ -3,8 +3,14 @@ import 'package:allo/components/card_annonce.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/annonce.dart';
+import 'package:allo/models/app_bar_title.dart';
+import 'package:allo/widgets/accueil.dart';
+import 'package:allo/widgets/annonces_enregistres.dart';
+import 'package:allo/widgets/page_notifications.dart';
+import 'package:allo/widgets/page_profil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -51,7 +57,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Accueil',
+          Provider.of<AppBarTitle>(context).title,
           style: TextStyle(
             color: AppColors.dark,
             fontSize: 24.0,
@@ -137,18 +143,7 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-              padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
-              child: CustomTextField(
-                  hint: "Rechercher une annonce...",
-                  iconPath: "assets/icons/loupe.svg")),
-          ListeAnnonce(titre: "Vous pouvez les aider !", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces urgentes", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces récentes", annonces: lesAnnonces),
-        ],
-      ),
+      body: _selectedIndex == 0 ? Accueil() : _selectedIndex == 1 ? AnnoncesEnregistrees() : _selectedIndex == 3 ? PageNotifications() : _selectedIndex == 4 ? PageProfil() : null,
     );
   }
 }

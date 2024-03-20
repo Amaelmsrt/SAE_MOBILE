@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
 
 class ListeAnnonce extends StatelessWidget {
-  final String titre;
+  final String? titre;
   final List<Annonce> annonces;
+  final bool isVertical;
 
-  ListeAnnonce({required this.titre, required this.annonces});
+  ListeAnnonce({this.titre, required this.annonces, this.isVertical = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,38 +20,68 @@ class ListeAnnonce extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                titre,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "NeueRegrade",
+            if (titre != null)
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  titre!,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "NeueRegrade",
+                  ),
                 ),
               ),
-            ),
-            Container(
-              height: 215, // adjust this height to fit your needs
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: annonces.length,
-                itemBuilder: (context, index) {
-                  Annonce annonce = annonces[index];
-                  return Padding(
-                    padding: EdgeInsets.only(
-                        right: 12), // adjust this padding to fit your needs
-                    child: CardAnnonce(
-                      titre: annonce.titre,
-                      imagePath: annonce.imageLink,
-                      isSaved: annonce.isSaved,
-                      prix: annonce.prix,
-                      niveauUrgence: annonce.niveauUrgence,
-                    ),
-                  );
-                },
+            if (!isVertical)
+              Container(
+                height: 215, // adjust this height to fit your needs
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: annonces.length,
+                  itemBuilder: (context, index) {
+                    Annonce annonce = annonces[index];
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          right: 12), // adjust this padding to fit your needs
+                      child: CardAnnonce(
+                        titre: annonce.titre,
+                        imagePath: annonce.imageLink,
+                        isSaved: annonce.isSaved,
+                        prix: annonce.prix,
+                        niveauUrgence: annonce.niveauUrgence,
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
+            if (isVertical)
+  Container(
+        height: 490 ,
+        decoration: BoxDecoration(),
+        child: GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.fromLTRB(10,0,10,0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // number of items per row
+            childAspectRatio: 0.82,
+            mainAxisSpacing: 10 // adjust this value to fit your needs
+          ),
+          itemCount: annonces.length,
+          itemBuilder: (context, index) {
+            Annonce annonce = annonces[index];
+            return Padding(
+              padding: EdgeInsets.only(right: 12, left:12), // adjust this padding to fit your needs
+              child: CardAnnonce(
+                titre: annonce.titre,
+                imagePath: annonce.imageLink,
+                isSaved: annonce.isSaved,
+                prix: annonce.prix,
+                niveauUrgence: annonce.niveauUrgence,
+              ),
+            );
+          },
+        ),
+      ),
           ],
         ));
   }
