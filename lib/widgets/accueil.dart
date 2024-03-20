@@ -11,7 +11,6 @@ class Accueil extends StatefulWidget {
 }
 
 class _HomeState extends State<Accueil> {
-
   // fais un exemple de liste avec quelques annonces
   final List<Annonce> lesAnnonces = [
     Annonce(
@@ -45,27 +44,35 @@ class _HomeState extends State<Accueil> {
   ];
 
   @override
-void initState() {
-  super.initState();
-  Future.delayed(Duration.zero, () {
-    Provider.of<AppBarTitle>(context, listen: false).setTitle('Accueil');
-  });
-}
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Accueil');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return (ListView(
-        children: <Widget>[
-          Padding(
-              padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
-              child: CustomTextField(
-                  hint: "Rechercher une annonce...",
-                  iconPath: "assets/icons/loupe.svg")),
-          ListeAnnonce(titre: "Vous pouvez les aider !", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces urgentes", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces récentes", annonces: lesAnnonces),
-        ],
-      )
-    );
+    return (Padding(
+        padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+                padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: CustomTextField(
+                    hint: "Rechercher une annonce...",
+                    iconPath: "assets/icons/loupe.svg")),
+            ListeAnnonce(
+                titre: "Vous pouvez les aider !", annonces: lesAnnonces),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces urgentes", annonces: lesAnnonces),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces récentes", annonces: lesAnnonces),
+          ],
+        )));
   }
 }
