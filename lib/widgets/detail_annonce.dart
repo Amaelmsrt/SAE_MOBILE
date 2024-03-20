@@ -10,10 +10,9 @@ import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
 class DetailAnnonce extends StatefulWidget {
   final String titre;
   final String imagePath;
-  final bool isSaved;
+  bool isSaved;
   final double prix;
   final int niveauUrgence;
-
 
   DetailAnnonce(
       {required this.titre,
@@ -83,343 +82,439 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-
-
-          Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-         
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.only(left: 0, right: 0, top: 0),
-            child: ListView(
-              controller: _scrollController,
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                 Stack(
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(
-                      15), // change this to your desired border radius
-                  bottomRight: Radius.circular(
-                      15), // change this to your desired border radius
-                ),
-                child: Image.asset(
-                  widget.imagePath,
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-             
-            ],
-          ),
-          Padding(padding: EdgeInsets.only(left: 15, right: 15, top: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-Text(
-                    'Titre: ${widget.titre}',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "NeueRegrade",
-                    ),
-                  ),
-           
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Stack(
+      children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.only(left: 0, right: 0, top: 0),
+              child: ListView(
+                controller: _scrollController,
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  Stack(
                     children: <Widget>[
-                      Text(
-                        'Publié le 19/07/2024 à 16h07',
-                        style: TextStyle(
-                          fontFamily: "NeueRegrade",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(
+                              15), // change this to your desired border radius
+                          bottomRight: Radius.circular(
+                              15), // change this to your desired border radius
+                        ),
+                        child: Image.asset(
+                          widget.imagePath,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      Text('${widget.prix} €',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "NeueRegrade",
-                          )),
                     ],
                   ),
-             
-                SizedBox(height: 24),
-               Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Container(
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: AppColors.lightSecondary,
-                            borderRadius: BorderRadius.circular(10000),
-                          ),
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Expanded(
-                                  child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      ClipOval(
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          color: AppColors.lightBlue,
-                                          width:
-                                              55.0, // you can adjust width and height to your liking
-                                          height:
-                                              55.0, // you can adjust width and height to your liking
-                                          child: Text(
-                                            'J',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20,
-                                              fontFamily: "NeueRegrade",
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              10), // you can adjust the spacing to your liking
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('Julien Arsouze'),
-                                          Row(children: <Widget>[
-                                            SvgPicture.asset("assets/icons/star.svg"),
-                                            SvgPicture.asset("assets/icons/star.svg"),
-                                            SvgPicture.asset("assets/icons/star.svg"),
-                                            SvgPicture.asset("assets/icons/star.svg"),
-                                            SvgPicture.asset("assets/icons/star.svg"),
-                                            SizedBox(width: 8),
-                                            Text('158 avis')
-                                          ])
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      height: 50, // same height as a FAB
-                                      width: 50, // same width as a FAB
-                                      decoration: BoxDecoration(
-                                        color: AppColors
-                                            .primary, // same color as your FAB
-                                        borderRadius: BorderRadius.circular(
-                                            8000), // change this to your desired border radius
-                                      ),
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                            "assets/icons/chat.svg"), // your icon
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ))),
-                        )),
-                SizedBox(height: 24),
-                    Text("Description",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "NeueRegrade",
-                        )),
-                    SizedBox(height: 16),
-                    Text(
-                        "Bonjour à tous, Je me lance dans une série de projets de bricolage et j’ai rapidement réalisé que je suis en manque d’un outil essentiel - une perceuse robuste et efficace. Je cherche donc une perceuse qui peut me soutenir dans divers travaux, que ce soit pour assembler des meubles, fixer des étagères ou même entreprendre des petites rénovations.",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "NeueRegrade",
-                        )),
-                    SizedBox(height: 24),
-                    Text("Catégories",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "NeueRegrade",
-                        )),
-                    SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8.0, // gap between adjacent chips
-                      runSpacing: 4.0, // gap between lines
-                      children: <Widget>[
-                        Chip(
-                          backgroundColor: AppColors.lightSecondary,
-                          label: Text('Bricolage',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "NeueRegrade",
-                              )),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // increase this for a more rounded border
-                            side: BorderSide(
-                                color: Colors
-                                    .transparent), // this makes the border transparent
-                          ),
-                        ),
-                        Chip(
-                          backgroundColor: AppColors.lightSecondary,
-                          label: Text('Bricolage',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "NeueRegrade",
-                              )),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // increase this for a more rounded border
-                            side: BorderSide(
-                                color: Colors
-                                    .transparent), // this makes the border transparent
-                          ),
-                        ),
-                        Chip(
-                          backgroundColor: AppColors.lightSecondary,
-                          label: Text('Bricolage',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "NeueRegrade",
-                              )),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // increase this for a more rounded border
-                            side: BorderSide(
-                                color: Colors
-                                    .transparent), // this makes the border transparent
-                          ),
-                        ),
-                        Chip(
-                          backgroundColor: AppColors.lightSecondary,
-                          label: Text('Outils',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "NeueRegrade",
-                              )),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // increase this for a more rounded border
-                            side: BorderSide(
-                                color: Colors
-                                    .transparent), // this makes the border transparent
-                          ),
-                        ),
-                        Chip(
-                          backgroundColor: AppColors.lightSecondary,
-                          label: Text(
-                            'Perceuse',
+                  Padding(
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Titre: ${widget.titre}',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
                               fontFamily: "NeueRegrade",
                             ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // increase this for a more rounded border
-                            side: BorderSide(
-                                color: Colors
-                                    .transparent), // this makes the border transparent
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Publié le 19/07/2024 à 16h07',
+                                style: TextStyle(
+                                  fontFamily: "NeueRegrade",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text('${widget.prix} €',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: "NeueRegrade",
+                                  )),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 24),
-                    ListeAnnonce(
-                        titre: "Annonces similaires", annonces: lesAnnonces),
-                    SizedBox(height: 32),
-              ],
-          )),
-                
-              ],
+                          SizedBox(height: 24),
+                          Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: Container(
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: AppColors.lightSecondary,
+                                  borderRadius: BorderRadius.circular(10000),
+                                ),
+                                child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: Expanded(
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            ClipOval(
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                color: AppColors.lightBlue,
+                                                width:
+                                                    55.0, // you can adjust width and height to your liking
+                                                height:
+                                                    55.0, // you can adjust width and height to your liking
+                                                child: Text(
+                                                  'J',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 20,
+                                                    fontFamily: "NeueRegrade",
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    10), // you can adjust the spacing to your liking
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text('Julien Arsouze'),
+                                                Row(children: <Widget>[
+                                                  SvgPicture.asset(
+                                                      "assets/icons/star.svg"),
+                                                  SvgPicture.asset(
+                                                      "assets/icons/star.svg"),
+                                                  SvgPicture.asset(
+                                                      "assets/icons/star.svg"),
+                                                  SvgPicture.asset(
+                                                      "assets/icons/star.svg"),
+                                                  SvgPicture.asset(
+                                                      "assets/icons/star.svg"),
+                                                  SizedBox(width: 8),
+                                                  Text('158 avis')
+                                                ])
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            height: 50, // same height as a FAB
+                                            width: 50, // same width as a FAB
+                                            decoration: BoxDecoration(
+                                              color: AppColors
+                                                  .primary, // same color as your FAB
+                                              borderRadius: BorderRadius.circular(
+                                                  8000), // change this to your desired border radius
+                                            ),
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                  "assets/icons/chat.svg"), // your icon
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ))),
+                              )),
+                          SizedBox(height: 24),
+                          Text("Description",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "NeueRegrade",
+                              )),
+                          SizedBox(height: 16),
+                          Text(
+                              "Bonjour à tous, Je me lance dans une série de projets de bricolage et j’ai rapidement réalisé que je suis en manque d’un outil essentiel - une perceuse robuste et efficace. Je cherche donc une perceuse qui peut me soutenir dans divers travaux, que ce soit pour assembler des meubles, fixer des étagères ou même entreprendre des petites rénovations.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: "NeueRegrade",
+                              )),
+                          SizedBox(height: 24),
+                          Text("Catégories",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "NeueRegrade",
+                              )),
+                          SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8.0, // gap between adjacent chips
+                            runSpacing: 4.0, // gap between lines
+                            children: <Widget>[
+                              Chip(
+                                backgroundColor: AppColors.lightSecondary,
+                                label: Text('Bricolage',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "NeueRegrade",
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // increase this for a more rounded border
+                                  side: BorderSide(
+                                      color: Colors
+                                          .transparent), // this makes the border transparent
+                                ),
+                              ),
+                              Chip(
+                                backgroundColor: AppColors.lightSecondary,
+                                label: Text('Bricolage',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "NeueRegrade",
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // increase this for a more rounded border
+                                  side: BorderSide(
+                                      color: Colors
+                                          .transparent), // this makes the border transparent
+                                ),
+                              ),
+                              Chip(
+                                backgroundColor: AppColors.lightSecondary,
+                                label: Text('Bricolage',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "NeueRegrade",
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // increase this for a more rounded border
+                                  side: BorderSide(
+                                      color: Colors
+                                          .transparent), // this makes the border transparent
+                                ),
+                              ),
+                              Chip(
+                                backgroundColor: AppColors.lightSecondary,
+                                label: Text('Outils',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "NeueRegrade",
+                                    )),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // increase this for a more rounded border
+                                  side: BorderSide(
+                                      color: Colors
+                                          .transparent), // this makes the border transparent
+                                ),
+                              ),
+                              Chip(
+                                backgroundColor: AppColors.lightSecondary,
+                                label: Text(
+                                  'Perceuse',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "NeueRegrade",
+                                  ),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // increase this for a more rounded border
+                                  side: BorderSide(
+                                      color: Colors
+                                          .transparent), // this makes the border transparent
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 24),
+                          ListeAnnonce(
+                              titre: "Annonces similaires",
+                              annonces: lesAnnonces),
+                          SizedBox(height: 132),
+                        ],
+                      )),
+                ],
+              ),
+            )),
+          ],
+        ),
+        Positioned(
+          top: 0,
+          left: 0,
+          child: AnimatedOpacity(
+            opacity: _showTopBar ? 1.0 : 0.0,
+            duration: Duration(
+                milliseconds: 300), // Changez ceci à la durée que vous voulez
+            child: Container(
+              height: 110,
+              width: MediaQuery.of(context).size.width,
+              color: AppColors.light,
+              alignment: Alignment.center,
             ),
-          )),
-        ],
-      ),
+          ),
+        ),
+        Positioned(
+          top: 45,
+          left: 100,
+          child: AnimatedOpacity(
+            opacity: _showTopBar ? 1.0 : 0.0,
+            duration: Duration(
+                milliseconds: 300), // Changez ceci à la durée que vous voulez
+            child: Container(
+              height: 45,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.transparent,
+              alignment: Alignment.centerLeft,
+              child: Text(widget.titre,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: "NeueRegrade",
+                  )),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 45,
+          left: 25,
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Container(
+              height: 45, // same height as a FAB
+              width: 45, // same width as a FAB
+              decoration: BoxDecoration(
+                color: AppColors.primary, // same color as your FAB
+                borderRadius: BorderRadius.circular(
+                    8000), // change this to your desired border radius
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                    "assets/icons/arrow-back.svg"), // your icon
+              ),
+            ),
+          ),
+        ),
 
-    Positioned(
-  top: 0,
-  left: 0,
-  child: AnimatedOpacity(
-    opacity: _showTopBar ? 1.0 : 0.0,
-    duration: Duration(milliseconds: 300), // Changez ceci à la durée que vous voulez
-    child: Container(
-      height: 110,
-      width: MediaQuery.of(context).size.width,
-      color: AppColors.light,
-      alignment: Alignment.center,
-    ),
-  ),
-),
-        
           Positioned(
-  top: 45,
-  left: 100,
-  child: AnimatedOpacity(
-    opacity: _showTopBar ? 1.0 : 0.0,
-    duration: Duration(milliseconds: 300), // Changez ceci à la durée que vous voulez
-    child: Container(
-      height: 45,
-      width: MediaQuery.of(context).size.width,
-      color: Colors.transparent,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        widget.titre,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          fontFamily: "NeueRegrade",
-        )),
-    ),
-  ),
-),
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child:
+      Container(
+        color: AppColors.light,
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child:
+      
+      Padding(
+    
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 25),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            double buttonWidth = constraints.maxWidth /
+                2.2; // 1.1 (pour le bouton de gauche) + 1.1 * 1.2 (pour le bouton de droite) = 2.2
 
-           Positioned(
-                top: 45,
-                left: 25,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 45, // same height as a FAB
-                    width: 45, // same width as a FAB
-                    decoration: BoxDecoration(
-                      color: AppColors.primary, // same color as your FAB
-                      borderRadius: BorderRadius.circular(
-                          8000), // change this to your desired border radius
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: buttonWidth,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      
+                      setState(() {
+                        widget.isSaved = !widget.isSaved;
+                      });
+
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shadowColor: Colors.transparent,
+                      elevation: 0,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      backgroundColor: widget.isSaved ? AppColors.yellow : AppColors.lightSecondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                          "assets/icons/arrow-back.svg"), // your icon
+                    child: 
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                      SvgPicture.asset("assets/icons/bookmark.svg", color: AppColors.dark,),
+                      SizedBox(width: 5),  
+                      Text(
+                        widget.isSaved ? 'Enregistré' : 'Enregistrer',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "NeueRegrade",
+                          color: AppColors.dark,
+                        ),
+                      ),
+                      ]
+                    )
+                  ),
+                ),
+                Container(
+                  width: 1.1*buttonWidth,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shadowColor: Colors.transparent,
+                       padding: EdgeInsets.symmetric(vertical: 15),
+                      elevation: 0,
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Text(
+                      'Aider',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "NeueRegrade",
+                        color: AppColors.dark,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
+            );
+          },
+        ),
+      )),
+    )
+      ],
+    ),
+   
+   // un bouton enregistrer et un bouton aider
+  
 
-        ],
-      )
     );
   }
 }
