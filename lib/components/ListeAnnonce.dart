@@ -16,13 +16,13 @@ class ListeAnnonce extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (titre != null)
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.fromLTRB(0,0,0,16),
                 child: Text(
                   titre!,
                   style: TextStyle(
