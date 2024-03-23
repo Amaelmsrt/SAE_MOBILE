@@ -1,3 +1,4 @@
+import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
 import 'package:allo/components/custom_text_field.dart';
@@ -23,6 +24,7 @@ class AjoutAnnonce extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
+                        AddImages(),
                         CustomTextField(
                             hint: "Recherche une perceuse...",
                             label: "Titre de l'annonce"),
@@ -47,7 +49,7 @@ class AjoutAnnonce extends StatelessWidget {
                         CustomCheckBox(
                             label: "Niveau d'urgence", hint: "Annonce urgente"),
                         SizedBox(
-                          height: 64,
+                          height: 100,
                         ),
                       ],
                     ),

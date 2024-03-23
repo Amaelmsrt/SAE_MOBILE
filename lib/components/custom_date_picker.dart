@@ -34,12 +34,27 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         if (widget.label != null) SizedBox(height: 16.0),
         GestureDetector(
           onTap: () async {
-            FocusScope.of(context).requestFocus(new FocusNode()); // to hide the keyboard
+            FocusScope.of(context)
+                .requestFocus(new FocusNode()); // to hide the keyboard
             final DateTime? picked = await showDatePicker(
               context: context,
               initialDate: selectedDate,
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),
+              builder: (BuildContext context, Widget? child) {
+                return Theme(
+                  data: ThemeData.light().copyWith(
+                    primaryColor:
+                        AppColors.accent, //Change this to your desired color
+                    colorScheme: ColorScheme.light(
+                        primary:
+                            AppColors.accent), //Change this to your desired color
+                    buttonTheme:
+                        ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                  ),
+                  child: child!,
+                );
+              },
             );
             if (picked != null && picked != selectedDate) {
               setState(() {
@@ -49,11 +64,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           },
           child: AbsorbPointer(
             child: TextField(
-              controller: TextEditingController(text: "${selectedDate.toLocal()}".split(' ')[0]),
+              controller: TextEditingController(
+                  text: "${selectedDate.toLocal()}".split(' ')[0]),
               style: TextStyle(color: AppColors.dark),
               decoration: InputDecoration(
                 hintText: widget.hint,
-                contentPadding: EdgeInsets.symmetric(vertical: 17.0, horizontal: 20.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 17.0, horizontal: 20.0),
                 hintStyle: TextStyle(color: AppColors.darkSecondary),
                 prefixIcon: Padding(
                   padding: EdgeInsets.only(left: 20.0, right: 12.0),
@@ -73,8 +90,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             ),
           ),
         ),
-        if (widget.noSpacing == false)
-          SizedBox(height: 24.0),
+        if (widget.noSpacing == false) SizedBox(height: 24.0),
       ],
     );
   }

@@ -63,7 +63,7 @@ class ListeAnnonce extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(10,0,10,0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // number of items per row
-            childAspectRatio: 0.82,
+            childAspectRatio: 0.75,
             mainAxisSpacing: 10 // adjust this value to fit your needs
           ),
           itemCount: annonces.length,

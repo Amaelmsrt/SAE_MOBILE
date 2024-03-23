@@ -72,6 +72,7 @@ class _ListingCategoriesState extends State<ListingCategories> {
           }).toList(),
         ),
         SizedBox(height: 10),
+        if (widget.isExpandable)
         TextButton(
             onPressed: () => {
                   Navigator.push(
