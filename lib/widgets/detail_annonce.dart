@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:math';
 
 import 'package:allo/components/ListeAnnonce.dart';
+import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:flutter/material.dart';
@@ -251,101 +252,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                 fontFamily: "NeueRegrade",
                               )),
                           SizedBox(height: 24),
-                          Text("Catégories",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: "NeueRegrade",
-                              )),
-                          SizedBox(height: 16),
-                          Wrap(
-                            spacing: 8.0, // gap between adjacent chips
-                            runSpacing: 4.0, // gap between lines
-                            children: <Widget>[
-                              Chip(
-                                backgroundColor: AppColors.lightSecondary,
-                                label: Text('Bricolage',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "NeueRegrade",
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // increase this for a more rounded border
-                                  side: BorderSide(
-                                      color: Colors
-                                          .transparent), // this makes the border transparent
-                                ),
-                              ),
-                              Chip(
-                                backgroundColor: AppColors.lightSecondary,
-                                label: Text('Bricolage',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "NeueRegrade",
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // increase this for a more rounded border
-                                  side: BorderSide(
-                                      color: Colors
-                                          .transparent), // this makes the border transparent
-                                ),
-                              ),
-                              Chip(
-                                backgroundColor: AppColors.lightSecondary,
-                                label: Text('Bricolage',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "NeueRegrade",
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // increase this for a more rounded border
-                                  side: BorderSide(
-                                      color: Colors
-                                          .transparent), // this makes the border transparent
-                                ),
-                              ),
-                              Chip(
-                                backgroundColor: AppColors.lightSecondary,
-                                label: Text('Outils',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "NeueRegrade",
-                                    )),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // increase this for a more rounded border
-                                  side: BorderSide(
-                                      color: Colors
-                                          .transparent), // this makes the border transparent
-                                ),
-                              ),
-                              Chip(
-                                backgroundColor: AppColors.lightSecondary,
-                                label: Text(
-                                  'Perceuse',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "NeueRegrade",
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // increase this for a more rounded border
-                                  side: BorderSide(
-                                      color: Colors
-                                          .transparent), // this makes the border transparent
-                                ),
-                              ),
-                            ],
-                          ),
+                          ListingCategories(lesCategories: ["Outils", "Perceuse", "Bricolage", "Perceur", "Saucisson"]),
                           SizedBox(height: 24),
                           ListeAnnonce(
                               titre: "Annonces similaires",

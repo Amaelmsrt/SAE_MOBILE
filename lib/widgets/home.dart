@@ -5,6 +5,7 @@ import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/widgets/accueil.dart';
+import 'package:allo/widgets/ajout_annonce.dart';
 import 'package:allo/widgets/annonces_enregistres.dart';
 import 'package:allo/widgets/page_notifications.dart';
 import 'package:allo/widgets/page_profil.dart';
@@ -137,13 +138,31 @@ class _HomeState extends State<Home> {
           type: BottomNavigationBarType.fixed,
           elevation: 0.0,
           onTap: (index) {
+            if (index == 2) {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return AjoutAnnonce();
+                },
+                isScrollControlled: true,
+              );
+              return;
+            }
             setState(() {
               _selectedIndex = index;
             });
           },
         ),
       ),
-      body: _selectedIndex == 0 ? Accueil() : _selectedIndex == 1 ? AnnoncesEnregistrees() : _selectedIndex == 3 ? PageNotifications() : _selectedIndex == 4 ? PageProfil() : null,
+      body: _selectedIndex == 0
+          ? Accueil()
+          : _selectedIndex == 1
+              ? AnnoncesEnregistrees()
+              : _selectedIndex == 3
+                  ? PageNotifications()
+                  : _selectedIndex == 4
+                      ? PageProfil()
+                      : null,
     );
   }
 }
