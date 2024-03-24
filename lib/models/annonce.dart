@@ -21,14 +21,14 @@ class Annonce {
 
   factory Annonce.fromJson(Map<String, dynamic> json) {
     return Annonce(
-      idAnnonce: json['idAnnonce'],
-      titreAnnonce: json['titreAnnonce'],
-      descriptionAnnonce: json['descriptionAnnonce'],
-      datePubliAnnonce: DateTime.parse(json['datePubliAnnonce']),
-      dateAideAnnonce: DateTime.parse(json['dateAideAnnonce']),
-      estUrgente: json['estUrgente'],
-      etatAnnonce: json['etatAnnonce'],
-      idUtilisateur: json['idUtilisateur'],
+      idAnnonce: json['idannonce'],
+      titreAnnonce: json['titreannonce'],
+      descriptionAnnonce: json['descriptionannonce'],
+      datePubliAnnonce: DateTime.parse(json['datepubliannonce']),
+      dateAideAnnonce: DateTime.parse(json['dateaideannonce']),
+      estUrgente: json['esturgente'],
+      etatAnnonce: json['etatannonce'],
+      idUtilisateur: json['idutilisateur'],
     );
   }
 
@@ -44,4 +44,6 @@ class Annonce {
       'idUtilisateur': idUtilisateur,
     };
   }
+
+  
 }
