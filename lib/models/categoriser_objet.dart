@@ -9,15 +9,15 @@ class CategoriserObjet {
 
   factory CategoriserObjet.fromJson(Map<String, dynamic> json) {
     return CategoriserObjet(
-      idObjet: json['idObjet'],
-      idAnnonce: json['idAnnonce'],
+      idObjet: json['idobjet'],
+      idAnnonce: json['idannonce'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idObjet': idObjet,
-      'idAnnonce': idAnnonce,
+      'idobjet': idObjet,
+      'idannonce': idAnnonce,
     };
   }
 }

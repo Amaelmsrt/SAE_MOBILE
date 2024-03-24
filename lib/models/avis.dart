@@ -17,23 +17,23 @@ class Avis {
 
   factory Avis.fromJson(Map<String, dynamic> json) {
     return Avis(
-      idAvis: json['idAvis'],
-      titreAvis: json['titreAvis'],
-      noteAvis: json['noteAvis'],
-      messageAvis: json['messageAvis'],
-      dateAvis: DateTime.parse(json['dateAvis']),
-      idUtilisateur: json['idUtilisateur'],
+      idAvis: json['idavis'],
+      titreAvis: json['titreavis'],
+      noteAvis: json['noteavis'],
+      messageAvis: json['messageavis'],
+      dateAvis: DateTime.parse(json['dateavis']),
+      idUtilisateur: json['idutilisateur'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idAvis': idAvis,
-      'titreAvis': titreAvis,
-      'noteAvis': noteAvis,
-      'messageAvis': messageAvis,
-      'dateAvis': dateAvis.toIso8601String(),
-      'idUtilisateur': idUtilisateur,
+      'idavis': idAvis,
+      'titreavis': titreAvis,
+      'noteavis': noteAvis,
+      'messageavis': messageAvis,
+      'dateavis': dateAvis.toIso8601String(),
+      'idutilisateur': idUtilisateur,
     };
   }
 }

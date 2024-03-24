@@ -19,25 +19,25 @@ class Reponse {
 
   factory Reponse.fromJson(Map<String, dynamic> json) {
     return Reponse(
-      idReponse: json['idReponse'],
-      commentaireReponse: json['commentaireReponse'],
-      estAcceptee: json['estAcceptee'],
+      idReponse: json['idreponse'],
+      commentaireReponse: json['commentairereponse'],
+      estAcceptee: json['estacceptee'],
       prix: json['prix'],
-      idUtilisateur: json['idUtilisateur'],
-      idAnnonce: json['idAnnonce'],
-      idObjet: json['idObjet'],
+      idUtilisateur: json['idutilisateur'],
+      idAnnonce: json['idannonce'],
+      idObjet: json['idobjet'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idReponse': idReponse,
-      'commentaireReponse': commentaireReponse,
-      'estAcceptee': estAcceptee,
+      'idreponse': idReponse,
+      'commentairereponse': commentaireReponse,
+      'estacceptee': estAcceptee,
       'prix': prix,
-      'idUtilisateur': idUtilisateur,
-      'idAnnonce': idAnnonce,
-      'idObjet': idObjet,
+      'idutilisateur': idUtilisateur,
+      'idannonce': idAnnonce,
+      'idobjet': idObjet,
     };
   }
 }

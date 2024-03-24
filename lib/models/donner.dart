@@ -9,15 +9,15 @@ class Donner {
 
   factory Donner.fromJson(Map<String, dynamic> json) {
     return Donner(
-      idUtilisateur: json['idUtilisateur'],
-      idAvis: json['idAvis'],
+      idUtilisateur: json['idutilisateur'],
+      idAvis: json['idavis'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idUtilisateur': idUtilisateur,
-      'idAvis': idAvis,
+      'idutilisateur': idUtilisateur,
+      'idavis': idAvis,
     };
   }
 }

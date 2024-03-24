@@ -13,17 +13,17 @@ class PhotoAnnonce {
 
   factory PhotoAnnonce.fromJson(Map<String, dynamic> json) {
     return PhotoAnnonce(
-      idPhotoAnnonce: json['idPhotoAnnonce'],
+      idPhotoAnnonce: json['idphotoannonce'],
       photo: json['photo'],
-      idAnnonce: json['idAnnonce'],
+      idAnnonce: json['idannonce'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idPhotoAnnonce': idPhotoAnnonce,
+      'idphotoannonce': idPhotoAnnonce,
       'photo': photo,
-      'idAnnonce': idAnnonce,
+      'idannonce': idAnnonce,
     };
   }
 }

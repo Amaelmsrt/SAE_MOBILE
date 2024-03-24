@@ -17,21 +17,21 @@ class Objet {
 
   factory Objet.fromJson(Map<String, dynamic> json) {
     return Objet(
-      idObjet: json['idObjet'],
-      nomObjet: json['nomObjet'],
-      descriptionObjet: json['descriptionObjet'],
-      statutObjet: json['statutObjet'],
-      photoObjet: json['photoObjet'],
+      idObjet: json['idobjet'],
+      nomObjet: json['nomobjet'],
+      descriptionObjet: json['descriptionobjet'],
+      statutObjet: json['statutobjet'],
+      photoObjet: json['photoobjet'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idObjet': idObjet,
-      'nomObjet': nomObjet,
-      'descriptionObjet': descriptionObjet,
-      'statutObjet': statutObjet,
-      'photoObjet': photoObjet,
+      'idobjet': idObjet,
+      'nomobjet': nomObjet,
+      'descriptionobjet': descriptionObjet,
+      'statutobjet': statutObjet,
+      'photoobjet': photoObjet,
     };
   }
 }

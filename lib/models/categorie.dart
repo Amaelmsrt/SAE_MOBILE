@@ -9,15 +9,15 @@ class Categorie {
 
   factory Categorie.fromJson(Map<String, dynamic> json) {
     return Categorie(
-      idCat: json['idCat'],
-      nomCat: json['nomCat'],
+      idCat: json['idcat'],
+      nomCat: json['nomcat'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idCat': idCat,
-      'nomCat': nomCat,
+      'idcat': idCat,
+      'nomcat': nomCat,
     };
   }
 }
