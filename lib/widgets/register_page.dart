@@ -1,11 +1,123 @@
+import 'dart:async';
+
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../main.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  late final StreamSubscription<AuthState> authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    authSubscription = supabase.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+      if (session != null) {
+        Navigator.of(context).pushReplacementNamed('/acccount');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    authSubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> register(BuildContext context) async {
+    final String username = usernameController.text.trim();
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
+
+    // Print pour vérifier les valeurs des champs
+    print('Username: $username');
+    print('Email: $email');
+    print('Password: $password');
+
+    if (username.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Veuillez remplir tous les champs.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Le mot de passe doit comporter au moins 6 caractères.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Print avant l'appel de signUp
+      print(
+          'Tentative d\'inscription avec l\'email: $email et le mot de passe: $password');
+
+      final response = await supabase.auth.signUp(email: email, password: password);
+      print("Réponse de signUp: $response, user: ${response.user}");
+      if (response.user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Veuillez confirmer votre inscription en cliquant sur le lien dans l\'email de confirmation.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      final user = supabase.auth.currentUser;
+      print('Utilisateur actuel: $user');
+      if (user != null) {
+        await supabase.from('UTILISATEUR').insert([
+          {
+            'idUtilisateur': user.id,
+            'nomUtilisateur': username,
+            'emailUtilisateur': email,
+            'mdpUtilisateur': password,
+          }
+        ]);
+
+        print('Données insérées dans la table UTILISATEUR');
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    } catch (e) {
+      print('Erreur lors de l\'inscription: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur : $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,8 +130,7 @@ class RegisterPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    height: constraints.maxHeight *
-                        0.25, // 30% de la hauteur de l'écran
+                    height: constraints.maxHeight * 0.25,
                     child: ClipPath(
                       clipper: BottomRoundClipper(),
                       child: Transform.translate(
@@ -28,8 +139,7 @@ class RegisterPage extends StatelessWidget {
                           scale: 1.2,
                           child: Image.asset(
                             'assets/register.png',
-                            fit: BoxFit
-                                .cover, // remplir le conteneur (peut recadrer l'image)
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
@@ -50,9 +160,22 @@ class RegisterPage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          CustomTextField(label: "Nom d'utilisateur", hint: "Nom d'utilisateur...", iconPath: "assets/icons/user.svg"),
-                          CustomTextField(label: "E-mail", hint: "E-mail...", iconPath: "assets/icons/email.svg"),
-                          CustomTextField(label: "Mot de passe", hint: "Mot de passe...", iconPath: "assets/icons/key.svg"),
+                          CustomTextField(
+                              controller: usernameController,
+                              label: "Nom d'utilisateur",
+                              hint: "Nom d'utilisateur...",
+                              iconPath: "assets/icons/user.svg"),
+                          CustomTextField(
+                              controller: emailController,
+                              label: "E-mail",
+                              hint: "E-mail...",
+                              iconPath: "assets/icons/email.svg"),
+                          CustomTextField(
+                              controller: passwordController,
+                              label: "Mot de passe",
+                              hint: "Mot de passe...",
+                              iconPath: "assets/icons/key.svg",
+                              obscureText: true),
                         ],
                       ),
                     ),
@@ -92,7 +215,7 @@ class RegisterPage extends StatelessWidget {
                                 elevation: MaterialStateProperty.all(0.0),
                               ),
                               child: Text(
-                                'Connection',
+                                'Connexion',
                                 style: TextStyle(
                                   color: Color(0xFF0F0D11),
                                   fontSize: 18.0,
@@ -105,9 +228,7 @@ class RegisterPage extends StatelessWidget {
                             width: buttonWidth * 1.2 -
                                 10, // Le bouton de droite est 20% plus grand que le bouton de gauche
                             child: ElevatedButton(
-                              onPressed: () {
-                                print('Button 2');
-                              },
+                              onPressed: () => register(context),
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(
                                     AppColors.primary),
