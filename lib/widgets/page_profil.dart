@@ -1,7 +1,9 @@
 import 'package:allo/components/ListeAnnonce.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/models/annonce.dart';
+import 'package:allo/models/app_bar_title.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PageProfil extends StatefulWidget {
   @override
@@ -41,6 +43,15 @@ class _HomeState extends State<PageProfil> {
       niveauUrgence: 4,
     ),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Mon profil');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

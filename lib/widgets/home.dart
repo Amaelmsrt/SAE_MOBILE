@@ -56,7 +56,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.light,
       appBar: AppBar(
+        toolbarHeight: 80,
         title: Text(
           Provider.of<AppBarTitle>(context).title,
           style: TextStyle(
@@ -154,7 +156,8 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
-      body: _selectedIndex == 0
+      body:
+       _selectedIndex == 0
           ? Accueil()
           : _selectedIndex == 1
               ? AnnoncesEnregistrees()

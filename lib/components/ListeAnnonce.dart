@@ -56,7 +56,7 @@ class ListeAnnonce extends StatelessWidget {
               ),
             if (isVertical)
   Container(
-        height: 490 ,
+        height: 470 ,
         decoration: BoxDecoration(),
         child: GridView.builder(
           shrinkWrap: true,
