@@ -22,12 +22,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    authSubscription = supabase.auth.onAuthStateChange.listen((event) {
-      final session = event.session;
-      if (session != null) {
-        Navigator.of(context).pushReplacementNamed('/acccount');
-      }
-    });
   }
 
   @override
@@ -39,84 +33,31 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  Future<void> register(BuildContext context) async {
-    final String username = usernameController.text.trim();
-    final String email = emailController.text.trim();
-    final String password = passwordController.text.trim();
+  Future<void> register(String email, String password, String username) async {
+  final response = await supabase.auth.signUp(email: email, password: password);
 
-    // Print pour vérifier les valeurs des champs
-    print('Username: $username');
-    print('Email: $email');
-    print('Password: $password');
+  if (response.user == null) {
+    print('Erreur lors de l\'inscription : ${response}');
+    return;
+  }
 
-    if (username.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Veuillez remplir tous les champs.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('Le mot de passe doit comporter au moins 6 caractères.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    try {
-      // Print avant l'appel de signUp
-      print(
-          'Tentative d\'inscription avec l\'email: $email et le mot de passe: $password');
-
-      final response = await supabase.auth.signUp(email: email, password: password);
-      print("Réponse de signUp: $response, user: ${response.user}");
-      if (response.user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Veuillez confirmer votre inscription en cliquant sur le lien dans l\'email de confirmation.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
+  final user = supabase.auth.currentUser;
+  if (user != null) {
+    final insertResponse = await supabase.from('utilisateur').insert([
+      {
+        'idutilisateur': user.id,
+        'nomutilisateur': username,
+        'emailutilisateur': email
       }
+    ]);
 
-      final user = supabase.auth.currentUser;
-      print('Utilisateur actuel: $user');
-      if (user != null) {
-        await supabase.from('UTILISATEUR').insert([
-          {
-            'idUtilisateur': user.id,
-            'nomUtilisateur': username,
-            'emailUtilisateur': email,
-            'mdpUtilisateur': password,
-          }
-        ]);
-
-        print('Données insérées dans la table UTILISATEUR');
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
-      }
-    } catch (e) {
-      print('Erreur lors de l\'inscription: $e');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur : $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    if (insertResponse != null && insertResponse.error != null) {
+      print('Erreur lors de l\'insertion de l\'utilisateur dans la table UTILISATEUR : ${insertResponse.error!.message}');
     }
   }
+
+  return;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -228,7 +169,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             width: buttonWidth * 1.2 -
                                 10, // Le bouton de droite est 20% plus grand que le bouton de gauche
                             child: ElevatedButton(
-                              onPressed: () => register(context),
+                              onPressed: () => register(
+                                  emailController.text,
+                                  passwordController.text,
+                                  usernameController.text),
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(
                                     AppColors.primary),
