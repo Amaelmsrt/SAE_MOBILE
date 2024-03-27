@@ -54,7 +54,7 @@ class _HomeState extends State<Accueil> {
   @override
   Widget build(BuildContext context) {
     return (Padding(
-        padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
+        padding: new EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: ListView(
           children: <Widget>[
             Padding(

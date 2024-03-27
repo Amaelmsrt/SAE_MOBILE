@@ -56,14 +56,14 @@ class ListeAnnonce extends StatelessWidget {
               ),
             if (isVertical)
   Container(
-        height: 490 ,
+        height: 470 ,
         decoration: BoxDecoration(),
         child: GridView.builder(
           shrinkWrap: true,
           padding: EdgeInsets.fromLTRB(10,0,10,0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // number of items per row
-            childAspectRatio: 0.82,
+            childAspectRatio: 0.75,
             mainAxisSpacing: 10 // adjust this value to fit your needs
           ),
           itemCount: annonces.length,

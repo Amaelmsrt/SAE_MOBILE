@@ -85,7 +85,7 @@ void initState() {
     return (ListView(
         children: <Widget>[
           Padding(
-              padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
+              padding: new EdgeInsets.fromLTRB(15, 0, 15, 0),
               child: CustomTextField(
                   hint: "Rechercher une annonce...",
                   iconPath: "assets/icons/loupe.svg")),
