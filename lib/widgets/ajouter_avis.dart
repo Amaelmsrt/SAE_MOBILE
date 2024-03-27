@@ -1,17 +1,13 @@
-import 'package:allo/components/add_images.dart';
-import 'package:allo/components/custom_check_box.dart';
-import 'package:allo/components/custom_date_picker.dart';
 import 'package:allo/components/custom_text_field.dart';
-import 'package:allo/components/listing_categories.dart';
+import 'package:allo/components/resume_annonce.dart';
+import 'package:allo/components/star_picker.dart';
+import 'package:allo/components/user_preview.dart';
 import 'package:allo/constants/app_colors.dart';
-import 'package:allo/utils/bottom_round_clipper.dart';
-import 'package:allo/widgets/home.dart';
-import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AjoutAnnonce extends StatelessWidget {
-  @override
+class AjouterAvis extends StatelessWidget {
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.light,
@@ -24,30 +20,22 @@ class AjoutAnnonce extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        AddImages(),
+                        ResumeAnnonce(imagePath: "assets/perceuse.jpeg", title: "Besoin d’une perceuse pour le 24/02/2023", description: "On vous a rendu le service le 17/07/2024"),
+                        SizedBox(height: 24,),
+                        UserPreview(pseudo: "Julien Arsouze", nbAvis: 158, nbEtoiles: 3, description: "L'utilisateur qui vous a aidé",),
+                        SizedBox(height: 24,),
+                        StarPicker(onRatingChanged: (int newRating) {}, label: "Niveau de satisfaction"),
+                        SizedBox(height: 22,),
                         CustomTextField(
-                            hint: "Recherche une perceuse...",
-                            label: "Titre de l'annonce"),
+                            hint: "Votre titre...",
+                            label: "Titre de l'avis"),
                         CustomTextField(
-                            hint: "Description de l'annonce",
-                            label: "Description",
+                            hint: "Votre commentaire...",
+                            label: "Commentaire",
                             isArea: true),
-                        ListingCategories(lesCategories: [
-                          "Perceuse",
-                          "Outils",
-                          "Visseuse",
-                          "Poulet",
-                          "Gode ceinture"
-                        ], isSelectable: true, isExpandable: true),
                         SizedBox(
                           height: 24,
                         ),
-                        CustomDatePicker(
-                          hint: "Selectionner une date",
-                          label: "Date de fin de l'annonce",
-                        ),
-                        CustomCheckBox(
-                            label: "Niveau d'urgence", hint: "Annonce urgente"),
                         SizedBox(
                           height: 100,
                         ),
@@ -69,13 +57,13 @@ class AjoutAnnonce extends StatelessWidget {
             ),
             Positioned(
               top: 45,
-              left: 100,
+              left: 0,
               child: Container(
                 height: 45,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
-                alignment: Alignment.centerLeft,
-                child: Text("Nouvelle annonce",
+                alignment: Alignment.center,
+                child: Text("Laisser un avis",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -130,7 +118,7 @@ class AjoutAnnonce extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "Ajouter l'annonce",
+                      "Laisser un avis",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

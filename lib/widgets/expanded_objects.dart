@@ -1,58 +1,28 @@
-import 'dart:math';
-
 import 'package:allo/components/custom_text_field.dart';
-import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
-import 'package:allo/utils/bottom_round_clipper.dart';
-import 'package:allo/widgets/home.dart';
-import 'package:allo/widgets/register_page.dart';
+import 'package:allo/models/objet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ExpandedCategories extends StatefulWidget {
-  List<String> lesCategories;
-  List<String> preSelectedCategories = [];
-  List<String> selectedCategories = [];
+class ExpandedObjects extends StatefulWidget {
+  List<Objet> lesObjets;
 
-  ExpandedCategories(
-      {required this.lesCategories, this.preSelectedCategories = const []});
+  final Function(Objet) onObjectChanged;
+
+  ExpandedObjects({required this.lesObjets, required this.onObjectChanged});
 
   @override
-  State<ExpandedCategories> createState() => _ExpandedCategoriesState();
+  _ExpandedObjectsState createState() => _ExpandedObjectsState();
 }
 
-class _ExpandedCategoriesState extends State<ExpandedCategories>
-    with TickerProviderStateMixin {
-  Map<String, AnimationController> _controllers = {};
+class _ExpandedObjectsState extends State<ExpandedObjects> {
+  String objectBeingAnimated = "";
 
-  String categoryBeingAnimated = "";
+  Objet? objet = null;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
-    for (var category in widget.lesCategories) {
-      _controllers[category] = AnimationController(
-        duration: const Duration(milliseconds: 250),
-        vsync: this,
-      );
-    }
-
-    // on ajoute toutes les preselected categories dans les selected categories
-
-    this.widget.preSelectedCategories.forEach((element) {
-      this.widget.selectedCategories.add(element);
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    for (var controller in _controllers.values) {
-      controller.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -71,22 +41,15 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                         noSpacing: true),
                     Expanded(
                       child: ListView(
-                        children:
-                            this.widget.lesCategories.map<Widget>((category) {
+                        children: this.widget.lesObjets.map<Widget>((obj) {
                           bool isSelected =
-                              widget.selectedCategories.contains(category);
+                              (objet != null) && (obj.title == objet!.title);
                           return Expanded(
                             child: GestureDetector(
                               onTap: () {
                                 // Handle tap
                                 setState(() {
-                                  if (isSelected) {
-                                    widget.selectedCategories.remove(category);
-                                    _controllers[category]!.reverse();
-                                  } else {
-                                    widget.selectedCategories.add(category);
-                                    _controllers[category]!.forward();
-                                  }
+                                  objet = obj;
                                 });
                               },
                               child: AnimatedContainer(
@@ -99,28 +62,43 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 16.0, horizontal: 20.0),
+                                    vertical: 8.0, horizontal: 10.0),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      category,
-                                      style: TextStyle(
-                                        fontFamily: "NeueRegrade",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                  children: <Widget>[
+                                    // affiche l'image de l'objet avec des bords arrondis
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      child: Image.asset(
+                                        obj.imagePath,
+                                        width: 65,
+                                        height: 65,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                    RotationTransition(
-                                      turns: Tween(begin: 0.0, end: 1 / 8).animate(_controllers[category] ?? AnimationController(vsync: this)),
-                                      child: SvgPicture.asset(
-                                        "assets/icons/plus.svg",
-                                        color: AppColors.dark,
-                                        width: 21,
-                                        height: 21,
-                                      ),
+                                    SizedBox(
+                                      width: 12,
                                     ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(obj.title,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              fontFamily: "NeueRegrade",
+                                              color: AppColors.dark,
+                                            )),
+                                        Text(obj.mainCategory,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                              fontFamily: "NeueRegrade",
+                                              color: AppColors.dark,
+                                            )),
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
@@ -149,7 +127,7 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
                 alignment: Alignment.centerLeft,
-                child: Text("Nouvelle annonce",
+                child: Text("Mes objets",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -192,11 +170,13 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
+                      widget.onObjectChanged(objet!);
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 17, horizontal: 40),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 17, horizontal: 40),
                       elevation: 0,
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(

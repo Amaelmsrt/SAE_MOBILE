@@ -53,11 +53,21 @@ class _HomeState extends State<Home> {
     ),
   ];
 
+  void laisserAvis(String avis) {
+   showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return AjoutAnnonce();
+                },
+                isScrollControlled: true,
+              );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.light,
-      appBar: AppBar(
+      appBar: _selectedIndex == 4 ? null : AppBar(
         toolbarHeight: 80,
         title: Text(
           Provider.of<AppBarTitle>(context).title,

@@ -1,16 +1,17 @@
-import 'package:allo/components/add_images.dart';
-import 'package:allo/components/custom_check_box.dart';
-import 'package:allo/components/custom_date_picker.dart';
 import 'package:allo/components/custom_text_field.dart';
-import 'package:allo/components/listing_categories.dart';
+import 'package:allo/components/object_picker.dart';
 import 'package:allo/constants/app_colors.dart';
-import 'package:allo/utils/bottom_round_clipper.dart';
-import 'package:allo/widgets/home.dart';
-import 'package:allo/widgets/register_page.dart';
+import 'package:allo/models/objet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AjoutAnnonce extends StatelessWidget {
+class PageAider extends StatefulWidget {
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<PageAider> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,37 +22,27 @@ class AjoutAnnonce extends StatelessWidget {
               padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 110.0),
               child: CustomScrollView(
                 slivers: <Widget>[
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        AddImages(),
-                        CustomTextField(
-                            hint: "Recherche une perceuse...",
-                            label: "Titre de l'annonce"),
-                        CustomTextField(
-                            hint: "Description de l'annonce",
-                            label: "Description",
-                            isArea: true),
-                        ListingCategories(lesCategories: [
-                          "Perceuse",
-                          "Outils",
-                          "Visseuse",
-                          "Poulet",
-                          "Gode ceinture"
-                        ], isSelectable: true, isExpandable: true),
-                        SizedBox(
-                          height: 24,
-                        ),
-                        CustomDatePicker(
-                          hint: "Selectionner une date",
-                          label: "Date de fin de l'annonce",
-                        ),
-                        CustomCheckBox(
-                            label: "Niveau d'urgence", hint: "Annonce urgente"),
-                        SizedBox(
-                          height: 100,
-                        ),
-                      ],
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ObjectPicker(onObjectChanged: (Objet obj) {}, label: "Mon objet",),
+                          SizedBox(
+                            height: 24,
+                          ),
+                          CustomTextField(
+                              hint: "Votre commentaire...",
+                              label: "Commentaire",
+                              isArea: true),
+                          // on ajoute un sizedboxx pour eviter que ça dépasse sur le bouton d'en bas et le fond blanc derrière
+                          SizedBox(
+                            height: 100,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -69,13 +60,13 @@ class AjoutAnnonce extends StatelessWidget {
             ),
             Positioned(
               top: 45,
-              left: 100,
+              left: 0,
               child: Container(
                 height: 45,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
-                alignment: Alignment.centerLeft,
-                child: Text("Nouvelle annonce",
+                alignment: Alignment.center,
+                child: Text("Proposer mon aide",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -130,7 +121,7 @@ class AjoutAnnonce extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "Ajouter l'annonce",
+                      "Aider",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
