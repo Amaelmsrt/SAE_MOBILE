@@ -1,7 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:allo/models/Utilisateur.dart';
 
 class Annonce {
-  int idAnnonce;
+  String idAnnonce;
   String titreAnnonce;
   String descriptionAnnonce;
   DateTime datePubliAnnonce;
@@ -33,7 +35,8 @@ class Annonce {
       dateAideAnnonce: DateTime.parse(json['dateaideannonce']),
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'],
-      utilisateur: Utilisateur.fromJson(json['utilisateur']),
+      utilisateur: json['utilisateur'] 
+      //utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }
 

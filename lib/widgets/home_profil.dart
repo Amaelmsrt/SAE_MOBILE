@@ -1,12 +1,13 @@
 import 'package:allo/components/link_item.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/main.dart';
 import 'package:allo/models/app_bar_title.dart';
+import 'package:allo/widgets/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class HomeProfil extends StatefulWidget {
-  
   @override
   State<HomeProfil> createState() => _HomeProfilState();
 }
@@ -16,14 +17,14 @@ class _HomeProfilState extends State<HomeProfil> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      Provider.of<AppBarTitle>(context, listen: false)
-          .setTitle('Mon profil');
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Mon profil');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
+        child: Padding(
       padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
       child: Column(
         children: <Widget>[
@@ -94,26 +95,50 @@ class _HomeProfilState extends State<HomeProfil> {
                 SizedBox(
                   height: 12,
                 ),
-                LinkItem(title: "Mes annonces", onTap: () {
-                   Navigator.pushNamed(context, '/mes-annonces');
-                }),
+                LinkItem(
+                    title: "Mes annonces",
+                    onTap: () {
+                      Navigator.pushNamed(context, '/mes-annonces');
+                    }),
                 SizedBox(
                   height: 12,
                 ),
-                LinkItem(title: "Mes objets", onTap: () {
-                   Navigator.pushNamed(context, '/mes-objets');
-                }),
+                LinkItem(
+                    title: "Mes objets",
+                    onTap: () {
+                      Navigator.pushNamed(context, '/mes-objets');
+                    }),
                 SizedBox(
                   height: 12,
                 ),
-                LinkItem(title: "Mes avis", onTap: () {
-                   Navigator.pushNamed(context, '/mes-avis');
-                }),
+                LinkItem(
+                    title: "Mes avis",
+                    onTap: () {
+                      Navigator.pushNamed(context, '/mes-avis');
+                    }),
+                SizedBox(
+                  height: 12,
+                ),
+                LinkItem(
+                    title: "Me déconnecter",
+                    isWarning: true,
+                    onTap: () async {
+                      await supabase.auth.signOut();
+                      print('Utilisateur déconnecté');
+                      Navigator.of(context, rootNavigator: true)
+                          .pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => WelcomePage()),
+                        (Route<dynamic> route) => false,
+                      );
+                    }),
+                SizedBox(
+                  height: 36,
+                ),
               ],
             ),
           )
         ],
       ),
-    );
+    ));
   }
 }

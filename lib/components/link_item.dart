@@ -4,10 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class LinkItem extends StatelessWidget{
   String title;
+  bool isWarning;
   //fonction qui sera appelée lorsqu'on clique sur le lien
   Function() onTap;
 
-  LinkItem({required this.title, required this.onTap});
+  LinkItem({required this.title, required this.onTap, this.isWarning=false});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +36,10 @@ class LinkItem extends StatelessWidget{
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppColors.darkQuaternary,
+                color: isWarning ? AppColors.danger : AppColors.darkQuaternary,
               ),
             ),
-            SvgPicture.asset("assets/icons/chevron-right.svg"),
+            SvgPicture.asset("assets/icons/chevron-right.svg", color: isWarning ? AppColors.danger : AppColors.darkQuaternary,),
           ]
         ),
       ),

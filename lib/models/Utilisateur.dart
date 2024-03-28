@@ -1,17 +1,15 @@
 import 'dart:typed_data';
 
 class Utilisateur {
-  int idUtilisateur;
+  String idUtilisateur;
   String nomUtilisateur;
   String emailUtilisateur;
-  String mdpUtilisateur;
   Uint8List photoDeProfilUtilisateur;
 
   Utilisateur({
     required this.idUtilisateur,
     required this.nomUtilisateur,
     required this.emailUtilisateur,
-    required this.mdpUtilisateur,
     required this.photoDeProfilUtilisateur,
   });
 
@@ -20,8 +18,9 @@ class Utilisateur {
       idUtilisateur: json['idutilisateur'],
       nomUtilisateur: json['nomutilisateur'],
       emailUtilisateur: json['emailutilisateur'],
-      mdpUtilisateur: json['mdputilisateur'],
-      photoDeProfilUtilisateur: json['photoDeProfilutilisateur'],
+      photoDeProfilUtilisateur: json['photoDeProfilutilisateur'] == null
+          ? Uint8List(0)
+          : Uint8List.fromList(json['photoDeProfilutilisateur'].codeUnits),
     );
   }
 
@@ -30,7 +29,6 @@ class Utilisateur {
       'idutilisateur': idUtilisateur,
       'nomutilisateur': nomUtilisateur,
       'emailutilisateur': emailUtilisateur,
-      'mdputilisateur': mdpUtilisateur,
       'photoDeProfilutilisateur': photoDeProfilUtilisateur,
     };
   }
