@@ -8,8 +8,9 @@ class CustomTextField extends StatelessWidget {
   final String? iconPath;
   final bool isArea;
   final bool noSpacing;
-
-  CustomTextField({this.label, required this.hint, this.iconPath, this.isArea = false, this.noSpacing = false});
+  final TextEditingController? controller;
+  final bool obscureText;
+  CustomTextField({this.label, required this.hint, this.iconPath, this.controller, this.obscureText = false,this.isArea = false, this.noSpacing = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,8 @@ class CustomTextField extends StatelessWidget {
           ),
         if (label != null) SizedBox(height: 16.0),
         TextField(
+          controller: controller,
+          obscureText: obscureText,
           minLines: this.isArea ? 5 : 1,
           maxLines: this.isArea ? 5 : 1,
           style: TextStyle(color: AppColors.dark),

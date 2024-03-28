@@ -12,6 +12,7 @@ import 'package:allo/widgets/page_profil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../models/DB/annonce_db.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -20,38 +21,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+  List<Annonce> lesAnnonces = [];
 
-  // fais un exemple de liste avec quelques annonces
-  final List<Annonce> lesAnnonces = [
-    Annonce(
-      titre: 'Annonce 1',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 100,
-      niveauUrgence: 1,
-    ),
-    Annonce(
-      titre: 'Annonce 2',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 200,
-      niveauUrgence: 2,
-    ),
-    Annonce(
-      titre: 'Annonce 3',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 300,
-      niveauUrgence: 3,
-    ),
-    Annonce(
-      titre: 'Annonce 4',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 400,
-      niveauUrgence: 4,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchAnnonces();
+  }
+
+  Future<void> fetchAnnonces() async {
+    final annonces = await AnnonceDB.fetchAllAnnonces();
+    setState(() {
+      lesAnnonces = annonces;
+    });
+  }
 
   void laisserAvis(String avis) {
    showModalBottomSheet(

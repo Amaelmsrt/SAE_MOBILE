@@ -34,6 +34,7 @@ dependencies:
   flutter_statusbarcolor_ns : ^0.5.0
   flutter_svg: ^2.0.10
   provider: ^6.1.2
+  supabase_flutter: ^1.10.3
   image_picker: ^1.0.7
 
   # The following adds the Cupertino Icons font to your application.

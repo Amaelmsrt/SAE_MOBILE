@@ -10,6 +10,7 @@ import 'package:allo/widgets/mes_avis.dart';
 import 'package:allo/widgets/mes_objets.dart';
 import 'package:allo/widgets/modifier_profil.dart';
 import 'package:flutter/material.dart';
+import '../models/DB/annonce_db.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,21 @@ class PageProfil extends StatefulWidget {
 }
 
 class _HomeState extends State<PageProfil> {
+  List<Annonce> lesAnnonces = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAnnonces();
+  }
+
+  Future<void> fetchAnnonces() async {
+    final annonces = await AnnonceDB.fetchAllAnnonces();
+    setState(() {
+      lesAnnonces = annonces;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(

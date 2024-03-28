@@ -10,6 +10,7 @@ import 'package:allo/models/index_page_notifications.dart';
 import 'package:allo/models/notification.dart';
 import 'package:allo/models/notification_message.dart';
 import 'package:flutter/material.dart';
+import '../models/DB/annonce_db.dart';
 import 'package:provider/provider.dart';
 
 class PageNotifications extends StatefulWidget {
@@ -18,6 +19,21 @@ class PageNotifications extends StatefulWidget {
 }
 
 class _HomeState extends State<PageNotifications> {
+  List<Annonce> lesAnnonces = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAnnonces();
+  }
+
+  Future<void> fetchAnnonces() async {
+    final annonces = await AnnonceDB.fetchAllAnnonces();
+    setState(() {
+      lesAnnonces = annonces;
+    });
+  }
+
   // fais un exemple de liste avec quelques annonces
   PageController _pageController = PageController();
   @override
