@@ -54,7 +54,8 @@ class _ObjectPickerState extends State<ObjectPicker> {
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(10)),
                                       child: Image.asset(
-                                        objet!.imagePath,
+                                        //objet!.imagePath,
+                                        "assets/perceuse.jpeg",
                                         width: 65,
                                         height: 65,
                                         fit: BoxFit.cover,
@@ -67,14 +68,14 @@ class _ObjectPickerState extends State<ObjectPicker> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(objet!.title,
+                                        Text(objet!.nomObjet,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 16,
                                               fontFamily: "NeueRegrade",
                                               color: AppColors.dark,
                                             )),
-                                        Text(objet!.mainCategory,
+                                        Text(objet!.descriptionObjet,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 14,
@@ -93,26 +94,6 @@ class _ObjectPickerState extends State<ObjectPicker> {
                       MaterialPageRoute(
                         builder: (context) => ExpandedObjects(
                             lesObjets: [
-                              Objet(
-                                imagePath: "assets/perceuse.jpeg",
-                                title: "Perceuse",
-                                mainCategory: "Perceuse sans fil",
-                              ),
-                              Objet(
-                                imagePath: "assets/perceuse.jpeg",
-                                title: "Visseuse",
-                                mainCategory: "Visseuse sans fil",
-                              ),
-                              Objet(
-                                imagePath: "assets/perceuse.jpeg",
-                                title: "Marteau",
-                                mainCategory: "Marteau",
-                              ),
-                              Objet(
-                                imagePath: "assets/perceuse.jpeg",
-                                title: "Scie",
-                                mainCategory: "Scie",
-                              ),
                             ],
                             onObjectChanged: (Objet? obj) {
                               setState(() {

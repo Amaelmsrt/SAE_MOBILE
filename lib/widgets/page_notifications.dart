@@ -19,20 +19,6 @@ class PageNotifications extends StatefulWidget {
 }
 
 class _HomeState extends State<PageNotifications> {
-  List<Annonce> lesAnnonces = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchAnnonces();
-  }
-
-  Future<void> fetchAnnonces() async {
-    final annonces = await AnnonceDB.fetchAllAnnonces();
-    setState(() {
-      lesAnnonces = annonces;
-    });
-  }
 
   // fais un exemple de liste avec quelques annonces
   PageController _pageController = PageController();

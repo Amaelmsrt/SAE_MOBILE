@@ -43,7 +43,7 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                       child: ListView(
                         children: this.widget.lesObjets.map<Widget>((obj) {
                           bool isSelected =
-                              (objet != null) && (obj.title == objet!.title);
+                              (objet != null) && (obj.nomObjet == objet!.nomObjet);
                           return Expanded(
                             child: GestureDetector(
                               onTap: () {
@@ -70,7 +70,8 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(10)),
                                       child: Image.asset(
-                                        obj.imagePath,
+                                        //obj.imagePath,
+                                        "assets/perceuse.jpeg",
                                         width: 65,
                                         height: 65,
                                         fit: BoxFit.cover,
@@ -83,14 +84,14 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(obj.title,
+                                        Text(obj.nomObjet,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 16,
                                               fontFamily: "NeueRegrade",
                                               color: AppColors.dark,
                                             )),
-                                        Text(obj.mainCategory,
+                                        Text(obj.descriptionObjet,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 14,

@@ -34,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> register(String email, String password, String username) async {
+    print("nouvel utilisateur : $username, $email, $password");
   final response = await supabase.auth.signUp(email: email, password: password);
 
   if (response.user == null) {

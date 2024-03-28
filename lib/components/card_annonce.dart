@@ -10,14 +10,14 @@ class CardAnnonce extends StatelessWidget {
   final String imagePath;
   final bool isSaved;
   final double prix;
-  final int niveauUrgence;
+  final bool estUrgente;
 
   CardAnnonce(
       {required this.titre,
       required this.imagePath,
       required this.isSaved,
       required this.prix,
-      required this.niveauUrgence});
+      required this.estUrgente});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class CardAnnonce extends StatelessWidget {
                   imagePath: imagePath,
                   isSaved: isSaved,
                   prix: prix,
-                  niveauUrgence: niveauUrgence,
+                  estUrgente: estUrgente,
                 )),
           )
         },
@@ -57,6 +57,7 @@ class CardAnnonce extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (estUrgente)
                     Positioned(
                       right: 10,
                       bottom: 10,
@@ -68,7 +69,7 @@ class CardAnnonce extends StatelessWidget {
                           borderRadius: BorderRadius.circular(500000),
                         ),
                         child: Text(
-                          'Urgence: $niveauUrgence',
+                          'Urgente',
                           style: TextStyle(
                               color: AppColors.dark,
                               fontFamily: "NeueRegrade",

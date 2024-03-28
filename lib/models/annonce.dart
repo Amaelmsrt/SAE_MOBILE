@@ -1,3 +1,5 @@
+import 'package:allo/models/Utilisateur.dart';
+
 class Annonce {
   int idAnnonce;
   String titreAnnonce;
@@ -6,7 +8,9 @@ class Annonce {
   DateTime dateAideAnnonce;
   bool estUrgente;
   int etatAnnonce;
-  int idUtilisateur;
+  Utilisateur? utilisateur;
+  double? prixAnnonce;
+  bool isSaved;
 
   Annonce({
     required this.idAnnonce,
@@ -16,7 +20,8 @@ class Annonce {
     required this.dateAideAnnonce,
     required this.estUrgente,
     required this.etatAnnonce,
-    required this.idUtilisateur,
+    required this.utilisateur,
+    this.isSaved = false,
   });
 
   factory Annonce.fromJson(Map<String, dynamic> json) {
@@ -28,7 +33,7 @@ class Annonce {
       dateAideAnnonce: DateTime.parse(json['dateaideannonce']),
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'],
-      idUtilisateur: json['idutilisateur'],
+      utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }
 
@@ -41,7 +46,7 @@ class Annonce {
       'dateAideAnnonce': dateAideAnnonce.toIso8601String(),
       'estUrgente': estUrgente,
       'etatAnnonce': etatAnnonce,
-      'idUtilisateur': idUtilisateur,
+      'utilisateur': utilisateur,
     };
   }
 

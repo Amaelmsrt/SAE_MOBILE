@@ -21,12 +21,6 @@ class _MesAvisState extends State<MesAvis> {
   }
 
   List<Avis> mesAvis = [
-    new Avis(
-        pseudo: "Julien Arsouze",
-        commentaire:
-            "Salut j’ai beaucoup aimé sa perceuse franchement un pur banger j’ai kiffé on refait ça quand tu veux mon frérot love sur toi jtm.",
-        date: "il y a 5 minutes",
-        nbEtoiles: 4)
   ];
 
   @override
@@ -64,11 +58,11 @@ class _MesAvisState extends State<MesAvis> {
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         return VueAvis(
-                          imagePath: mesAvis[index].imagePath,
-                          pseudo: mesAvis[index].pseudo,
-                          commentaire: mesAvis[index].commentaire,
-                          date: mesAvis[index].date,
-                          nbEtoiles: mesAvis[index].nbEtoiles,
+                          //imagePath: mesAvis[index].utilisateur.imagePath,
+                          pseudo: mesAvis[index].utilisateur.nomUtilisateur,
+                          commentaire: mesAvis[index].messageAvis,
+                          date: mesAvis[index].dateAvis.toString(),
+                          nbEtoiles: mesAvis[index].noteAvis,
                         );
                       },
                       childCount: mesAvis.length,

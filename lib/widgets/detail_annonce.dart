@@ -15,14 +15,14 @@ class DetailAnnonce extends StatefulWidget {
   final String imagePath;
   bool isSaved;
   final double prix;
-  final int niveauUrgence;
+  final bool estUrgente;
 
   DetailAnnonce(
       {required this.titre,
       required this.imagePath,
       required this.isSaved,
       required this.prix,
-      required this.niveauUrgence});
+      required this.estUrgente});
 
   @override
   State<DetailAnnonce> createState() => _DetailAnnonceState();
@@ -51,36 +51,37 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
       });
   }
 
-  final List<Annonce> lesAnnonces = [
-    Annonce(
-      titre: 'Annonce 1',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 100,
-      niveauUrgence: 1,
-    ),
-    Annonce(
-      titre: 'Annonce 2',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 200,
-      niveauUrgence: 2,
-    ),
-    Annonce(
-      titre: 'Annonce 3',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 300,
-      niveauUrgence: 3,
-    ),
-    Annonce(
-      titre: 'Annonce 4',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 400,
-      niveauUrgence: 4,
-    ),
-  ];
+  //annoncesimiliares
+  // final List<Annonce> lesAnnonces = [
+  //   Annonce(
+  //     titre: 'Annonce 1',
+  //     imageLink: 'assets/perceuse.jpeg',
+  //     isSaved: false,
+  //     prix: 100,
+  //     niveauUrgence: 1,
+  //   ),
+  //   Annonce(
+  //     titre: 'Annonce 2',
+  //     imageLink: 'assets/perceuse.jpeg',
+  //     isSaved: true,
+  //     prix: 200,
+  //     niveauUrgence: 2,
+  //   ),
+  //   Annonce(
+  //     titre: 'Annonce 3',
+  //     imageLink: 'assets/perceuse.jpeg',
+  //     isSaved: false,
+  //     prix: 300,
+  //     niveauUrgence: 3,
+  //   ),
+  //   Annonce(
+  //     titre: 'Annonce 4',
+  //     imageLink: 'assets/perceuse.jpeg',
+  //     isSaved: true,
+  //     prix: 400,
+  //     niveauUrgence: 4,
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -178,9 +179,9 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                               "Saucisson"
                             ]),
                             SizedBox(height: 24),
-                            ListeAnnonce(
-                                titre: "Annonces similaires",
-                                annonces: lesAnnonces),
+                            //ListeAnnonce(
+                            //    titre: "Annonces similaires",
+                            //    annonces: lesAnnonces),
                             SizedBox(height: 132),
                           ],
                         )),

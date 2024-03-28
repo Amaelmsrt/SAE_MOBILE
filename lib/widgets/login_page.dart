@@ -1,12 +1,17 @@
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/main.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatelessWidget {
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,13 +60,17 @@ class LoginPage extends StatelessWidget {
                               height:
                                   32.0), // espace entre le titre et le premier champ de texte
                           CustomTextField(
-                              label: "Nom d'utilisateur",
-                              hint: "Nom d'utilisateur...",
-                              iconPath: "assets/icons/user.svg"),
+                            label: "E-mail",
+                            hint: "E-mail...",
+                            iconPath: "assets/icons/email.svg",
+                            controller: _usernameController,
+                          ),
                           CustomTextField(
-                              label: "Mot de passe",
-                              hint: "Mot de passe...",
-                              iconPath: "assets/icons/key.svg"),
+                            label: "Mot de passe",
+                            hint: "Mot de passe...",
+                            iconPath: "assets/icons/key.svg",
+                            controller: _passwordController,
+                          ),
                         ],
                       ),
                     ),
@@ -114,12 +123,33 @@ class LoginPage extends StatelessWidget {
                             width: buttonWidth * 1.2 -
                                 10, // Le bouton de droite est 20% plus grand que le bouton de gauche
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => Home()),
-                                  (Route<dynamic> route) => false,
-                                );
+                              onPressed: () async {
+                                print('Connexion');
+                                print(_usernameController.text +
+                                    " " +
+                                    _passwordController.text);
+                                try {
+                                  final response = await supabase.auth
+                                      .signInWithPassword(
+                                          password: _passwordController.text,
+                                          email: _usernameController.text);
+                                  print(response.user);
+                                  print(response.session);
+
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => Home()),
+                                    (Route<dynamic> route) => false,
+                                  );
+                                } catch (e) {
+                                  if (e is AuthException) {
+                                    print(
+                                        'Erreur d\'authentification: ${e.message}');
+                                  } else {
+                                    print(
+                                        'Une autre erreur s\'est produite: $e');
+                                  }
+                                }
                               },
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(

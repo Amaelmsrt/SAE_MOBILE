@@ -1,11 +1,13 @@
 
+import 'package:allo/models/Utilisateur.dart';
+
 class Avis {
   int idAvis;
   String titreAvis;
   int noteAvis;
   String messageAvis;
   DateTime dateAvis;
-  int idUtilisateur;
+  Utilisateur utilisateur;
 
   Avis({
     required this.idAvis,
@@ -13,7 +15,7 @@ class Avis {
     required this.noteAvis,
     required this.messageAvis,
     required this.dateAvis,
-    required this.idUtilisateur,
+    required this.utilisateur,
   });
 
   factory Avis.fromJson(Map<String, dynamic> json) {
@@ -23,7 +25,7 @@ class Avis {
       noteAvis: json['noteavis'],
       messageAvis: json['messageavis'],
       dateAvis: DateTime.parse(json['dateavis']),
-      idUtilisateur: json['idutilisateur'],
+      utilisateur: json['utilisateur'],
     );
   }
 
@@ -34,20 +36,21 @@ class Avis {
       'noteavis': noteAvis,
       'messageavis': messageAvis,
       'dateavis': dateAvis.toIso8601String(),
-      'idutilisateur': idUtilisateur,
+      'utilisateur': utilisateur,
     };
   }
-//ancienne version à adapter
-class Avis{
-  String? imagePath;
-  String pseudo, commentaire, date;
-  int nbEtoiles;
-
-  Avis({
-    this.imagePath,
-    required this.pseudo,
-    required this.commentaire,
-    required this.date,
-    required this.nbEtoiles,
-  }); 
 }
+// //ancienne version à adapter
+// class Avis{
+//   String? imagePath;
+//   String pseudo, commentaire, date;
+//   int nbEtoiles;
+
+//   Avis({
+//     this.imagePath,
+//     required this.pseudo,
+//     required this.commentaire,
+//     required this.date,
+//     required this.nbEtoiles,
+//   }); 
+// }
