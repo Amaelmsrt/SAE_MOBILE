@@ -4,6 +4,7 @@ import 'package:allo/models/annonce.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/DB/annonce_db.dart';
 
 class AnnoncesEnregistrees extends StatefulWidget {
   @override
@@ -11,74 +12,23 @@ class AnnoncesEnregistrees extends StatefulWidget {
 }
 
 class _HomeState extends State<AnnoncesEnregistrees> {
-
-  // fais un exemple de liste avec quelques annonces
-  final List<Annonce> lesAnnonces = [
-    Annonce(
-      titre: 'Annonce 1',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 100,
-      niveauUrgence: 1,
-    ),
-    Annonce(
-      titre: 'Annonce 2',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 200,
-      niveauUrgence: 2,
-    ),
-    Annonce(
-      titre: 'Annonce 3',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 300,
-      niveauUrgence: 3,
-    ),
-    Annonce(
-      titre: 'Annonce 4',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 400,
-      niveauUrgence: 4,
-    ),
-     Annonce(
-      titre: 'Annonce 1',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 100,
-      niveauUrgence: 1,
-    ),
-    Annonce(
-      titre: 'Annonce 2',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 200,
-      niveauUrgence: 2,
-    ),
-    Annonce(
-      titre: 'Annonce 3',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 300,
-      niveauUrgence: 3,
-    ),
-    Annonce(
-      titre: 'Annonce 4',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 400,
-      niveauUrgence: 4,
-    ),
-  ];
+  List<Annonce> lesAnnonces = [];
 
   @override
-void initState() {
-  super.initState();
-  Future.delayed(Duration.zero, () {
-    Provider.of<AppBarTitle>(context, listen: false).setTitle('Annonces enregistrées');
-  });
-}
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Annonces enregistrées');
+    });
+    fetchAnnonces();
+  }
+
+  Future<void> fetchAnnonces() async {
+    final annonces = await AnnonceDB.fetchFirstAnnonces();
+    setState(() {
+      lesAnnonces = annonces;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

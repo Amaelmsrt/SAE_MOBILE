@@ -4,6 +4,7 @@ import 'package:allo/models/annonce.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/DB/annonce_db.dart';
 
 class Accueil extends StatefulWidget {
   @override
@@ -11,46 +12,30 @@ class Accueil extends StatefulWidget {
 }
 
 class _HomeState extends State<Accueil> {
-
-  // fais un exemple de liste avec quelques annonces
-  final List<Annonce> lesAnnonces = [
-    Annonce(
-      titre: 'Annonce 1',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 100,
-      niveauUrgence: 1,
-    ),
-    Annonce(
-      titre: 'Annonce 2',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 200,
-      niveauUrgence: 2,
-    ),
-    Annonce(
-      titre: 'Annonce 3',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: false,
-      prix: 300,
-      niveauUrgence: 3,
-    ),
-    Annonce(
-      titre: 'Annonce 4',
-      imageLink: 'assets/perceuse.jpeg',
-      isSaved: true,
-      prix: 400,
-      niveauUrgence: 4,
-    ),
-  ];
+  List<Annonce> toutesLesAnnonces = [];
+  List<Annonce> dernieresAnnonces = [];
+  List<Annonce> annoncesUrgentes = [];
 
   @override
-void initState() {
-  super.initState();
-  Future.delayed(Duration.zero, () {
-    Provider.of<AppBarTitle>(context, listen: false).setTitle('Accueil');
-  });
-}
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Accueil');
+    });
+    fetchAnnonces();
+  }
+
+  Future<void> fetchAnnonces() async {
+    final allAnnonces = await AnnonceDB.fetchAllAnnonces();
+    final lastAnnonces = await AnnonceDB.fetchLastAnnonces();
+    final urgentAnnonces = await AnnonceDB.fetchUrgentAnnonces();
+
+    setState(() {
+      toutesLesAnnonces = allAnnonces;
+      dernieresAnnonces = lastAnnonces;
+      annoncesUrgentes = urgentAnnonces;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +46,9 @@ void initState() {
               child: CustomTextField(
                   hint: "Rechercher une annonce...",
                   iconPath: "assets/icons/loupe.svg")),
-          ListeAnnonce(titre: "Vous pouvez les aider !", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces urgentes", annonces: lesAnnonces),
-          ListeAnnonce(titre: "Annonces récentes", annonces: lesAnnonces),
+          ListeAnnonce(titre: "Vous pouvez les aider !", annonces: toutesLesAnnonces),
+          ListeAnnonce(titre: "Annonces urgentes", annonces: annoncesUrgentes),
+          ListeAnnonce(titre: "Annonces récentes", annonces: dernieresAnnonces),
         ],
       )
     );
