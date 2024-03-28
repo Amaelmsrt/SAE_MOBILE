@@ -6,8 +6,10 @@ class CustomTextField extends StatelessWidget {
   final String? label;
   final String hint;
   final String iconPath;
+  final TextEditingController? controller;
+  final bool obscureText;
 
-  CustomTextField({this.label, required this.hint, required this.iconPath});
+  CustomTextField({this.label, required this.hint, required this.iconPath, this.controller, this.obscureText = false});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,8 @@ class CustomTextField extends StatelessWidget {
           ),
         if (label != null) SizedBox(height: 16.0),
         TextField(
+          controller: controller,
+          obscureText: obscureText,
           style: TextStyle(color: AppColors.dark),
           decoration: InputDecoration(
             hintText: hint,
