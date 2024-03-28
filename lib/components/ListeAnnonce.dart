@@ -16,19 +16,20 @@ class ListeAnnonce extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          if (titre != null)
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                titre!,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "NeueRegrade",
+        padding: EdgeInsets.all(0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (titre != null)
+              Padding(
+                padding: EdgeInsets.fromLTRB(0,0,0,16),
+                child: Text(
+                  titre!,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "NeueRegrade",
+                  ),
                 ),
               ),
             ),
@@ -52,33 +53,29 @@ class ListeAnnonce extends StatelessWidget {
                   );
                 },
               ),
-            ),
-          if (isVertical)
-            Container(
-              height: 490,
-              decoration: BoxDecoration(),
-              child: GridView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.82,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: annonces.length,
-                itemBuilder: (context, index) {
-                  Annonce annonce = annonces[index];
-                  return Padding(
-                    padding: EdgeInsets.only(right: 12, left: 12),
-                    child: CardAnnonce(
-                      titre: annonce.titreAnnonce,
-                      imagePath: "", // A remplacer par le lien de l'image de l'annonce
-                      isSaved: false, // A remplacer par l'état de sauvegarde de l'annonce
-                      prix: 0, // A remplacer par le prix de l'annonce
-                      niveauUrgence: annonce.estUrgente ? 1 : 0, // A remplacer par le niveau d'urgence de l'annonce
-                    ),
-                  );
-                },
+            if (isVertical)
+  Container(
+        height: 470 ,
+        decoration: BoxDecoration(),
+        child: GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.fromLTRB(10,0,10,0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // number of items per row
+            childAspectRatio: 0.75,
+            mainAxisSpacing: 10 // adjust this value to fit your needs
+          ),
+          itemCount: annonces.length,
+          itemBuilder: (context, index) {
+            Annonce annonce = annonces[index];
+            return Padding(
+              padding: EdgeInsets.only(right: 12, left:12), // adjust this padding to fit your needs
+              child: CardAnnonce(
+                titre: annonce.titre,
+                imagePath: annonce.imageLink,
+                isSaved: annonce.isSaved,
+                prix: annonce.prix,
+                niveauUrgence: annonce.niveauUrgence,
               ),
             ),
         ],

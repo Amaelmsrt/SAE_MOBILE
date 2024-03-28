@@ -39,18 +39,26 @@ class _HomeState extends State<Accueil> {
 
   @override
   Widget build(BuildContext context) {
-    return (ListView(
-        children: <Widget>[
-          Padding(
-              padding: new EdgeInsets.fromLTRB(15, 20, 15, 0),
-              child: CustomTextField(
-                  hint: "Rechercher une annonce...",
-                  iconPath: "assets/icons/loupe.svg")),
-          ListeAnnonce(titre: "Vous pouvez les aider !", annonces: toutesLesAnnonces),
-          ListeAnnonce(titre: "Annonces urgentes", annonces: annoncesUrgentes),
-          ListeAnnonce(titre: "Annonces récentes", annonces: dernieresAnnonces),
-        ],
-      )
-    );
+    return (Padding(
+        padding: new EdgeInsets.fromLTRB(15, 0, 15, 0),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+                padding: new EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: CustomTextField(
+                    hint: "Rechercher une annonce...",
+                    iconPath: "assets/icons/loupe.svg")),
+            ListeAnnonce(
+                titre: "Vous pouvez les aider !", annonces: toutesLesAnnonces),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces urgentes", annonces: dernieresAnnonces),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces récentes", annonces: annoncesUrgentes),
+          ],
+        )));
   }
 }

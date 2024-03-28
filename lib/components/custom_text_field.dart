@@ -5,11 +5,12 @@ import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
 class CustomTextField extends StatelessWidget {
   final String? label;
   final String hint;
-  final String iconPath;
+  final String? iconPath;
+  final bool isArea;
+  final bool noSpacing;
   final TextEditingController? controller;
   final bool obscureText;
-
-  CustomTextField({this.label, required this.hint, required this.iconPath, this.controller, this.obscureText = false});
+  CustomTextField({this.label, required this.hint, this.iconPath, this.controller, this.obscureText = false,this.isArea = false, this.noSpacing = false});
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +31,17 @@ class CustomTextField extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscureText,
+          minLines: this.isArea ? 5 : 1,
+          maxLines: this.isArea ? 5 : 1,
           style: TextStyle(color: AppColors.dark),
           decoration: InputDecoration(
             hintText: hint,
             contentPadding: EdgeInsets.symmetric(vertical: 17.0, horizontal: 20.0),
             hintStyle: TextStyle(color: AppColors.darkSecondary),
-            prefixIcon: Padding(
+            prefixIcon: iconPath != null ? Padding(
               padding: EdgeInsets.only(left: 20.0, right: 12.0),
-              child: SvgPicture.asset(iconPath),
-            ),
+              child: SvgPicture.asset(iconPath!),
+            ) : null,
             filled: true,
             fillColor: AppColors.lightSecondary,
             enabledBorder: OutlineInputBorder(
@@ -51,7 +54,8 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 24.0),
+        if (this.noSpacing == false)
+          SizedBox(height: 24.0),
       ],
     );
   }
