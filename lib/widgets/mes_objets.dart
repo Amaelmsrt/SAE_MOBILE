@@ -3,6 +3,7 @@ import 'package:allo/components/vue_gestion_objet_annonce.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
+import 'package:allo/widgets/ajouter_objet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,15 @@ class _MesObjetsState extends State<MesObjets> {
                                       0.6, // 70% de la largeur du parent
                                   child: ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) {
+                                            return AjouterObjet();
+                                          },
+                                          isScrollControlled: true,
+                                          useRootNavigator:
+                                              true, // Ajoutez cette ligne
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shadowColor: Colors.transparent,
@@ -81,8 +90,10 @@ class _MesObjetsState extends State<MesObjets> {
                                         ),
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Text(
                                             "Ajouter un objet",
@@ -94,7 +105,11 @@ class _MesObjetsState extends State<MesObjets> {
                                             ),
                                           ),
                                           SizedBox(width: 8),
-                                          SvgPicture.asset("assets/icons/plus.svg", color: AppColors.dark, height: 16,)
+                                          SvgPicture.asset(
+                                            "assets/icons/plus.svg",
+                                            color: AppColors.dark,
+                                            height: 16,
+                                          )
                                         ],
                                       )),
                                 ),
