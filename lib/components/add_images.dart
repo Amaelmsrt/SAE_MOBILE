@@ -15,12 +15,16 @@ class AddImages extends StatefulWidget {
 class _AddImagesState extends State<AddImages> {
   Future<void> pickImage() async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
-      setState(() {
-        widget.images.add(image);
-      });
+      if (image != null) {
+        setState(() {
+          widget.images.add(image);
+        });
+      }
+    } catch (e) {
+      print('Erreur lors de la sélection de l\'image : $e');
     }
   }
 
@@ -130,7 +134,8 @@ class _AddImagesState extends State<AddImages> {
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Center(
-                      child: SvgPicture.asset("assets/icons/img-upload.svg",
+                      child: SvgPicture.asset(
+                        "assets/icons/img-upload.svg",
                         width: 24,
                         height: 24,
                       ),

@@ -6,8 +6,9 @@ class CustomDatePicker extends StatefulWidget {
   final String? label;
   final String hint;
   final bool noSpacing;
+  final ValueNotifier<DateTime> dateNotifier;
 
-  CustomDatePicker({this.label, required this.hint, this.noSpacing = false});
+  CustomDatePicker({this.label, required this.hint, this.noSpacing = false, required this.dateNotifier});
 
   @override
   _CustomDatePickerState createState() => _CustomDatePickerState();
@@ -59,6 +60,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             if (picked != null && picked != selectedDate) {
               setState(() {
                 selectedDate = picked;
+                print(selectedDate.toLocal());
+                widget.dateNotifier.value = selectedDate;
               });
             }
           },

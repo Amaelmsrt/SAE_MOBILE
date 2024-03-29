@@ -7,12 +7,15 @@ class CustomCheckBox extends StatefulWidget {
   final String hint;
   final bool noSpacing;
   bool isChecked;
+  final ValueNotifier<bool>? isCheckedNotifier;
 
   CustomCheckBox(
       {this.label,
       required this.hint,
       this.noSpacing = false,
-      this.isChecked = false});
+      this.isChecked = false,
+      required this.isCheckedNotifier
+      });
 
   @override
   _CustomCheckBoxState createState() => _CustomCheckBoxState();
@@ -41,6 +44,9 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
           onTap: () {
             setState(() {
               widget.isChecked = !widget.isChecked;
+              if (widget.isCheckedNotifier != null) {
+                widget.isCheckedNotifier!.value = widget.isChecked;
+              }
             });
           },
           child: Row(

@@ -8,11 +8,14 @@ class ListingCategories extends StatefulWidget {
   bool isSelectable;
   List<String> selectedCategories = [];
   bool isExpandable;
+  final ValueNotifier<List<String>>? selectedCategoriesNotifier;
 
   ListingCategories(
       {required this.lesCategories,
       this.isSelectable = false,
-      this.isExpandable = false});
+      this.isExpandable = false,
+      this.selectedCategoriesNotifier
+      });
 
   @override
   State<ListingCategories> createState() => _ListingCategoriesState();
@@ -46,6 +49,10 @@ class _ListingCategoriesState extends State<ListingCategories> {
                         else
                           widget.selectedCategories.add(category);
                       });
+                      if (widget.selectedCategoriesNotifier != null) {
+                        widget.selectedCategoriesNotifier!.value =
+                            widget.selectedCategories;
+                      }
                     }
                   : null,
               child: Chip(

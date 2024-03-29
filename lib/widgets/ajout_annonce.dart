@@ -7,10 +7,30 @@ import 'package:allo/constants/app_colors.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 
-class AjoutAnnonce extends StatelessWidget {
+class AjoutAnnonce extends StatefulWidget {
+  @override
+  State<AjoutAnnonce> createState() => _AjoutAnnonceState();
+}
+
+class _AjoutAnnonceState extends State<AjoutAnnonce> {
+  ValueNotifier<List<XFile>> images = ValueNotifier<List<XFile>>([]);
+
+  TextEditingController _texteAnnonceController = TextEditingController();
+
+  TextEditingController descriptionAnnonce = TextEditingController();
+
+  ValueNotifier<DateTime> dateAideAnnonce = ValueNotifier<DateTime>(DateTime.now());
+
+  ValueNotifier<List<String>> categorieAnnonce = ValueNotifier<List<String>>([]);
+
+  ValueNotifier<bool> estUrgente = ValueNotifier<bool>(false);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,27 +47,38 @@ class AjoutAnnonce extends StatelessWidget {
                         AddImages(),
                         CustomTextField(
                             hint: "Recherche une perceuse...",
-                            label: "Titre de l'annonce"),
+                            label: "Titre de l'annonce",
+                            controller: _texteAnnonceController,),
                         CustomTextField(
                             hint: "Description de l'annonce",
                             label: "Description",
-                            isArea: true),
+                            isArea: true,
+                            controller: descriptionAnnonce
+                            ),
                         ListingCategories(lesCategories: [
                           "Perceuse",
                           "Outils",
                           "Visseuse",
                           "Poulet",
                           "Gode ceinture"
-                        ], isSelectable: true, isExpandable: true),
+                        ],
+                        isSelectable: true,
+                        isExpandable: true,
+                        selectedCategoriesNotifier: categorieAnnonce,
+                        ),
                         SizedBox(
                           height: 24,
                         ),
                         CustomDatePicker(
                           hint: "Selectionner une date",
                           label: "Date de fin de l'annonce",
+                          dateNotifier: dateAideAnnonce,
                         ),
                         CustomCheckBox(
-                            label: "Niveau d'urgence", hint: "Annonce urgente"),
+                            label: "Niveau d'urgence",
+                            hint: "Annonce urgente",
+                            isCheckedNotifier: estUrgente,
+                            ),
                         SizedBox(
                           height: 100,
                         ),
@@ -118,7 +149,12 @@ class AjoutAnnonce extends StatelessWidget {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      print("Ajout de l'annonce");
+                      print("Titre: ${_texteAnnonceController.text}");
+                      print("Description: ${descriptionAnnonce.text}");
+                      print("Date: ${dateAideAnnonce.value}");
+                      print("Categorie: ${categorieAnnonce.value}");
+                      print("Urgence: ${estUrgente.value}");
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
