@@ -77,6 +77,34 @@ class AnnonceDB {
     }
   }
 
+  static Future<Annonce> _createAnnonceFromResponse(Map<String, dynamic> annonceData) async {
+    Annonce annonce = Annonce.fromJson({...annonceData});
+
+    final photos = await supabase
+        .from("photo_annonce")
+        .select('photo')
+        .eq('idannonce', annonceData['idannonce']);
+
+    for (var photo in photos) {
+      String hexDecoded = photo['photo'].toString().substring(2);
+      Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
+      annonce.addImage(imgdata);
+    }
+
+    String? myUUID = await UserBD.getMyUUID();
+    final responseEnregistrer = await supabase
+        .from("enregistrer")
+        .select('*')
+        .eq('idutilisateur', myUUID)
+        .eq('idannonce', annonceData['idannonce']);
+
+    if (responseEnregistrer.length > 0) {
+      annonce.isSaved = true;
+    }
+
+    return annonce;
+  }
+
   static Future<List<Annonce>> fetchAllAnnonces() async {
     try {
       String? myUUID = await UserBD.getMyUUID();
@@ -89,32 +117,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        final photos = await supabase
-            .from('photo_annonce')
-            .select('photo')
-            .eq('idannonce', annonce['idannonce']);
-
-        for (var photo in photos) {
-          String hexDecoded = photo['photo'].toString().substring(2);
-
-          // Convertir la chaîne hexadécimale en Uint8List
-          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
-
-          // Ajoutez l'image à votre objet Annonce
-          nouvelleAnnonce.addImage(imgdata);
-        }
-
-        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
-
-        final responseEnregistrer = await supabase
-            .from('enregistrer')
-            .select('*')
-            .eq('idutilisateur', myUUID)
-            .eq('idannonce', annonce['idannonce']);
-
-        if (responseEnregistrer.length > 0) {
-          nouvelleAnnonce.isSaved = true;
-        }
+        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         return nouvelleAnnonce;
       }).toList();
@@ -207,32 +210,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        final photos = await supabase
-            .from('photo_annonce')
-            .select('photo')
-            .eq('idannonce', annonce['idannonce']);
-
-        for (var photo in photos) {
-          String hexDecoded = photo['photo'].toString().substring(2);
-
-          // Convertir la chaîne hexadécimale en Uint8List
-          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
-
-          // Ajoutez l'image à votre objet Annonce
-          nouvelleAnnonce.addImage(imgdata);
-        }
-
-        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
-
-        final responseEnregistrer = await supabase
-            .from('enregistrer')
-            .select('*')
-            .eq('idutilisateur', myUUID)
-            .eq('idannonce', annonce['idannonce']);
-
-        if (responseEnregistrer.length > 0) {
-          nouvelleAnnonce.isSaved = true;
-        }
+        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         return nouvelleAnnonce;
       }).toList();
@@ -257,32 +235,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        final photos = await supabase
-            .from('photo_annonce')
-            .select('photo')
-            .eq('idannonce', annonce['idannonce']);
-
-        for (var photo in photos) {
-          String hexDecoded = photo['photo'].toString().substring(2);
-
-          // Convertir la chaîne hexadécimale en Uint8List
-          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
-
-          // Ajoutez l'image à votre objet Annonce
-          nouvelleAnnonce.addImage(imgdata);
-        }
-
-        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
-
-        final responseEnregistrer = await supabase
-            .from('enregistrer')
-            .select('*')
-            .eq('idutilisateur', myUUID)
-            .eq('idannonce', annonce['idannonce']);
-
-        if (responseEnregistrer.length > 0) {
-          nouvelleAnnonce.isSaved = true;
-        }
+        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         return nouvelleAnnonce;
       }).toList();
@@ -323,23 +276,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        final photos = await supabase
-            .from('photo_annonce')
-            .select('photo')
-            .eq('idannonce', annonce['idannonce']);
-
-        for (var photo in photos) {
-          String hexDecoded = photo['photo'].toString().substring(2);
-
-          // Convertir la chaîne hexadécimale en Uint8List
-          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
-
-          // Ajoutez l'image à votre objet Annonce
-          nouvelleAnnonce.addImage(imgdata);
-        }
-
-        // L'annonce est enregistrée car nous avons récupéré les annonces enregistrées
-        nouvelleAnnonce.isSaved = true;
+         nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         return nouvelleAnnonce;
       }).toList();
