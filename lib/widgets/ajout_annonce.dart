@@ -20,21 +20,31 @@ class AjoutAnnonce extends StatefulWidget {
   State<AjoutAnnonce> createState() => _AjoutAnnonceState();
 }
 
-class _AjoutAnnonceState extends State<AjoutAnnonce> {
+class _AjoutAnnonceState extends State<AjoutAnnonce>
+    with AutomaticKeepAliveClientMixin {
   ValueNotifier<List<XFile>> images = ValueNotifier<List<XFile>>([]);
 
   TextEditingController _texteAnnonceController = TextEditingController();
 
   TextEditingController descriptionAnnonce = TextEditingController();
 
-  ValueNotifier<DateTime> dateAideAnnonce = ValueNotifier<DateTime>(DateTime.now());
+  ValueNotifier<DateTime> dateAideAnnonce =
+      ValueNotifier<DateTime>(DateTime.now());
 
-  ValueNotifier<List<String>> categorieAnnonce = ValueNotifier<List<String>>([]);
+  ValueNotifier<List<String>> categorieNonSelectionnesAnnonce =
+      ValueNotifier<List<String>>([]);
+
+  ValueNotifier<List<String>> categorieAnnonce =
+      ValueNotifier<List<String>>([]);
 
   ValueNotifier<bool> estUrgente = ValueNotifier<bool>(false);
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         backgroundColor: AppColors.light,
         body: Stack(
@@ -47,26 +57,27 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                     delegate: SliverChildListDelegate(
                       [
                         AddImages(valueNotifier: images),
-                        CustomTextField(
-                            hint: "Recherche une perceuse...",
-                            label: "Titre de l'annonce",
-                            controller: _texteAnnonceController,),
+                        StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return CustomTextField(
+                              hint: "Recherche une perceuse...",
+                              label: "Titre de l'annonce",
+                              controller: _texteAnnonceController,
+                            );
+                          },
+                        ),
                         CustomTextField(
                             hint: "Description de l'annonce",
                             label: "Description",
                             isArea: true,
-                            controller: descriptionAnnonce
-                            ),
-                        ListingCategories(lesCategories: [
-                          "Perceuse",
-                          "Outils",
-                          "Visseuse",
-                          "Poulet",
-                          "Gode ceinture"
-                        ],
-                        isSelectable: true,
-                        isExpandable: true,
-                        selectedCategoriesNotifier: categorieAnnonce,
+                            controller: descriptionAnnonce),
+                        ListingCategories(
+                          listeningToString: _texteAnnonceController,
+                          isSelectable: true,
+                          isExpandable: true,
+                          selectedCategoriesNotifier: categorieAnnonce,
+                          categoriesNotifier: categorieNonSelectionnesAnnonce,
                         ),
                         SizedBox(
                           height: 24,
@@ -77,10 +88,10 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                           dateNotifier: dateAideAnnonce,
                         ),
                         CustomCheckBox(
-                            label: "Niveau d'urgence",
-                            hint: "Annonce urgente",
-                            isCheckedNotifier: estUrgente,
-                            ),
+                          label: "Niveau d'urgence",
+                          hint: "Annonce urgente",
+                          isCheckedNotifier: estUrgente,
+                        ),
                         SizedBox(
                           height: 100,
                         ),
@@ -158,11 +169,18 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                       print("Date: ${dateAideAnnonce.value}");
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
-                      AnnonceDB.ajouterAnnonce(images.value, _texteAnnonceController.text, descriptionAnnonce.text, dateAideAnnonce.value, categorieAnnonce.value, estUrgente.value);
+                      AnnonceDB.ajouterAnnonce(
+                          images.value,
+                          _texteAnnonceController.text,
+                          descriptionAnnonce.text,
+                          dateAideAnnonce.value,
+                          categorieAnnonce.value,
+                          estUrgente.value);
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 17, horizontal: 40),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 17, horizontal: 40),
                       elevation: 0,
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(

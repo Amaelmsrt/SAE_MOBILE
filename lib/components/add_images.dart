@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddImages extends StatefulWidget {
-  List<XFile> images = [];
 
   ValueNotifier<List<XFile>> valueNotifier;
 
@@ -24,13 +23,18 @@ class _AddImagesState extends State<AddImages> {
 
       if (image != null) {
         setState(() {
-          widget.images.add(image);
-          widget.valueNotifier.value = widget.images;
+          widget.valueNotifier.value.add(image);
         });
       }
     } catch (e) {
       print('Erreur lors de la sélection de l\'image : $e');
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -53,7 +57,7 @@ class _AddImagesState extends State<AddImages> {
               child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              for (var image in widget.images)
+              for (var image in widget.valueNotifier.value)
                 Container(
                     margin: EdgeInsets.only(right: 5),
                     child: Stack(
@@ -73,7 +77,7 @@ class _AddImagesState extends State<AddImages> {
                           child: InkWell(
                             onTap: () {
                               setState(() {
-                                widget.images.remove(image);
+                                widget.valueNotifier.value.remove(image);
                               });
                             },
                             child: Container(
@@ -97,7 +101,7 @@ class _AddImagesState extends State<AddImages> {
                         ),
                       ],
                     )),
-              if (widget.images.isEmpty)
+              if (widget.valueNotifier.value.isEmpty)
                 GestureDetector(
                   onTap: () {
                     pickImage();
@@ -126,7 +130,7 @@ class _AddImagesState extends State<AddImages> {
                     ),
                   ),
                 ),
-              if (widget.images.isNotEmpty && widget.images.length < 4)
+              if (widget.valueNotifier.value.isNotEmpty && widget.valueNotifier.value.length < 4)
                 GestureDetector(
                   onTap: () {
                     pickImage();

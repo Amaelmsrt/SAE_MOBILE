@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/categorie_db.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -10,12 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ExpandedCategories extends StatefulWidget {
-  List<String> lesCategories;
-  List<String> preSelectedCategories = [];
+  List<String> lesCategories = [];
   List<String> selectedCategories = [];
 
-  ExpandedCategories(
-      {required this.lesCategories, this.preSelectedCategories = const []});
+  final ValueNotifier<List<String>>? selectedCategoriesNotifier;
+  TextEditingController searchBarTextController = TextEditingController();
+
+  ExpandedCategories({required this.selectedCategoriesNotifier});
 
   @override
   State<ExpandedCategories> createState() => _ExpandedCategoriesState();
@@ -27,23 +29,67 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
 
   String categoryBeingAnimated = "";
 
+  void searchBarListener() {
+    print("nouveau texte: " + widget.searchBarTextController.text);
+    {
+      CategorieDB.findMatchingCategories(
+              text: widget.searchBarTextController.text)
+          .then((List<String> value) {
+        if (!mounted) {
+          print("was not mounted");
+          return;
+        }
+        setState(() {
+          // on va supprimer les controleurs qui ne seront plus utilisés
+
+          var keys = List<String>.from(_controllers.keys);
+
+          for (var controller in keys) {
+            if (!value.contains(controller) && !widget.selectedCategories.contains(controller)) {
+              _controllers[controller]!.dispose();
+              _controllers.remove(controller);
+            }
+          }
+
+          // on enlève toutes les catégories dans lesCategories sauf celles qui sont déjà selectionnées
+
+          widget.lesCategories.removeWhere(
+              (element) => !widget.selectedCategories.contains(element));
+
+          for (var categ in value) {
+            if (!widget.lesCategories.contains(categ)) {
+              widget.lesCategories.add(categ);
+              _controllers[categ] = AnimationController(
+                duration: const Duration(milliseconds: 250),
+                vsync: this,
+              );
+            }
+          }
+        });
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // on ajoute toutes les catégories selectionnées (dans le notifier) dans les catégories selectionnées et les catégories
 
-    for (var category in widget.lesCategories) {
-      _controllers[category] = AnimationController(
-        duration: const Duration(milliseconds: 250),
-        vsync: this,
-      );
+    for (var category in widget.selectedCategoriesNotifier!.value) {
+      if (!widget.selectedCategories.contains(category)) {
+        widget.selectedCategories.add(category);
+      }
+      if (!widget.lesCategories.contains(category)) {
+        widget.lesCategories.add(category);
+        _controllers[category] = AnimationController(
+          duration: const Duration(milliseconds: 250),
+          vsync: this,
+        );
+      }
     }
 
-    // on ajoute toutes les preselected categories dans les selected categories
-
-    this.widget.preSelectedCategories.forEach((element) {
-      this.widget.selectedCategories.add(element);
-    });
+    widget.searchBarTextController.addListener(searchBarListener);
   }
 
   @override
@@ -53,6 +99,8 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
       controller.dispose();
     }
     super.dispose();
+
+    widget.searchBarTextController.removeListener(searchBarListener);
   }
 
   @override
@@ -68,7 +116,8 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                     CustomTextField(
                         hint: "Votre recherche...",
                         iconPath: "assets/icons/loupe.svg",
-                        noSpacing: true),
+                        noSpacing: true,
+                        controller: widget.searchBarTextController),
                     Expanded(
                       child: ListView(
                         children:
@@ -113,7 +162,9 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                                       ),
                                     ),
                                     RotationTransition(
-                                      turns: Tween(begin: 0.0, end: 1 / 8).animate(_controllers[category] ?? AnimationController(vsync: this)),
+                                      turns: Tween(begin: 0.0, end: 1 / 8)
+                                          .animate(_controllers[category] ??
+                                              AnimationController(vsync: this)),
                                       child: SvgPicture.asset(
                                         "assets/icons/plus.svg",
                                         color: AppColors.dark,
@@ -192,11 +243,14 @@ class _ExpandedCategoriesState extends State<ExpandedCategories>
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
+                      widget.selectedCategoriesNotifier!.value =
+                          widget.selectedCategories;
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 17, horizontal: 40),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 17, horizontal: 40),
                       elevation: 0,
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
