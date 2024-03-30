@@ -22,7 +22,7 @@ class AjouterAvis extends StatelessWidget {
                       [
                         ResumeAnnonce(imagePath: "assets/perceuse.jpeg", title: "Besoin d’une perceuse pour le 24/02/2023", description: "On vous a rendu le service le 17/07/2024"),
                         SizedBox(height: 24,),
-                        UserPreview(pseudo: "Julien Arsouze", nbAvis: 158, nbEtoiles: 3, description: "L'utilisateur qui vous a aidé",),
+                        //UserPreview(pseudo: "Julien Arsouze", nbAvis: 158, nbEtoiles: 3, description: "L'utilisateur qui vous a aidé",),
                         SizedBox(height: 24,),
                         StarPicker(onRatingChanged: (int newRating) {}, label: "Niveau de satisfaction"),
                         SizedBox(height: 22,),

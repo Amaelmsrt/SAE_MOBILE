@@ -113,6 +113,26 @@ class AnnonceDB {
     }
   }
 
+  static Future<Annonce> fetchAnnonceDetails(String uuidAnnonce) async{
+    // permet de get la description, la date de publication et l'utilisateur de l'annonce
+      final responseAnnonce = await supabase
+          .from('annonce')
+          .select('*')
+          .eq('idannonce', uuidAnnonce);
+
+      final annonce = responseAnnonce as List;
+
+      final responseUtilisateur = await supabase
+          .from('utilisateur')
+          .select('*')
+          .eq('idutilisateur', annonce[0]['idutilisateur']) as List;
+    
+      final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
+
+      return Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
+
+  }
+
   static Future<List<Annonce>> fetchUrgentAnnonces() async {
     try {
       final responseAnnonce = await supabase

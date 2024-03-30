@@ -7,8 +7,8 @@ import 'package:image_picker/image_picker.dart';
 class Annonce {
   String idAnnonce;
   String titreAnnonce;
-  String descriptionAnnonce;
-  DateTime datePubliAnnonce;
+  String? descriptionAnnonce;
+  DateTime? datePubliAnnonce;
   DateTime dateAideAnnonce;
   bool estUrgente;
   int etatAnnonce;
@@ -31,6 +31,7 @@ class Annonce {
     required this.etatAnnonce,
     required this.utilisateur,
     this.isSaved = false,
+    this.prixAnnonce,
   });
 
   factory Annonce.fromJson(Map<String, dynamic> json) {
@@ -43,6 +44,7 @@ class Annonce {
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'],
       utilisateur: json['utilisateur'],
+      prixAnnonce: double.parse(json['prixannonce']??'0.0'),
       //utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }
@@ -52,11 +54,12 @@ class Annonce {
       'idAnnonce': idAnnonce,
       'titreAnnonce': titreAnnonce,
       'descriptionAnnonce': descriptionAnnonce,
-      'datePubliAnnonce': datePubliAnnonce.toIso8601String(),
+      'datePubliAnnonce': datePubliAnnonce?.toIso8601String(),
       'dateAideAnnonce': dateAideAnnonce.toIso8601String(),
       'estUrgente': estUrgente,
       'etatAnnonce': etatAnnonce,
       'utilisateur': utilisateur,
+      'prixAnnonce': prixAnnonce,
     };
   }
 

@@ -1,20 +1,14 @@
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UserPreview extends StatelessWidget {
-  String? imagePath;
-  String pseudo;
-  int nbEtoiles;
-  int nbAvis;
-
+  Utilisateur utilisateur;
   String? description;
 
   UserPreview(
-      {this.imagePath,
-      required this.pseudo,
-      required this.nbEtoiles,
-      required this.nbAvis,
+      {required this.utilisateur,
       this.description});
 
   @override
@@ -52,7 +46,7 @@ class UserPreview extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      if (imagePath == null)
+                      if (utilisateur.photoDeProfilUtilisateur == null)
                         ClipOval(
                           child: Container(
                             alignment: Alignment.center,
@@ -62,7 +56,7 @@ class UserPreview extends StatelessWidget {
                             height:
                                 60, // you can adjust width and height to your liking
                             child: Text(
-                              pseudo[0].toUpperCase(),
+                              utilisateur.nomUtilisateur[0].toUpperCase(),
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20,
@@ -71,14 +65,14 @@ class UserPreview extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (imagePath != null)
+                      if (utilisateur.photoDeProfilUtilisateur != null)
                         Container(
                           width: 60,
                           height: 60,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                              image: AssetImage(imagePath!),
+                              image: MemoryImage(utilisateur.photoDeProfilUtilisateur!),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -90,15 +84,15 @@ class UserPreview extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(pseudo),
+                          Text(utilisateur.nomUtilisateur),
                           Row(children: <Widget>[
-                            SvgPicture.asset("assets/icons/star.svg", color: nbEtoiles >= 1 ? AppColors.yellow : AppColors.lightBlue,),
-                            SvgPicture.asset("assets/icons/star.svg", color: nbEtoiles >= 2 ? AppColors.yellow : AppColors.lightBlue),
-                            SvgPicture.asset("assets/icons/star.svg", color: nbEtoiles >= 3 ? AppColors.yellow : AppColors.lightBlue),
-                            SvgPicture.asset("assets/icons/star.svg", color: nbEtoiles >= 4 ? AppColors.yellow : AppColors.lightBlue),
-                            SvgPicture.asset("assets/icons/star.svg", color: nbEtoiles >= 5 ? AppColors.yellow : AppColors.lightBlue),
+                            SvgPicture.asset("assets/icons/star.svg", color: utilisateur.note >= 1 ? AppColors.yellow : AppColors.lightBlue,),
+                            SvgPicture.asset("assets/icons/star.svg", color: utilisateur.note >= 2 ? AppColors.yellow : AppColors.lightBlue),
+                            SvgPicture.asset("assets/icons/star.svg", color: utilisateur.note >= 3 ? AppColors.yellow : AppColors.lightBlue),
+                            SvgPicture.asset("assets/icons/star.svg", color: utilisateur.note >= 4 ? AppColors.yellow : AppColors.lightBlue),
+                            SvgPicture.asset("assets/icons/star.svg", color: utilisateur.note >= 5 ? AppColors.yellow : AppColors.lightBlue),
                             SizedBox(width: 8),
-                            Text('${nbAvis} avis')
+                            Text('${utilisateur.nbAvis} avis')
                           ])
                         ],
                       )

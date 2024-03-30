@@ -43,11 +43,7 @@ class ListeAnnonce extends StatelessWidget {
                     return Padding(
                       padding: EdgeInsets.only(right: 12),
                       child: CardAnnonce(
-                        titre: annonce.titreAnnonce,
-                        image: annonce.images[0], // A remplacer par le lien de l'image de l'annonce
-                        isSaved: false, // A remplacer par l'état de sauvegarde de l'annonce
-                        prix: 0, // A remplacer par le prix de l'annonce
-                        estUrgente: annonce.estUrgente, // A remplacer par le niveau d'urgence de l'annonce
+                       annonce: annonce,// A remplacer par le niveau d'urgence de l'annonce
                       ),
                     );
                   },
@@ -71,11 +67,7 @@ class ListeAnnonce extends StatelessWidget {
                     return Padding(
                       padding: EdgeInsets.only(right: 12, left:12), // adjust this padding to fit your needs
                       child: CardAnnonce(
-                        titre: annonce.titreAnnonce,
-                        image: annonce.images[0],
-                        isSaved: annonce.isSaved,
-                        prix: annonce.prixAnnonce??0,
-                        estUrgente: annonce.estUrgente,
+                        annonce: annonce,
                       ),
                     );
                   },
