@@ -303,6 +303,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                   setState(() {
                                     widget.annonce.isSaved =
                                         !widget.annonce.isSaved;
+                                    AnnonceDB.toggleSaveAnnonce(widget.annonce.idAnnonce);
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(

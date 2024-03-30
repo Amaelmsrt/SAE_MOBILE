@@ -92,9 +92,10 @@ class CardAnnonce extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         SvgPicture.asset(
-                          'assets/icons/bookmark.svg',
+                          annonce.isSaved ? 'assets/icons/bookmark-filled.svg' : 'assets/icons/bookmark.svg',
                           width: 18,
-                          height: 18,
+                          height: 18, 
+                          color: annonce.isSaved ? AppColors.yellow : AppColors.dark,
                         ),
                         Text('${annonce.prixAnnonce} \€',
                             style: TextStyle(

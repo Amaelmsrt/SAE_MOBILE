@@ -80,7 +80,7 @@ class AnnonceDB {
 
   static Future<List<Annonce>> fetchAllAnnonces() async {
     try {
-      //String? myUUID = await UserBD.getMyUUID();
+      String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
           .select('*')
@@ -104,6 +104,18 @@ class AnnonceDB {
 
           // Ajoutez l'image à votre objet Annonce
           nouvelleAnnonce.addImage(imgdata);
+        }
+
+        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
+
+        final responseEnregistrer = await supabase
+            .from('enregistrer')
+            .select('*')
+            .eq('idutilisateur', myUUID)
+            .eq('idannonce', annonce['idannonce']);
+
+        if (responseEnregistrer.length > 0) {
+          nouvelleAnnonce.isSaved = true;
         }
 
         return nouvelleAnnonce;
@@ -153,6 +165,37 @@ class AnnonceDB {
       return annonceObj;
 
   }
+
+  static void toggleSaveAnnonce(String idAnnonce) async {
+  try {
+    String? myUUID = await UserBD.getMyUUID();
+    final response = await supabase
+        .from('enregistrer')
+        .select()
+        .eq('idutilisateur', myUUID)
+        .eq('idannonce', idAnnonce)
+        .single();
+
+    if (response != null) {
+      // L'annonce est déjà enregistrée, la supprimer
+      await supabase
+          .from('enregistrer')
+          .delete()
+          .eq('idutilisateur', myUUID)
+          .eq('idannonce', idAnnonce);
+    } else {
+      // L'annonce n'est pas enregistrée, l'ajouter
+      await supabase.from('enregistrer').insert([
+        {
+          'idutilisateur': myUUID,
+          'idannonce': idAnnonce,
+        }
+      ]);
+    }
+  } catch (e) {
+    print('Erreur lors de la modification de l\'enregistrement de l\'annonce: $e');
+  }
+}
 
   static Future<List<Annonce>> fetchUrgentAnnonces() async {
     try {
