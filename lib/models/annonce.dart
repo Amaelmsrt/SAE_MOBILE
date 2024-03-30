@@ -9,9 +9,9 @@ class Annonce {
   String titreAnnonce;
   String? descriptionAnnonce;
   DateTime? datePubliAnnonce;
-  DateTime dateAideAnnonce;
+  DateTime? dateAideAnnonce;
   bool estUrgente;
-  int etatAnnonce;
+  int? etatAnnonce;
   Utilisateur? utilisateur;
   double? prixAnnonce;
   bool isSaved;
@@ -25,11 +25,11 @@ class Annonce {
   Annonce({
     required this.idAnnonce,
     required this.titreAnnonce,
-    required this.descriptionAnnonce,
-    required this.datePubliAnnonce,
-    required this.dateAideAnnonce,
+    this.descriptionAnnonce,
+    this.datePubliAnnonce,
+    this.dateAideAnnonce,
     required this.estUrgente,
-    required this.etatAnnonce,
+    this.etatAnnonce,
     required this.utilisateur,
     this.isSaved = false,
     this.prixAnnonce,
@@ -39,11 +39,11 @@ class Annonce {
     return Annonce(
       idAnnonce: json['idannonce'],
       titreAnnonce: json['titreannonce'],
-      descriptionAnnonce: json['descriptionannonce'],
-      datePubliAnnonce: DateTime.parse(json['datepubliannonce']),
-      dateAideAnnonce: DateTime.parse(json['dateaideannonce']),
+      descriptionAnnonce: json['descriptionannonce'] ?? '',
+      datePubliAnnonce: DateTime.parse(json['datepubliannonce']?? '2021-01-01T00:00:00.000Z'),
+      dateAideAnnonce: DateTime.parse(json['dateaideannonce'] ?? '2021-01-01T00:00:00.000Z'),
       estUrgente: json['esturgente'],
-      etatAnnonce: json['etatannonce'],
+      etatAnnonce: json['etatannonce'] ?? 0,
       utilisateur: json['utilisateur'],
       prixAnnonce: double.parse(json['prixannonce']??'0.0'),
       //utilisateur: Utilisateur.fromJson(json['utilisateur']),
@@ -56,7 +56,7 @@ class Annonce {
       'titreAnnonce': titreAnnonce,
       'descriptionAnnonce': descriptionAnnonce,
       'datePubliAnnonce': datePubliAnnonce?.toIso8601String(),
-      'dateAideAnnonce': dateAideAnnonce.toIso8601String(),
+      'dateAideAnnonce': dateAideAnnonce?.toIso8601String(),
       'estUrgente': estUrgente,
       'etatAnnonce': etatAnnonce,
       'utilisateur': utilisateur,

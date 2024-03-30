@@ -110,7 +110,7 @@ class AnnonceDB {
       String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
-          .select('*')
+          .select('idannonce, titreannonce, esturgente, prix_annonce')
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
 
@@ -202,7 +202,7 @@ class AnnonceDB {
       String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
-          .select('*')
+          .select('idannonce, titreannonce, esturgente, prix_annonce')
           .eq('esturgente', true)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
@@ -227,7 +227,7 @@ class AnnonceDB {
       String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
-          .select('*')
+          .select('idannonce, titreannonce, esturgente, prix_annonce')
           .order('idannonce', ascending: false)
           .limit(5);
       print('Response Annonce: $responseAnnonce');
@@ -267,7 +267,7 @@ class AnnonceDB {
       // Récupérer les annonces correspondantes
       final responseAnnonce = await supabase
           .from('annonce')
-          .select('*')
+          .select('idannonce, titreannonce, esturgente, prix_annonce')
           .in_('idannonce', idAnnonces)
           .order('idannonce', ascending: false);
 
