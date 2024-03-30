@@ -53,13 +53,25 @@ class AnnonceDB {
           }
         ]).select('photo');
 
-// Récupérer l'image de la base de données
-        String hexDecoded = responseImage[0]['photo'].toString().substring(2);
+        // on ne connait que le nom(nomcat) de chaque categorie on doit faire l'association avec l'idcat
+        // puis ajouter dans la tablea categoriser_annonce les idcat et idannonce
 
-// Convertir la chaîne hexadécimale en Uint8List
-        var imgdata = hex.decode(hexDecoded);
+        for (var categorie in categorieAnnonce) {
+          final responseCategorie = await supabase
+              .from('categorie')
+              .select('idcat')
+              .eq('nomcat', categorie);
 
-        print("test");
+          final idCategorie = responseCategorie[0]['idcat'];
+
+          final responseCategoriserAnnonce = await supabase
+              .from('categoriser_annonce')
+              .insert([
+                {'idcat': idCategorie, 'idannonce': idAnnonce}
+              ]).select('idcat');
+        }
+
+        print("finito");
       }
     } catch (e) {
       print('Erreur lors de l\'ajout de l\'annonce: $e');
@@ -76,17 +88,8 @@ class AnnonceDB {
       print('Response Annonce: $responseAnnonce');
 
       final annonces = (responseAnnonce as List).map((annonce) async {
-        final responseUtilisateur = await supabase
-            .from('utilisateur')
-            .select('*')
-            .eq('idutilisateur', annonce['idutilisateur']);
-        print('Response Utilisateur: $responseUtilisateur');
-
-        // Combine the data from 'annonce' and 'utilisateur' here
-        final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
-
         Annonce nouvelleAnnonce =
-            Annonce.fromJson({...annonce, 'utilisateur': utilisateur});
+            Annonce.fromJson({...annonce});
 
         final photos = await supabase
             .from('photo_annonce')
@@ -129,7 +132,25 @@ class AnnonceDB {
     
       final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
 
-      return Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
+      Annonce annonceObj = Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
+
+      // on va get les categories de l'annonce
+
+      final responseCategories = await supabase
+          .from('categoriser_annonce')
+          .select('idcat')
+          .eq('idannonce', uuidAnnonce) as List;
+
+      for (var categorie in responseCategories) {
+        final responseCategorie = await supabase
+            .from('categorie')
+            .select('nomcat')
+            .eq('idcat', categorie['idcat']) as List;
+
+        annonceObj.categories.add(responseCategorie[0]['nomcat']);
+      }
+
+      return annonceObj;
 
   }
 

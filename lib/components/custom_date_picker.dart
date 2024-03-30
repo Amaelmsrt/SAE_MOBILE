@@ -8,7 +8,11 @@ class CustomDatePicker extends StatefulWidget {
   final bool noSpacing;
   final ValueNotifier<DateTime> dateNotifier;
 
-  CustomDatePicker({this.label, required this.hint, this.noSpacing = false, required this.dateNotifier});
+  CustomDatePicker(
+      {this.label,
+      required this.hint,
+      this.noSpacing = false,
+      required this.dateNotifier});
 
   @override
   _CustomDatePickerState createState() => _CustomDatePickerState();
@@ -39,17 +43,17 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 .requestFocus(new FocusNode()); // to hide the keyboard
             final DateTime? picked = await showDatePicker(
               context: context,
-              initialDate: selectedDate,
-              firstDate: DateTime(2000),
-              lastDate: DateTime.now(),
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(Duration(days: 365 * 2)),
               builder: (BuildContext context, Widget? child) {
                 return Theme(
                   data: ThemeData.light().copyWith(
                     primaryColor:
                         AppColors.accent, //Change this to your desired color
                     colorScheme: ColorScheme.light(
-                        primary:
-                            AppColors.accent), //Change this to your desired color
+                        primary: AppColors
+                            .accent), //Change this to your desired color
                     buttonTheme:
                         ButtonThemeData(textTheme: ButtonTextTheme.primary),
                   ),

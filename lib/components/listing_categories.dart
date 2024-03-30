@@ -83,8 +83,6 @@ class _ListingCategoriesState extends State<ListingCategories> {
     // TODO: implement initState
     super.initState();
 
-    widget.categoriesNotifier!.value ??= [];
-
     if (widget.listeningToString != null) {
       widget.listeningToString!.addListener(ListenerFunction);
     }
@@ -179,9 +177,7 @@ class _ListingCategoriesState extends State<ListingCategories> {
                         : null,
                     child: Chip(
                       backgroundColor:
-                          widget.selectedCategoriesNotifier!.value.contains(category)
-                              ? AppColors.primary
-                              : AppColors.lightSecondary,
+                          AppColors.lightSecondary,
                       label: Text(
                         category,
                         style: TextStyle(

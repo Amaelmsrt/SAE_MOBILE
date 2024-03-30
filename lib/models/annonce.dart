@@ -16,6 +16,7 @@ class Annonce {
   double? prixAnnonce;
   bool isSaved;
   List<Uint8List> images = [];
+  List<String> categories = [];
 
   addImage(Uint8List image) {
     images.add(image);

@@ -137,19 +137,23 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                               ],
                             ),
                             SizedBox(height: 24),
-                            FutureBuilder(future: fetchDetails, builder: (context, snapshot){
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                // Si les données sont en cours de chargement, vous pouvez retourner un indicateur de chargement
-                                return CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                // Si une erreur s'est produite, vous pouvez retourner un widget d'erreur
-                                return Text('Une erreur s\'est produite');
-                              } else {
-                                // Si les données sont chargées, vous pouvez afficher la description de l'annonce
-                                Annonce? annonce = snapshot.data;
-                                return UserPreview(utilisateur: annonce!.utilisateur!);
-                              }
-                            }),
+                            FutureBuilder(
+                                future: fetchDetails,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    // Si les données sont en cours de chargement, vous pouvez retourner un indicateur de chargement
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    // Si une erreur s'est produite, vous pouvez retourner un widget d'erreur
+                                    return Text('Une erreur s\'est produite');
+                                  } else {
+                                    // Si les données sont chargées, vous pouvez afficher la description de l'annonce
+                                    Annonce? annonce = snapshot.data;
+                                    return UserPreview(
+                                        utilisateur: annonce!.utilisateur!);
+                                  }
+                                }),
                             SizedBox(height: 24),
                             Text("Description",
                                 style: TextStyle(
@@ -184,13 +188,23 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                               },
                             ),
                             SizedBox(height: 24),
-                            ListingCategories(lesCategories: [
-                              "Outils",
-                              "Perceuse",
-                              "Bricolage",
-                              "Perceur",
-                              "Saucisson"
-                            ]),
+                            FutureBuilder<Annonce>(
+                              future: fetchDetails,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  // Si les données sont en cours de chargement, vous pouvez retourner un indicateur de chargement
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  // Si une erreur s'est produite, vous pouvez retourner un widget d'erreur
+                                  return Text('Une erreur s\'est produite');
+                                } else {
+                                  // Si les données sont chargées, vous pouvez afficher la description de l'annonce
+                                  Annonce? annonce = snapshot.data;
+                                  return ListingCategories(lesCategories: annonce!.categories);
+                                }
+                              },
+                            ),
                             SizedBox(height: 24),
                             //ListeAnnonce(
                             //    titre: "Annonces similaires",
@@ -222,7 +236,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
               top: 45,
               left: 90,
               child: Container(
-                width: MediaQuery.of(context).size.width-125,
+                width: MediaQuery.of(context).size.width - 125,
                 child: AnimatedOpacity(
                   opacity: _showTopBar ? 1.0 : 0.0,
                   duration: Duration(
