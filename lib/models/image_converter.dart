@@ -13,19 +13,4 @@ class ImageConverter {
     String base64Image = base64Encode(imageBytes);
     return base64Image;
   }
-
-  static Future<XFile> base64ToXFile(String base64String) async {
-    Uint8List bytes = base64Decode(base64String);
-
-    // Get temporary directory
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-
-    // Create a temporary file with a unique name
-    File tempFile = await File('$tempPath/temp_${DateTime.now().millisecondsSinceEpoch}.png').create();
-    await tempFile.writeAsBytes(bytes);
-
-    return XFile(tempFile.path);
-  }
-
 }

@@ -5,6 +5,7 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/image_converter.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -149,7 +150,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                 child: Align(
                   alignment: Alignment.center,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       print("Ajout de l'annonce");
                       print("nb images: ${images.value.length}");
                       print("Titre: ${_texteAnnonceController.text}");

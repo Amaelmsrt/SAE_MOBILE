@@ -15,9 +15,9 @@ class Annonce {
   Utilisateur? utilisateur;
   double? prixAnnonce;
   bool isSaved;
-  List<XFile> images = [];
+  List<Uint8List> images = [];
 
-  addImage(XFile image) {
+  addImage(Uint8List image) {
     images.add(image);
   }
 

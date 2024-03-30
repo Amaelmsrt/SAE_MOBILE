@@ -1,20 +1,23 @@
 import 'dart:ffi';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/widgets/detail_annonce.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart'; // Import your color file
 
 class CardAnnonce extends StatelessWidget {
   final String titre;
-  final String imagePath;
+  final Uint8List image;
   final bool isSaved;
   final double prix;
   final bool estUrgente;
 
   CardAnnonce(
       {required this.titre,
-      required this.imagePath,
+      required this.image,
       required this.isSaved,
       required this.prix,
       required this.estUrgente});
@@ -23,18 +26,18 @@ class CardAnnonce extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailAnnonce(
-                  titre: titre,
-                  imagePath: imagePath,
-                  isSaved: isSaved,
-                  prix: prix,
-                  estUrgente: estUrgente,
-                )),
-          )
-        },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailAnnonce(
+                          titre: titre,
+                          imagePath: "assets/perceuse.jpeg",
+                          isSaved: isSaved,
+                          prix: prix,
+                          estUrgente: estUrgente,
+                        )),
+              )
+            },
         child: Card(
           color: Colors.transparent,
           elevation: 0,
@@ -51,33 +54,34 @@ class CardAnnonce extends StatelessWidget {
                         borderRadius:
                             BorderRadius.circular(15), // arrondir les bords
                         image: DecorationImage(
-                          image: AssetImage(imagePath),
+                          image: MemoryImage(
+                              image), // Utiliser MemoryImage pour un Uint8List
                           fit: BoxFit
                               .cover, // pour s'assurer que l'image couvre tout le rectangle
                         ),
                       ),
                     ),
                     if (estUrgente)
-                    Positioned(
-                      right: 10,
-                      bottom: 10,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger,
-                          borderRadius: BorderRadius.circular(500000),
-                        ),
-                        child: Text(
-                          'Urgente',
-                          style: TextStyle(
-                              color: AppColors.dark,
-                              fontFamily: "NeueRegrade",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
+                      Positioned(
+                        right: 10,
+                        bottom: 10,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: AppColors.danger,
+                            borderRadius: BorderRadius.circular(500000),
+                          ),
+                          child: Text(
+                            'Urgente',
+                            style: TextStyle(
+                                color: AppColors.dark,
+                                fontFamily: "NeueRegrade",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
                 Padding(
