@@ -8,6 +8,10 @@ import 'package:image_picker/image_picker.dart';
 class AddImages extends StatefulWidget {
   List<XFile> images = [];
 
+  ValueNotifier<List<XFile>> valueNotifier;
+
+  AddImages({required this.valueNotifier});
+
   @override
   _AddImagesState createState() => _AddImagesState();
 }
@@ -21,6 +25,7 @@ class _AddImagesState extends State<AddImages> {
       if (image != null) {
         setState(() {
           widget.images.add(image);
+          widget.valueNotifier.value = widget.images;
         });
       }
     } catch (e) {

@@ -4,6 +4,7 @@ import 'package:allo/components/custom_date_picker.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -44,7 +45,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        AddImages(),
+                        AddImages(valueNotifier: images),
                         CustomTextField(
                             hint: "Recherche une perceuse...",
                             label: "Titre de l'annonce",
@@ -150,11 +151,13 @@ class _AjoutAnnonceState extends State<AjoutAnnonce> {
                   child: ElevatedButton(
                     onPressed: () {
                       print("Ajout de l'annonce");
+                      print("nb images: ${images.value.length}");
                       print("Titre: ${_texteAnnonceController.text}");
                       print("Description: ${descriptionAnnonce.text}");
                       print("Date: ${dateAideAnnonce.value}");
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
+                      AnnonceDB.ajouterAnnonce(images.value, _texteAnnonceController.text, descriptionAnnonce.text, dateAideAnnonce.value, categorieAnnonce.value, estUrgente.value);
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,

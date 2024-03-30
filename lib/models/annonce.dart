@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:allo/components/add_images.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Annonce {
   String idAnnonce;
@@ -13,6 +15,11 @@ class Annonce {
   Utilisateur? utilisateur;
   double? prixAnnonce;
   bool isSaved;
+  List<XFile> images = [];
+
+  addImage(XFile image) {
+    images.add(image);
+  }
 
   Annonce({
     required this.idAnnonce,
@@ -35,7 +42,7 @@ class Annonce {
       dateAideAnnonce: DateTime.parse(json['dateaideannonce']),
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'],
-      utilisateur: json['utilisateur'] 
+      utilisateur: json['utilisateur'],
       //utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }

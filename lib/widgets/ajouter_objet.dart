@@ -9,8 +9,12 @@ import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AjouterObjet extends StatelessWidget {
+  
+  ValueNotifier<List<XFile>> images = ValueNotifier<List<XFile>>([]);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +28,7 @@ class AjouterObjet extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        AddImages(),
+                        AddImages(valueNotifier: images,),
                         CustomTextField(
                             hint: "Nom de l'objet...",
                             label: "Nom de l'objet"),
