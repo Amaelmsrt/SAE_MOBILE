@@ -176,8 +176,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                   // Si les données sont chargées, vous pouvez afficher la description de l'annonce
                                   Annonce? annonce = snapshot.data;
                                   return Text(
-                                    annonce?.descriptionAnnonce ??
-                                        "Pas de description",
+                                    (annonce?.descriptionAnnonce?.isNotEmpty ?? false) ? annonce!.descriptionAnnonce! : "Pas de description",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,

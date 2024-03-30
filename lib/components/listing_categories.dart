@@ -197,6 +197,10 @@ class _ListingCategoriesState extends State<ListingCategories> {
                   );
                 }).toList(),
         ),
+        if (widget.lesCategories != null && widget.lesCategories!.isEmpty)
+          Text(
+            "Pas de catégories",
+          ),
         SizedBox(height: 10),
         if (widget.isExpandable)
           TextButton(
