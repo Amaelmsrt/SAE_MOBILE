@@ -64,11 +64,10 @@ class AnnonceDB {
 
           final idCategorie = responseCategorie[0]['idcat'];
 
-          final responseCategoriserAnnonce = await supabase
-              .from('categoriser_annonce')
-              .insert([
-                {'idcat': idCategorie, 'idannonce': idAnnonce}
-              ]).select('idcat');
+          final responseCategoriserAnnonce =
+              await supabase.from('categoriser_annonce').insert([
+            {'idcat': idCategorie, 'idannonce': idAnnonce}
+          ]).select('idcat');
         }
 
         print("finito");
@@ -88,8 +87,7 @@ class AnnonceDB {
       print('Response Annonce: $responseAnnonce');
 
       final annonces = (responseAnnonce as List).map((annonce) async {
-        Annonce nouvelleAnnonce =
-            Annonce.fromJson({...annonce});
+        Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
         final photos = await supabase
             .from('photo_annonce')
@@ -128,77 +126,77 @@ class AnnonceDB {
     }
   }
 
-  static Future<Annonce> fetchAnnonceDetails(String uuidAnnonce) async{
+  static Future<Annonce> fetchAnnonceDetails(String uuidAnnonce) async {
     // permet de get la description, la date de publication et l'utilisateur de l'annonce
-      final responseAnnonce = await supabase
-          .from('annonce')
-          .select('*')
-          .eq('idannonce', uuidAnnonce);
+    final responseAnnonce =
+        await supabase.from('annonce').select('*').eq('idannonce', uuidAnnonce);
 
-      final annonce = responseAnnonce as List;
+    final annonce = responseAnnonce as List;
 
-      final responseUtilisateur = await supabase
-          .from('utilisateur')
-          .select('*')
-          .eq('idutilisateur', annonce[0]['idutilisateur']) as List;
-    
-      final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
+    final responseUtilisateur = await supabase
+        .from('utilisateur')
+        .select('*')
+        .eq('idutilisateur', annonce[0]['idutilisateur']) as List;
 
-      Annonce annonceObj = Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
+    final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
 
-      // on va get les categories de l'annonce
+    Annonce annonceObj =
+        Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
 
-      final responseCategories = await supabase
-          .from('categoriser_annonce')
-          .select('idcat')
-          .eq('idannonce', uuidAnnonce) as List;
+    // on va get les categories de l'annonce
 
-      for (var categorie in responseCategories) {
-        final responseCategorie = await supabase
-            .from('categorie')
-            .select('nomcat')
-            .eq('idcat', categorie['idcat']) as List;
+    final responseCategories = await supabase
+        .from('categoriser_annonce')
+        .select('idcat')
+        .eq('idannonce', uuidAnnonce) as List;
 
-        annonceObj.categories.add(responseCategorie[0]['nomcat']);
-      }
+    for (var categorie in responseCategories) {
+      final responseCategorie = await supabase
+          .from('categorie')
+          .select('nomcat')
+          .eq('idcat', categorie['idcat']) as List;
 
-      return annonceObj;
+      annonceObj.categories.add(responseCategorie[0]['nomcat']);
+    }
 
+    return annonceObj;
   }
 
   static void toggleSaveAnnonce(String idAnnonce) async {
-  try {
-    String? myUUID = await UserBD.getMyUUID();
-    final response = await supabase
-        .from('enregistrer')
-        .select()
-        .eq('idutilisateur', myUUID)
-        .eq('idannonce', idAnnonce)
-        .single();
-
-    if (response != null) {
-      // L'annonce est déjà enregistrée, la supprimer
-      await supabase
+    try {
+      String? myUUID = await UserBD.getMyUUID();
+      final response = await supabase
           .from('enregistrer')
-          .delete()
+          .select()
           .eq('idutilisateur', myUUID)
-          .eq('idannonce', idAnnonce);
-    } else {
-      // L'annonce n'est pas enregistrée, l'ajouter
-      await supabase.from('enregistrer').insert([
-        {
-          'idutilisateur': myUUID,
-          'idannonce': idAnnonce,
-        }
-      ]);
+          .eq('idannonce', idAnnonce)
+          .maybeSingle();
+
+      if (response != null) {
+        // L'annonce est déjà enregistrée, la supprimer
+        await supabase
+            .from('enregistrer')
+            .delete()
+            .eq('idutilisateur', myUUID)
+            .eq('idannonce', idAnnonce);
+      } else {
+        // L'annonce n'est pas enregistrée, l'ajouter
+        await supabase.from('enregistrer').insert([
+          {
+            'idutilisateur': myUUID,
+            'idannonce': idAnnonce,
+          }
+        ]);
+      }
+    } catch (e) {
+      print(
+          'Erreur lors de la modification de l\'enregistrement de l\'annonce: $e');
     }
-  } catch (e) {
-    print('Erreur lors de la modification de l\'enregistrement de l\'annonce: $e');
   }
-}
 
   static Future<List<Annonce>> fetchUrgentAnnonces() async {
     try {
+      String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
           .select('*')
@@ -207,15 +205,36 @@ class AnnonceDB {
       print('Response Annonce: $responseAnnonce');
 
       final annonces = (responseAnnonce as List).map((annonce) async {
-        final responseUtilisateur = await supabase
-            .from('utilisateur')
-            .select('*')
-            .eq('idutilisateur', annonce['idutilisateur']);
-        print('Response Utilisateur: $responseUtilisateur');
+        Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        // Combine the data from 'annonce' and 'utilisateur' here
-        final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
-        return Annonce.fromJson({...annonce, 'utilisateur': utilisateur});
+        final photos = await supabase
+            .from('photo_annonce')
+            .select('photo')
+            .eq('idannonce', annonce['idannonce']);
+
+        for (var photo in photos) {
+          String hexDecoded = photo['photo'].toString().substring(2);
+
+          // Convertir la chaîne hexadécimale en Uint8List
+          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
+
+          // Ajoutez l'image à votre objet Annonce
+          nouvelleAnnonce.addImage(imgdata);
+        }
+
+        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
+
+        final responseEnregistrer = await supabase
+            .from('enregistrer')
+            .select('*')
+            .eq('idutilisateur', myUUID)
+            .eq('idannonce', annonce['idannonce']);
+
+        if (responseEnregistrer.length > 0) {
+          nouvelleAnnonce.isSaved = true;
+        }
+
+        return nouvelleAnnonce;
       }).toList();
 
       return await Future.wait(annonces);
@@ -232,19 +251,40 @@ class AnnonceDB {
           .from('annonce')
           .select('*')
           .order('idannonce', ascending: false)
-          .limit(10);
+          .limit(5);
       print('Response Annonce: $responseAnnonce');
 
       final annonces = (responseAnnonce as List).map((annonce) async {
-        final responseUtilisateur = await supabase
-            .from('utilisateur')
-            .select('*')
-            .eq('idutilisateur', annonce['idutilisateur']);
-        print('Response Utilisateur: $responseUtilisateur');
+        Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        // Combine the data from 'annonce' and 'utilisateur' here
-        final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
-        return Annonce.fromJson({...annonce, 'utilisateur': utilisateur});
+        final photos = await supabase
+            .from('photo_annonce')
+            .select('photo')
+            .eq('idannonce', annonce['idannonce']);
+
+        for (var photo in photos) {
+          String hexDecoded = photo['photo'].toString().substring(2);
+
+          // Convertir la chaîne hexadécimale en Uint8List
+          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
+
+          // Ajoutez l'image à votre objet Annonce
+          nouvelleAnnonce.addImage(imgdata);
+        }
+
+        // on va aller regarder la table enregistrer et voir si l'annonce est enregistrée (idutilisateur, idannonce)
+
+        final responseEnregistrer = await supabase
+            .from('enregistrer')
+            .select('*')
+            .eq('idutilisateur', myUUID)
+            .eq('idannonce', annonce['idannonce']);
+
+        if (responseEnregistrer.length > 0) {
+          nouvelleAnnonce.isSaved = true;
+        }
+
+        return nouvelleAnnonce;
       }).toList();
 
       return await Future.wait(annonces);
@@ -254,26 +294,54 @@ class AnnonceDB {
     }
   }
 
-  static Future<List<Annonce>> fetchFirstAnnonces() async {
+  static Future<List<Annonce>> fetchAnnoncesEnregistrees() async {
     try {
       String? myUUID = await UserBD.getMyUUID();
+
+      // Récupérer les idannonce de la table enregistrer pour l'utilisateur actuel
+      final responseEnregistrer = await supabase
+          .from('enregistrer')
+          .select('idannonce')
+          .eq('idutilisateur', myUUID);
+
+
+      List<String> idAnnonces = [];
+
+      responseEnregistrer.forEach((element) {
+        idAnnonces.add(element['idannonce'].toString());
+      });
+
+      // Récupérer les annonces correspondantes
       final responseAnnonce = await supabase
           .from('annonce')
           .select('*')
-          .order('idannonce', ascending: false)
-          .limit(4);
+          .in_('idannonce', idAnnonces)
+          .order('idannonce', ascending: false);
+
       print('Response Annonce: $responseAnnonce');
 
       final annonces = (responseAnnonce as List).map((annonce) async {
-        final responseUtilisateur = await supabase
-            .from('utilisateur')
-            .select('*')
-            .eq('idutilisateur', annonce['idutilisateur']);
-        print('Response Utilisateur: $responseUtilisateur');
+        Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        // Combine the data from 'annonce' and 'utilisateur' here
-        final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
-        return Annonce.fromJson({...annonce, 'utilisateur': utilisateur});
+        final photos = await supabase
+            .from('photo_annonce')
+            .select('photo')
+            .eq('idannonce', annonce['idannonce']);
+
+        for (var photo in photos) {
+          String hexDecoded = photo['photo'].toString().substring(2);
+
+          // Convertir la chaîne hexadécimale en Uint8List
+          Uint8List imgdata = Uint8List.fromList(hex.decode(hexDecoded));
+
+          // Ajoutez l'image à votre objet Annonce
+          nouvelleAnnonce.addImage(imgdata);
+        }
+
+        // L'annonce est enregistrée car nous avons récupéré les annonces enregistrées
+        nouvelleAnnonce.isSaved = true;
+
+        return nouvelleAnnonce;
       }).toList();
 
       return await Future.wait(annonces);

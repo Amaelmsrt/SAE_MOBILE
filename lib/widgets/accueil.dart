@@ -50,14 +50,14 @@ class _HomeState extends State<Accueil> {
                     iconPath: "assets/icons/loupe.svg")),
             ListeAnnonce(
                 titre: "Vous pouvez les aider !", annonces: toutesLesAnnonces),
-            // SizedBox(
-            //   height: 24,
-            // ),
-            // ListeAnnonce(titre: "Annonces urgentes", annonces: dernieresAnnonces),
-            // SizedBox(
-            //   height: 24,
-            // ),
-            // ListeAnnonce(titre: "Annonces récentes", annonces: annoncesUrgentes),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces urgentes", annonces: annoncesUrgentes),
+            SizedBox(
+              height: 24,
+            ),
+            ListeAnnonce(titre: "Annonces récentes", annonces: dernieresAnnonces),
           ],
         )));
   }

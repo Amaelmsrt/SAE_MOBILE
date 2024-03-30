@@ -24,7 +24,7 @@ class _HomeState extends State<AnnoncesEnregistrees> {
   }
 
   Future<void> fetchAnnonces() async {
-    final annonces = await AnnonceDB.fetchFirstAnnonces();
+    final annonces = await AnnonceDB.fetchAnnoncesEnregistrees();
     setState(() {
       lesAnnonces = annonces;
     });
