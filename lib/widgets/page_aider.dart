@@ -1,17 +1,24 @@
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/object_picker.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/objet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PageAider extends StatefulWidget {
+  Annonce annonce;
+
+  PageAider({required this.annonce});
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<PageAider> {
+  ValueNotifier<Objet?> objetSelectionneNotifier = ValueNotifier<Objet?>(null);
+  TextEditingController commentaireController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +36,14 @@ class _HomeState extends State<PageAider> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ObjectPicker(onObjectChanged: (Objet obj) {}, label: "Mon objet",),
+                          ObjectPicker(objetSelectionneNotifier: objetSelectionneNotifier, label: "Mon objet",),
                           SizedBox(
                             height: 24,
                           ),
                           CustomTextField(
                               hint: "Votre commentaire...",
                               label: "Commentaire",
+                              controller: commentaireController,
                               isArea: true),
                           // on ajoute un sizedboxx pour eviter que ça dépasse sur le bouton d'en bas et le fond blanc derrière
                           SizedBox(
@@ -109,6 +117,12 @@ class _HomeState extends State<PageAider> {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
+                      print("aider");
+                      print("idanonce: ${widget.annonce.idAnnonce}");
+                      print("objet: ${objetSelectionneNotifier.value!.nomObjet} id ${objetSelectionneNotifier.value!.idObjet}");
+                      print("commentaire: ${commentaireController.text}");
+                      AnnonceDB.aiderAnnonce(
+                          widget.annonce.idAnnonce, objetSelectionneNotifier.value!.idObjet, commentaireController.text);
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(

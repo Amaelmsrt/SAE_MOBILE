@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/image_converter.dart';
+import 'package:allo/models/objet.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
@@ -310,6 +311,26 @@ class AnnonceDB {
     } catch (e) {
       print('Erreur lors de la récupération des annonces: $e');
       return [];
+    }
+  }
+
+  static void aiderAnnonce(String idAnnonce, String idObj, String commentaire) async{
+    // on ajoute dans la table aider
+    // idannonce, idobjet, commentaire, 
+
+    try {
+      final response = await supabase.from('aider').insert([
+        {
+          'idannonce': idAnnonce,
+          'idobjet': idObj,
+          'commentaire': commentaire,
+          'estAccepte': false
+        }
+      ]);
+
+      print('Response aide: $response');
+    } catch (e) {
+      print('Erreur lors de l\'aide de l\'annonce: $e');
     }
   }
 }

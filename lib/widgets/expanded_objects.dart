@@ -1,15 +1,15 @@
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/objet_bd.dart';
 import 'package:allo/models/objet.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ExpandedObjects extends StatefulWidget {
-  List<Objet> lesObjets;
+  final ValueNotifier<Objet?> objetSelectionneNotifier;
 
-  final Function(Objet) onObjectChanged;
-
-  ExpandedObjects({required this.lesObjets, required this.onObjectChanged});
+  ExpandedObjects({required this.objetSelectionneNotifier});
 
   @override
   _ExpandedObjectsState createState() => _ExpandedObjectsState();
@@ -17,12 +17,27 @@ class ExpandedObjects extends StatefulWidget {
 
 class _ExpandedObjectsState extends State<ExpandedObjects> {
   String objectBeingAnimated = "";
+  TextEditingController searchController = TextEditingController();
 
-  Objet? objet = null;
+  late Future<List<Objet>> lesObjets = ObjetBd.getMesObjets();
+
+  Objet? objetSelectionneLocal = null;
+
+  void searchTextChanged() {
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    searchController.addListener(searchTextChanged);
+    objetSelectionneLocal = widget.objetSelectionneNotifier.value;
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,74 +53,92 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                     CustomTextField(
                         hint: "Votre recherche...",
                         iconPath: "assets/icons/loupe.svg",
+                        controller: searchController,
                         noSpacing: true),
                     Expanded(
-                      child: ListView(
-                        children: this.widget.lesObjets.map<Widget>((obj) {
-                          bool isSelected =
-                              (objet != null) && (obj.nomObjet == objet!.nomObjet);
-                          return Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                // Handle tap
-                                setState(() {
-                                  objet = obj;
-                                });
-                              },
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 300),
-                                margin: EdgeInsets.only(bottom: 10.0),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 10.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    // affiche l'image de l'objet avec des bords arrondis
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      child: Image.asset(
-                                        //obj.imagePath,
-                                        "assets/perceuse.jpeg",
-                                        width: 65,
-                                        height: 65,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(obj.nomObjet,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                              fontFamily: "NeueRegrade",
-                                              color: AppColors.dark,
-                                            )),
-                                        Text(obj.descriptionObjet,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                              fontFamily: "NeueRegrade",
-                                              color: AppColors.dark,
-                                            )),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                      child: FutureBuilder(
+                        future: lesObjets,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else {
+                            return ListView(
+  children: snapshot.data!.map<Widget>((obj) {
+    bool isSelected =
+        (objetSelectionneLocal != null) &&
+            (obj.idObjet ==
+                objetSelectionneLocal!.idObjet);
+    if (searchController.text.isNotEmpty &&
+        !obj.nomObjet.toLowerCase().contains(
+            searchController.text.toLowerCase()))
+      return Container();
+    return GestureDetector(
+      onTap: () {
+        // Handle tap
+        setState(() {
+          if (objetSelectionneLocal != null && objetSelectionneLocal!.idObjet == obj.idObjet)
+            objetSelectionneLocal = null;
+          else
+            objetSelectionneLocal = obj;
+        });
+      },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        margin: EdgeInsets.only(bottom: 10.0),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary
+              : Colors.transparent,
+          borderRadius:
+              BorderRadius.circular(10.0),
+        ),
+        padding: EdgeInsets.symmetric(
+            vertical: 8.0, horizontal: 10.0),
+        child: Row(
+          children: <Widget>[
+            // affiche l'image de l'objet avec des bords arrondis
+            ClipRRect(
+              borderRadius: BorderRadius.all(
+                  Radius.circular(10)),
+              child: Image.memory(
+                obj.photoObjet,
+                width: 65,
+                height: 65,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(
+              width: 12,
+            ),
+            Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(obj.nomObjet,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontFamily: "NeueRegrade",
+                      color: AppColors.dark,
+                    )),
+                Text(obj.descriptionObjet,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      fontFamily: "NeueRegrade",
+                      color: AppColors.dark,
+                    )),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }).toList(),
+);
+                          }
+                        },
                       ),
                     ),
                   ],
@@ -171,7 +204,8 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onObjectChanged(objet!);
+                      widget.objetSelectionneNotifier.value =
+                          objetSelectionneLocal;
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(

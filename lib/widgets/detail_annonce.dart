@@ -347,7 +347,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                 showModalBottomSheet(
                                   context: context,
                                   builder: (context) {
-                                    return PageAider();
+                                    return PageAider(annonce: widget.annonce,);
                                   },
                                   isScrollControlled: true,
                                   useRootNavigator: true, // Ajoutez cette ligne
