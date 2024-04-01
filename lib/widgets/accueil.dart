@@ -12,28 +12,15 @@ class Accueil extends StatefulWidget {
 }
 
 class _HomeState extends State<Accueil> {
-  List<Annonce> toutesLesAnnonces = [];
-  List<Annonce> dernieresAnnonces = [];
-  List<Annonce> annoncesUrgentes = [];
+  late Future<List<Annonce>> toutesLesAnnonces = AnnonceDB.fetchAllAnnonces();
+  late Future<List<Annonce>> dernieresAnnonces = AnnonceDB.fetchLastAnnonces();
+  late Future<List<Annonce>> annoncesUrgentes = AnnonceDB.fetchUrgentAnnonces();
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       Provider.of<AppBarTitle>(context, listen: false).setTitle('Accueil');
-    });
-    fetchAnnonces();
-  }
-
-  Future<void> fetchAnnonces() async {
-    final allAnnonces = await AnnonceDB.fetchAllAnnonces();
-    final lastAnnonces = await AnnonceDB.fetchLastAnnonces();
-    final urgentAnnonces = await AnnonceDB.fetchUrgentAnnonces();
-
-    setState(() {
-      toutesLesAnnonces = allAnnonces;
-      dernieresAnnonces = lastAnnonces;
-      annoncesUrgentes = urgentAnnonces;
     });
   }
 
@@ -48,16 +35,40 @@ class _HomeState extends State<Accueil> {
                 child: CustomTextField(
                     hint: "Rechercher une annonce...",
                     iconPath: "assets/icons/loupe.svg")),
-            ListeAnnonce(
-                titre: "Vous pouvez les aider !", annonces: toutesLesAnnonces),
+
+            FutureBuilder(future: toutesLesAnnonces, builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return ListeAnnonce(
+                    titre: "Vous pouvez les aider !", annonces: snapshot.data!);
+              }
+            }),
             SizedBox(
               height: 24,
             ),
-            ListeAnnonce(titre: "Annonces urgentes", annonces: annoncesUrgentes),
+            FutureBuilder(future: dernieresAnnonces, builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return ListeAnnonce(
+                    titre: "Vous pouvez les aider !", annonces: snapshot.data!);
+              }
+            }),
             SizedBox(
               height: 24,
             ),
-            ListeAnnonce(titre: "Annonces récentes", annonces: dernieresAnnonces),
+            FutureBuilder(future: annoncesUrgentes, builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return ListeAnnonce(
+                    titre: "Vous pouvez les aider !", annonces: snapshot.data!);
+              }
+            }),
+            SizedBox(
+              height: 24,
+            ),
           ],
         )));
   }
