@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:allo/components/link_item.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/main.dart';
@@ -31,27 +33,42 @@ class _HomeProfilState extends State<HomeProfil> {
         children: <Widget>[
           Column(
             children: <Widget>[
-              ClipOval(
-                child: Container(
-                  alignment: Alignment.center,
-                  color: AppColors.lightBlue,
-                  width: 130, // you can adjust width and height to your liking
-                  height: 130, // you can adjust width and height to your liking
-                  child: Text(
-                    'J',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      fontFamily: "NeueRegrade",
+              if (Provider.of<MyUser>(context).myUser?.photoDeProfilUtilisateur == null)
+                ClipOval(
+                  child: Container(
+                    alignment: Alignment.center,
+                    color: AppColors.lightBlue,
+                    width: 130, // you can adjust width and height to your liking
+                    height:
+                        130, // you can adjust width and height to your liking
+                    child: Text(
+                      Provider.of<MyUser>(context).myUser?.nomUtilisateur[0].toUpperCase() ?? "?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30,
+                        fontFamily: "NeueRegrade",
+                      ),
                     ),
                   ),
                 ),
-              ),
+              if (Provider.of<MyUser>(context).myUser?.photoDeProfilUtilisateur != null)
+                Container(
+                  width: 130,
+                  height: 130,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: MemoryImage(Provider.of<MyUser>(context).myUser?.photoDeProfilUtilisateur! ?? Uint8List(0)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
               SizedBox(
                 height: 16,
               ),
               Text(
-                Provider.of<MyUser>(context).myUser?.nomUtilisateur ?? 'aucun utilisateur',
+                Provider.of<MyUser>(context).myUser?.nomUtilisateur ??
+                    'aucun utilisateur',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 22,
@@ -63,14 +80,47 @@ class _HomeProfilState extends State<HomeProfil> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 1 ? AppColors.yellow : AppColors.primary),),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 2 ? AppColors.yellow : AppColors.primary)),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 3 ? AppColors.yellow : AppColors.primary)),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 4 ? AppColors.yellow : AppColors.primary)),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 5 ? AppColors.yellow : AppColors.primary)),
+                    SvgPicture.asset(
+                      "assets/icons/star.svg",
+                      height: 16,
+                      color:
+                          ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 1
+                              ? AppColors.yellow
+                              : AppColors.primary),
+                    ),
+                    SvgPicture.asset("assets/icons/star.svg",
+                        height: 16,
+                        color:
+                            ((Provider.of<MyUser>(context).myUser?.note ?? 0) >=
+                                    2
+                                ? AppColors.yellow
+                                : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg",
+                        height: 16,
+                        color:
+                            ((Provider.of<MyUser>(context).myUser?.note ?? 0) >=
+                                    3
+                                ? AppColors.yellow
+                                : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg",
+                        height: 16,
+                        color:
+                            ((Provider.of<MyUser>(context).myUser?.note ?? 0) >=
+                                    4
+                                ? AppColors.yellow
+                                : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg",
+                        height: 16,
+                        color:
+                            ((Provider.of<MyUser>(context).myUser?.note ?? 0) >=
+                                    5
+                                ? AppColors.yellow
+                                : AppColors.primary)),
                     SizedBox(width: 8),
                     Text(
-                      (Provider.of<MyUser>(context).myUser?.nbAvis.toString() ?? '0') + " avis",
+                      (Provider.of<MyUser>(context).myUser?.nbAvis.toString() ??
+                              '0') +
+                          " avis",
                       style: TextStyle(
                         color: AppColors.dark,
                         fontWeight: FontWeight.w500,
@@ -82,7 +132,7 @@ class _HomeProfilState extends State<HomeProfil> {
             ],
           ),
           SizedBox(
-            height: 36,
+            height: 24,
           ),
           Padding(
             padding: new EdgeInsets.symmetric(horizontal: 16),
@@ -94,7 +144,7 @@ class _HomeProfilState extends State<HomeProfil> {
                       Navigator.pushNamed(context, '/modifier');
                     }),
                 SizedBox(
-                  height: 12,
+                  height: 10,
                 ),
                 LinkItem(
                     title: "Mes annonces",
@@ -102,7 +152,7 @@ class _HomeProfilState extends State<HomeProfil> {
                       Navigator.pushNamed(context, '/mes-annonces');
                     }),
                 SizedBox(
-                  height: 12,
+                  height: 10,
                 ),
                 LinkItem(
                     title: "Mes objets",
@@ -110,7 +160,7 @@ class _HomeProfilState extends State<HomeProfil> {
                       Navigator.pushNamed(context, '/mes-objets');
                     }),
                 SizedBox(
-                  height: 12,
+                  height: 10,
                 ),
                 LinkItem(
                     title: "Mes avis",
@@ -118,7 +168,7 @@ class _HomeProfilState extends State<HomeProfil> {
                       Navigator.pushNamed(context, '/mes-avis');
                     }),
                 SizedBox(
-                  height: 12,
+                  height: 10,
                 ),
                 LinkItem(
                     title: "Me déconnecter",

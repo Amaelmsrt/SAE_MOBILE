@@ -34,12 +34,12 @@ class LinkItem extends StatelessWidget{
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isWarning ? AppColors.danger : AppColors.darkQuaternary,
               ),
             ),
-            SvgPicture.asset("assets/icons/chevron-right.svg", color: isWarning ? AppColors.danger : AppColors.darkQuaternary,),
+            SvgPicture.asset("assets/icons/chevron-right.svg", color: isWarning ? AppColors.danger : AppColors.darkQuaternary, height: 14,),
           ]
         ),
       ),

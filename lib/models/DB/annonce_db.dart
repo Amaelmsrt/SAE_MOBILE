@@ -136,12 +136,7 @@ class AnnonceDB {
 
     final annonce = responseAnnonce as List;
 
-    final responseUtilisateur = await supabase
-        .from('utilisateur')
-        .select('*')
-        .eq('idutilisateur', annonce[0]['idutilisateur']) as List;
-
-    final utilisateur = Utilisateur.fromJson(responseUtilisateur[0]);
+    final utilisateur = await UserBD.getUser(annonce[0]['idutilisateur']);
 
     Annonce annonceObj =
         Annonce.fromJson({...annonce[0], 'utilisateur': utilisateur});
