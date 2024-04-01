@@ -1,23 +1,28 @@
+import 'dart:typed_data';
+
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/annonce.dart';
+import 'package:allo/models/objet.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class VueGestionObjetAnnonce extends StatefulWidget {
-  String imagePath;
-  String titre;
-  String description;
-  Color couleurEtat;
-  String etat;
-  String action;
-  Function actionFunction;
+  final Annonce? annonce;
+  final Objet? objet;
 
-  VueGestionObjetAnnonce(
-      {required this.imagePath,
-      required this.titre,
-      required this.description,
-      required this.couleurEtat,
-      required this.etat,
-      required this.action,
-      required this.actionFunction});
+  bool get isAnnonce => annonce != null;
+
+  VueGestionObjetAnnonce.forAnnonce({
+    required Annonce annonce,
+  })  : annonce = annonce,
+        objet = null;
+
+  // Constructeur pour Objet
+  VueGestionObjetAnnonce.forObjet({
+    required Objet objet,
+  })  : objet = objet,
+        annonce = null;
 
   @override
   _VueGestionObjetAnnonceState createState() => _VueGestionObjetAnnonceState();
@@ -28,6 +33,7 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(10),
+      margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.lightSecondary,
         borderRadius: BorderRadius.circular(10),
@@ -35,46 +41,58 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
       child: Column(
         children: <Widget>[
           Row(
-            children: <Widget>[
-              // affiche l'image de l'objet avec des bords arrondis
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Image.asset(
-                  widget.imagePath,
-                  width: 65,
-                  height: 65,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(width: 12,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.titre,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        fontFamily: "NeueRegrade",
-                        color: AppColors.dark,
-                      )),
-                  Text(widget.description,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14,
-                        fontFamily: "NeueRegrade",
-                        color: AppColors.dark,
-                      )),
-                ],
-              )
-            ],
+  children: <Widget>[
+    // affiche l'image de l'objet avec des bords arrondis
+    ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      child: Image.memory(
+        widget.isAnnonce ? widget.annonce!.images[0] : widget.objet!.photoObjet!,
+        width: 65,
+        height: 65,
+        fit: BoxFit.cover,
+      ),
+    ),
+    SizedBox(
+      width: 12,
+    ),
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.isAnnonce ? widget.annonce!.titreAnnonce : widget.objet!.nomObjet,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              fontFamily: "NeueRegrade",
+              color: AppColors.dark,
+            ),
           ),
-          SizedBox(height: 8,),
+          Text(
+            "17 annonces correspondent a votre objet mec ça va ou quoiiiihihihihihihi",
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              fontFamily: "NeueRegrade",
+              color: AppColors.dark,
+            ),
+          ),
+        ],
+      ),
+    )
+  ],
+),
+          SizedBox(
+            height: 8,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
                 onTap: () {
-                  widget.actionFunction();
+                  //
                 },
                 child: AnimatedContainer(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -87,9 +105,9 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      widget.action,
+                      "à determiner",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         fontFamily: "NeueRegrade",
                       ),
@@ -97,7 +115,9 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                   ),
                 ),
               ),
-              SizedBox(width: 8,),
+              SizedBox(
+                width: 8,
+              ),
               GestureDetector(
                 onTap: () {},
                 child: AnimatedContainer(
@@ -105,15 +125,19 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                   duration: Duration(milliseconds: 300), // Durée de l'animation
                   curve: Curves.easeInOut, // Type d'animation
                   decoration: BoxDecoration(
-                    color: widget.couleurEtat,
+                    color: widget.isAnnonce
+                        ? widget.annonce!.getEtatColor()
+                        : widget.objet!.getStatusColor(),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      widget.etat,
+                      widget.isAnnonce
+                          ? widget.annonce!.getEtatStr()
+                          : widget.objet!.getStatusStr(),
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         fontFamily: "NeueRegrade",
                       ),

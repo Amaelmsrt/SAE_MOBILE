@@ -282,4 +282,31 @@ class AnnonceDB {
       return [];
     }
   }
+
+  static Future<List<Annonce>> getMesAnnonces() async {
+    // on veut juste connaitre l'image de l'annonce, le titre et son etatannonce
+
+    try {
+      String? myUUID = await UserBD.getMyUUID();
+      final responseAnnonce = await supabase
+          .from('annonce')
+          .select('idannonce, titreannonce, esturgente, prix_annonce, etatannonce, dateaideannonce')
+          .eq('idutilisateur', myUUID)
+          .order('idannonce', ascending: false);
+      print('Response Annonce: $responseAnnonce');
+
+      final annonces = (responseAnnonce as List).map((annonce) async {
+        Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
+
+        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+
+        return nouvelleAnnonce;
+      }).toList();
+
+      return await Future.wait(annonces);
+    } catch (e) {
+      print('Erreur lors de la récupération des annonces: $e');
+      return [];
+    }
+  }
 }

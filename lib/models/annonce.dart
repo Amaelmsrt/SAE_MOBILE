@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:allo/components/add_images.dart';
+import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Annonce {
@@ -18,8 +21,43 @@ class Annonce {
   List<Uint8List> images = [];
   List<String> categories = [];
 
+  static const int EN_COURS = 0;
+  static const int AIDE_PLANIFIEE = 1;
+  static const int ANNULEE = 2;
+  static const int CLOTUREES = 3;
+
   addImage(Uint8List image) {
     images.add(image);
+  }
+
+  String getEtatStr(){
+    switch (etatAnnonce) {
+      case EN_COURS:
+        return 'En cours';
+      case AIDE_PLANIFIEE:
+        return 'Aide planifiée';
+      case ANNULEE:
+        return 'Annulée';
+      case CLOTUREES:
+        return 'Clôturée';
+      default:
+        return 'En cours';
+    }
+  }
+
+  Color getEtatColor(){
+    switch (etatAnnonce) {
+      case EN_COURS:
+        return AppColors.yellow;
+      case AIDE_PLANIFIEE:
+        return AppColors.primary;
+      case ANNULEE:
+        return AppColors.danger;
+      case CLOTUREES:
+        return AppColors.green;
+      default:
+        return AppColors.yellow;
+    }
   }
 
   Annonce({

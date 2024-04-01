@@ -34,6 +34,9 @@ class UserBD {
           UserAttributes(password: password),
         );
       }
+
+      // met à jour le token de session supabase
+      final response2 = await supabase.auth.refreshSession();
     } catch (e) {
       print('Erreur lors de la mise à jour de l\'utilisateur: $e');
     }

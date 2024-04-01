@@ -118,15 +118,7 @@ class _MesObjetsState extends State<MesObjets> {
                           } else {
                             return Column(
                               children: [
-                                VueGestionObjetAnnonce(
-                                  imagePath: "assets/perceuse.jpeg",
-                                  titre: "cherche perceuse",
-                                  description: "l'annonce est en cours",
-                                  couleurEtat: AppColors.yellow,
-                                  etat: "en cours",
-                                  action: "promouvoir",
-                                  actionFunction: () {},
-                                ),
+                               // VUE GESTION OBJET ANNONCE
                                 SizedBox(height: index == 5 ? 32 : 16),
                               ],
                             );

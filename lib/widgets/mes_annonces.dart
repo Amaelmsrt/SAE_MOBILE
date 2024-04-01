@@ -1,6 +1,8 @@
 import 'package:allo/components/top_selection_menu.dart';
 import 'package:allo/components/vue_gestion_objet_annonce.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
 import 'package:allo/widgets/ajout_annonce.dart';
@@ -15,6 +17,7 @@ class MesAnnonces extends StatefulWidget {
 
 class _MesAnnoncesState extends State<MesAnnonces> {
   PageController _pageController = PageController();
+  late Future<List<Annonce>> mesAnnonces = AnnonceDB.getMesAnnonces();
 
   @override
   void initState() {
@@ -33,7 +36,7 @@ class _MesAnnoncesState extends State<MesAnnonces> {
           children: <Widget>[
             Center(
                 child: TopSelectionMenu(
-              items: ["Tous", "Réservés", "Disponibles"],
+              items: ["Toutes", "En cours", "Cloturées"],
               onItemSelected: (int index) {
                 _pageController.animateToPage(
                   index,
@@ -56,37 +59,36 @@ class _MesAnnoncesState extends State<MesAnnonces> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                            return Column(
-                              children: [
-                                VueGestionObjetAnnonce(
-                                    imagePath: "assets/perceuse.jpeg",
-                                    titre: "cherche perceuse",
-                                    description: "l'annonce est en cours",
-                                    couleurEtat: AppColors.yellow,
-                                    etat: "en cours",
-                                    action: "promouvoir",
-                                    actionFunction: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return AjouterAvis();
-                                        },
-                                        isScrollControlled: true,
-                                        useRootNavigator:
-                                            true, // Ajoutez cette ligne
-                                      );
-                                    }),
-                                SizedBox(height: 16),
-                              ],
-                            );
-                          }),
-                        ),
-                      ],
+                    child: FutureBuilder<List<Annonce>>(
+                      future: mesAnnonces,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Erreur: ${snapshot.error}');
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              var annonce = snapshot.data![index];
+                              return VueGestionObjetAnnonce.forAnnonce(
+                                annonce: annonce,
+                                // actionFunction: () {
+                                //   showModalBottomSheet(
+                                //     context: context,
+                                //     builder: (context) {
+                                //       return AjouterAvis();
+                                //     },
+                                //     isScrollControlled: true,
+                                //     useRootNavigator: true,
+                                //   );
+                                // },
+                              );
+                            },
+                          );
+                        }
+                      },
                     ),
                   ),
                   Padding(
