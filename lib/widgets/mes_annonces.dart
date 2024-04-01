@@ -74,16 +74,7 @@ class _MesAnnoncesState extends State<MesAnnonces> {
                               var annonce = snapshot.data![index];
                               return VueGestionObjetAnnonce.forAnnonce(
                                 annonce: annonce,
-                                // actionFunction: () {
-                                //   showModalBottomSheet(
-                                //     context: context,
-                                //     builder: (context) {
-                                //       return AjouterAvis();
-                                //     },
-                                //     isScrollControlled: true,
-                                //     useRootNavigator: true,
-                                //   );
-                                // },
+                            
                               );
                             },
                           );
@@ -93,36 +84,62 @@ class _MesAnnoncesState extends State<MesAnnonces> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                            return Container(
-                              color: Colors.blue,
-                              height: 100,
-                            );
-                          }),
-                        ),
-                      ],
+                    child: FutureBuilder<List<Annonce>>(
+                      future: mesAnnonces,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Erreur: ${snapshot.error}');
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              var annonce = snapshot.data![index];
+                              if (annonce.etatAnnonce == Annonce.EN_COURS) {
+                                return VueGestionObjetAnnonce.forAnnonce(
+                                  annonce: annonce,
+                                 
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                          );
+                        }
+                      },
                     ),
                   ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return Container(
-                                  color: Colors.red,
-                                  height: 100,
+                 Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: FutureBuilder<List<Annonce>>(
+                      future: mesAnnonces,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Erreur: ${snapshot.error}');
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              var annonce = snapshot.data![index];
+                              if (annonce.etatAnnonce == Annonce.CLOTUREES) {
+                                return VueGestionObjetAnnonce.forAnnonce(
+                                  annonce: annonce,
+                                 
                                 );
-                              },
-                            ),
-                          ),
-                        ],
-                      )),
+                              } else {
+                                return Container();
+                              }
+                            },
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
