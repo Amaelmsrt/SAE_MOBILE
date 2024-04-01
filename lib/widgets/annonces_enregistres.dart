@@ -12,21 +12,13 @@ class AnnoncesEnregistrees extends StatefulWidget {
 }
 
 class _HomeState extends State<AnnoncesEnregistrees> {
-  List<Annonce> lesAnnonces = [];
+  late Future<List<Annonce>> lesAnnonces = AnnonceDB.fetchAnnoncesEnregistrees();
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       Provider.of<AppBarTitle>(context, listen: false).setTitle('Annonces enregistrées');
-    });
-    fetchAnnonces();
-  }
-
-  Future<void> fetchAnnonces() async {
-    final annonces = await AnnonceDB.fetchAnnoncesEnregistrees();
-    setState(() {
-      lesAnnonces = annonces;
     });
   }
 
@@ -39,7 +31,14 @@ class _HomeState extends State<AnnoncesEnregistrees> {
               child: CustomTextField(
                   hint: "Rechercher une annonce...",
                   iconPath: "assets/icons/loupe.svg")),
-          ListeAnnonce(annonces: lesAnnonces, isVertical: true,)
+          FutureBuilder(future: lesAnnonces, builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return ListeAnnonce(
+                  isVertical: true, annonces: snapshot.data!);
+            }
+          }),
         ],
       )
     );
