@@ -74,7 +74,6 @@ class _MesObjetsState extends State<MesObjets> {
                             return ListView.builder(
                               itemCount: snapshot.data!.length + 1,
                               itemBuilder: (context, index) {
-
                                 if (index == 0) {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -136,7 +135,7 @@ class _MesObjetsState extends State<MesObjets> {
                                     ),
                                   );
                                 }
-                                var objet = snapshot.data![index-1];
+                                var objet = snapshot.data![index - 1];
                                 return Column(
                                   children: <Widget>[
                                     VueGestionObjetAnnonce.forObjet(
@@ -155,38 +154,204 @@ class _MesObjetsState extends State<MesObjets> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                            return Container(
-                              color: Colors.blue,
-                              height: 100,
+                  MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: FutureBuilder<List<Objet>>(
+                        future: mesObjets,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Erreur: ${snapshot.error}');
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    child: Center(
+                                      child: Container(
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.65, // 70% de la largeur du parent
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AjouterObjet();
+                                                },
+                                                isScrollControlled: true,
+                                                useRootNavigator:
+                                                    true, // Ajoutez cette ligne
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              shadowColor: Colors.transparent,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 30),
+                                              elevation: 0,
+                                              backgroundColor:
+                                                  AppColors.primary,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Ajouter un objet",
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: "NeueRegrade",
+                                                    color: AppColors.dark,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                SvgPicture.asset(
+                                                  "assets/icons/plus.svg",
+                                                  color: AppColors.dark,
+                                                  height: 16,
+                                                )
+                                              ],
+                                            )),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                var objet = snapshot.data![index - 1];
+                                if (objet.statutObjet == Objet.RESERVE) {
+                                  return Column(
+                                    children: <Widget>[
+                                      VueGestionObjetAnnonce.forObjet(
+                                        objet: objet,
+                                      ),
+                                      SizedBox(
+                                          height: index == snapshot.data!.length
+                                              ? 32
+                                              : 16)
+                                    ],
+                                  );
+                                }
+                              },
                             );
-                          }),
-                        ),
-                      ],
+                          }
+                        },
+                      ),
                     ),
                   ),
-                  Padding(
+                  MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                return Container(
-                                  color: Colors.red,
-                                  height: 100,
-                                );
+                      child: FutureBuilder<List<Objet>>(
+                        future: mesObjets,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Erreur: ${snapshot.error}');
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    child: Center(
+                                      child: Container(
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.65, // 70% de la largeur du parent
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AjouterObjet();
+                                                },
+                                                isScrollControlled: true,
+                                                useRootNavigator:
+                                                    true, // Ajoutez cette ligne
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              shadowColor: Colors.transparent,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 30),
+                                              elevation: 0,
+                                              backgroundColor:
+                                                  AppColors.primary,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Ajouter un objet",
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: "NeueRegrade",
+                                                    color: AppColors.dark,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                SvgPicture.asset(
+                                                  "assets/icons/plus.svg",
+                                                  color: AppColors.dark,
+                                                  height: 16,
+                                                )
+                                              ],
+                                            )),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                var objet = snapshot.data![index - 1];
+                                if (objet.statutObjet == Objet.DISPONIBLE) {
+                                  return Column(
+                                    children: <Widget>[
+                                      VueGestionObjetAnnonce.forObjet(
+                                        objet: objet,
+                                      ),
+                                      SizedBox(
+                                          height: index == snapshot.data!.length
+                                              ? 32
+                                              : 16)
+                                    ],
+                                  );
+                                }
                               },
-                            ),
-                          ),
-                        ],
-                      )),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
