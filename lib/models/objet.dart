@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:allo/constants/app_colors.dart';
 
 class Objet {
-  int idObjet;
+  String idObjet;
   String nomObjet;
   String descriptionObjet;
   int statutObjet;

@@ -1,8 +1,10 @@
 import 'package:allo/components/top_selection_menu.dart';
 import 'package:allo/components/vue_gestion_objet_annonce.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/objet_bd.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
+import 'package:allo/models/objet.dart';
 import 'package:allo/widgets/ajouter_objet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +17,7 @@ class MesObjets extends StatefulWidget {
 
 class _MesObjetsState extends State<MesObjets> {
   PageController _pageController = PageController();
+  late Future<List<Objet>> mesObjets = ObjetBd.getMesObjets();
 
   @override
   void initState() {
@@ -42,6 +45,9 @@ class _MesObjetsState extends State<MesObjets> {
                 );
               },
             )),
+            SizedBox(
+              height: 8,
+            ),
             Expanded(
               // Ajoutez ce widget
               child: PageView(
@@ -56,71 +62,93 @@ class _MesObjetsState extends State<MesObjets> {
                     removeTop: true,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: ListView.builder(
-                        itemCount: 5,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              child: Center(
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      0.65, // 70% de la largeur du parent
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          builder: (context) {
-                                            return AjouterObjet();
-                                          },
-                                          isScrollControlled: true,
-                                          useRootNavigator:
-                                              true, // Ajoutez cette ligne
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shadowColor: Colors.transparent,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 30),
-                                        elevation: 0,
-                                        backgroundColor: AppColors.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Ajouter un objet",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "NeueRegrade",
-                                              color: AppColors.dark,
-                                            ),
-                                          ),
-                                          SizedBox(width: 8),
-                                          SvgPicture.asset(
-                                            "assets/icons/plus.svg",
-                                            color: AppColors.dark,
-                                            height: 16,
-                                          )
-                                        ],
-                                      )),
-                                ),
-                              ),
-                            );
+                      child: FutureBuilder<List<Objet>>(
+                        future: mesObjets,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Erreur: ${snapshot.error}');
                           } else {
-                            return Column(
-                              children: [
-                               // VUE GESTION OBJET ANNONCE
-                                SizedBox(height: index == 5 ? 32 : 16),
-                              ],
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length + 1,
+                              itemBuilder: (context, index) {
+
+                                if (index == 0) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    child: Center(
+                                      child: Container(
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.65, // 70% de la largeur du parent
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AjouterObjet();
+                                                },
+                                                isScrollControlled: true,
+                                                useRootNavigator:
+                                                    true, // Ajoutez cette ligne
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              shadowColor: Colors.transparent,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 30),
+                                              elevation: 0,
+                                              backgroundColor:
+                                                  AppColors.primary,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Ajouter un objet",
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: "NeueRegrade",
+                                                    color: AppColors.dark,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                SvgPicture.asset(
+                                                  "assets/icons/plus.svg",
+                                                  color: AppColors.dark,
+                                                  height: 16,
+                                                )
+                                              ],
+                                            )),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                var objet = snapshot.data![index-1];
+                                return Column(
+                                  children: <Widget>[
+                                    VueGestionObjetAnnonce.forObjet(
+                                      objet: objet,
+                                    ),
+                                    SizedBox(
+                                        height: index == snapshot.data!.length
+                                            ? 32
+                                            : 16)
+                                  ],
+                                );
+                              },
                             );
                           }
                         },
