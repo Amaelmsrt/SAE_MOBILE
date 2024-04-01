@@ -111,6 +111,7 @@ class AnnonceDB {
       final responseAnnonce = await supabase
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
+          .not('idutilisateur', 'eq', myUUID)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
 
@@ -199,6 +200,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .eq('esturgente', true)
+          .not('idutilisateur', 'eq', myUUID)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
 
@@ -223,6 +225,7 @@ class AnnonceDB {
       final responseAnnonce = await supabase
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
+          .not('idutilisateur', 'eq', myUUID)
           .order('idannonce', ascending: false)
           .limit(5);
       print('Response Annonce: $responseAnnonce');
