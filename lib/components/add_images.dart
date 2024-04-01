@@ -8,8 +8,9 @@ import 'package:image_picker/image_picker.dart';
 class AddImages extends StatefulWidget {
 
   ValueNotifier<List<XFile>> valueNotifier;
+  bool isSingleImage;
 
-  AddImages({required this.valueNotifier});
+  AddImages({this.isSingleImage = false, required this.valueNotifier});
 
   @override
   _AddImagesState createState() => _AddImagesState();
@@ -130,7 +131,7 @@ class _AddImagesState extends State<AddImages> {
                     ),
                   ),
                 ),
-              if (widget.valueNotifier.value.isNotEmpty && widget.valueNotifier.value.length < 4)
+              if (widget.valueNotifier.value.isNotEmpty && widget.valueNotifier.value.length < 4 && !widget.isSingleImage)
                 GestureDetector(
                   onTap: () {
                     pickImage();

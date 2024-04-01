@@ -10,7 +10,7 @@ class ListingCategories extends StatefulWidget {
   bool isExpandable;
   final ValueNotifier<List<String>>? categoriesNotifier;
   final ValueNotifier<List<String>>? selectedCategoriesNotifier;
-  TextEditingController? listeningToString;
+  List<TextEditingController> listeningToStrings;
 
   ListingCategories(
       {this.lesCategories,
@@ -18,7 +18,7 @@ class ListingCategories extends StatefulWidget {
       this.isExpandable = false,
       this.selectedCategoriesNotifier,
       this.categoriesNotifier,
-      this.listeningToString});
+      this.listeningToStrings = const []});
 
   @override
   State<ListingCategories> createState() => _ListingCategoriesState();
@@ -26,11 +26,10 @@ class ListingCategories extends StatefulWidget {
 
 class _ListingCategoriesState extends State<ListingCategories> {
   void ListenerFunction() {
-    print("nouveau texte: " + widget.listeningToString!.text);
     try {
       if (widget.selectedCategoriesNotifier!.value.length <= 4) {
         CategorieDB.findMatchingCategories(
-                text: widget.listeningToString!.text,
+                text: widget.listeningToStrings.map((controller) => controller.text).join(' '),
                 nbToFind: 5 - widget.selectedCategoriesNotifier!.value.length)
             .then((List<String> value) {
           if (!mounted) {
@@ -83,9 +82,10 @@ class _ListingCategoriesState extends State<ListingCategories> {
     // TODO: implement initState
     super.initState();
 
-    if (widget.listeningToString != null) {
-      widget.listeningToString!.addListener(ListenerFunction);
+    for (var controller in widget.listeningToStrings) {
+      controller.addListener(ListenerFunction);
     }
+
 
     if (widget.selectedCategoriesNotifier != null) {
       widget.selectedCategoriesNotifier!.addListener(selectedValuesHaveChanged);
@@ -96,8 +96,9 @@ class _ListingCategoriesState extends State<ListingCategories> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    if (widget.listeningToString != null) {
-      widget.listeningToString!.removeListener(ListenerFunction);
+    
+    for (var controller in widget.listeningToStrings) {
+      controller.removeListener(ListenerFunction);
     }
 
     if (widget.selectedCategoriesNotifier != null) {

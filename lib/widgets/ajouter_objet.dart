@@ -4,6 +4,7 @@ import 'package:allo/components/custom_date_picker.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/objet_bd.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -11,9 +12,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AjouterObjet extends StatelessWidget {
+class AjouterObjet extends StatefulWidget {
   
+  @override
+  State<AjouterObjet> createState() => _AjouterObjetState();
+}
+
+class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true;
+
   ValueNotifier<List<XFile>> images = ValueNotifier<List<XFile>>([]);
+
+  TextEditingController texteObjet = TextEditingController();
+
+  TextEditingController descriptionObjet = TextEditingController();
+
+  ValueNotifier<List<String>> categorieNonSelectionnesObjet =
+      ValueNotifier<List<String>>([]);
+
+  ValueNotifier<List<String>> categorieObjet =
+      ValueNotifier<List<String>>([]);
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +48,23 @@ class AjouterObjet extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        AddImages(valueNotifier: images,),
+                        AddImages(valueNotifier: images, isSingleImage: true),
                         CustomTextField(
                             hint: "Nom de l'objet...",
-                            label: "Nom de l'objet"),
+                            label: "Nom de l'objet",
+                            controller: texteObjet 
+                            ,),
                         CustomTextField(
                             hint: "Description de l'objet...",
                             label: "Description de l'objet",
-                            isArea: true),
-                        ListingCategories(lesCategories: [
-                          "Perceuse",
-                          "Outils",
-                          "Visseuse",
-                          "Poulet",
-                          "Gode ceinture"
-                        ], isSelectable: true, isExpandable: true),
+                            isArea: true, controller: descriptionObjet),
+                         ListingCategories(
+                          listeningToStrings: [texteObjet],
+                          isSelectable: true,
+                          isExpandable: true,
+                          selectedCategoriesNotifier: categorieObjet,
+                          categoriesNotifier: categorieNonSelectionnesObjet,
+                        ),
                         SizedBox(
                           height: 100,
                         ),
@@ -113,6 +135,14 @@ class AjouterObjet extends StatelessWidget {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
+                      print("Ajout de l'objet");
+                      print("nb images: ${images.value.length}");
+                      print("Titre de l'objet: ${texteObjet.text}");
+                      print("Description de l'objet: ${descriptionObjet.text}");
+                      print("Categories de l'objet: ${categorieObjet.value}");
+
+                      ObjetBd.ajouterObjet(images.value.first, texteObjet.text, descriptionObjet.text, categorieObjet.value);
+
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(

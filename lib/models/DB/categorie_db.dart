@@ -34,6 +34,9 @@ class CategorieDB{
       // pour chaque mot dans le texte je fais une requete
       for (var word in text.split(' ')) {
         List<String> cats = await _findCategories(word);
+        if (word.isEmpty){
+          continue;
+        }
         for (var cat in cats) {
           if (!categories.contains(cat)) {
             categories.add(cat);

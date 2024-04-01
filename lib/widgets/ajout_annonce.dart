@@ -73,7 +73,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                             isArea: true,
                             controller: descriptionAnnonce),
                         ListingCategories(
-                          listeningToString: _texteAnnonceController,
+                          listeningToStrings: [_texteAnnonceController, descriptionAnnonce],
                           isSelectable: true,
                           isExpandable: true,
                           selectedCategoriesNotifier: categorieAnnonce,
