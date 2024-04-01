@@ -65,7 +65,7 @@ class _MesObjetsState extends State<MesObjets> {
                               child: Center(
                                 child: Container(
                                   width: MediaQuery.of(context).size.width *
-                                      0.6, // 70% de la largeur du parent
+                                      0.65, // 70% de la largeur du parent
                                   child: ElevatedButton(
                                       onPressed: () {
                                         showModalBottomSheet(

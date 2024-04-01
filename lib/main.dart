@@ -1,5 +1,6 @@
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
+import 'package:allo/models/my_user.dart';
 import 'package:allo/widgets/my_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ void main() async {
       providers: [
          ChangeNotifierProvider(create: (context) => AppBarTitle()),
           ChangeNotifierProvider(create: (context) => IndexPageNotifications()),
+          ChangeNotifierProvider(create: (context) => MyUser()),
         // Ajoutez d'autres providers ici si nécessaire
       ],
       child: MyApp()

@@ -17,10 +17,10 @@ class _TopSelectionMenuState extends State<TopSelectionMenu> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 50,
         child: Wrap(
           alignment: WrapAlignment.center,
-          spacing: 12, // gap between adjacent chips
+          spacing: 12,
+          runSpacing: 12, // gap between adjacent chips
           children: this.widget.items.asMap().entries.map<Widget>((entry) {
             int index = entry.key;
             String item = entry.value;

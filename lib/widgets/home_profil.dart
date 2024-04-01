@@ -2,6 +2,7 @@ import 'package:allo/components/link_item.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/main.dart';
 import 'package:allo/models/app_bar_title.dart';
+import 'package:allo/models/my_user.dart';
 import 'package:allo/widgets/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -50,7 +51,7 @@ class _HomeProfilState extends State<HomeProfil> {
                 height: 16,
               ),
               Text(
-                "Julien Arsouze",
+                Provider.of<MyUser>(context).myUser?.nomUtilisateur ?? 'aucun utilisateur',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 22,
@@ -62,14 +63,14 @@ class _HomeProfilState extends State<HomeProfil> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SvgPicture.asset("assets/icons/star.svg", height: 16),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16),
-                    SvgPicture.asset("assets/icons/star.svg", height: 16),
+                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 1 ? AppColors.yellow : AppColors.primary),),
+                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 2 ? AppColors.yellow : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 3 ? AppColors.yellow : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 4 ? AppColors.yellow : AppColors.primary)),
+                    SvgPicture.asset("assets/icons/star.svg", height: 16, color: ((Provider.of<MyUser>(context).myUser?.note ?? 0) >= 5 ? AppColors.yellow : AppColors.primary)),
                     SizedBox(width: 8),
                     Text(
-                      '158 avis',
+                      (Provider.of<MyUser>(context).myUser?.nbAvis.toString() ?? '0') + " avis",
                       style: TextStyle(
                         color: AppColors.dark,
                         fontWeight: FontWeight.w500,
