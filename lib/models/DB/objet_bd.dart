@@ -55,14 +55,20 @@ class ObjetBd {
     }
   }
 
-  static Future<List<Objet>> getMesObjets() async {
+  static Future<List<Objet>> getMesObjets({onlyDisponibles = false}) async {
     try {
       String? myUUID = await UserBD.getMyUUID();
 
-      final response = await supabase
+      var query = supabase
           .from('objet')
           .select('idobjet, nomobjet, descriptionobjet, statutobjet, photoobjet')
           .eq('idutilisateur', myUUID);
+
+      if (onlyDisponibles) {
+        query = query.eq('statutobjet', Objet.DISPONIBLE);
+      }
+
+      final response = await query;
 
       print('Response mes objets: $response');
 

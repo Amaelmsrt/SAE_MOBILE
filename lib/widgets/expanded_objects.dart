@@ -19,7 +19,7 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
   String objectBeingAnimated = "";
   TextEditingController searchController = TextEditingController();
 
-  late Future<List<Objet>> lesObjets = ObjetBd.getMesObjets();
+  late Future<List<Objet>> lesObjets = ObjetBd.getMesObjets(onlyDisponibles: true);
 
   Objet? objetSelectionneLocal = null;
 

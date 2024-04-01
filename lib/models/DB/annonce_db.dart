@@ -329,6 +329,12 @@ class AnnonceDB {
       ]);
 
       print('Response aide: $response');
+
+      // on va mettre a jour le status dans objet
+
+      final responseObjet = await supabase.from('objet').update({
+        'statutobjet': Objet.RESERVE
+      }).eq('idobjet', idObj);
     } catch (e) {
       print('Erreur lors de l\'aide de l\'annonce: $e');
     }
