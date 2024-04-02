@@ -3,10 +3,32 @@ import 'package:allo/components/resume_annonce.dart';
 import 'package:allo/components/star_picker.dart';
 import 'package:allo/components/user_preview.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/DB/avis_bd.dart';
+import 'package:allo/models/DB/user_bd.dart';
+import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AjouterAvis extends StatelessWidget {
+class AjouterAvis extends StatefulWidget {
+
+  Annonce annonce;
+  String descriptionResume;
+
+  AjouterAvis({required this.annonce, required this.descriptionResume});
+
+  @override
+  State<AjouterAvis> createState() => _AjouterAvisState();
+}
+
+class _AjouterAvisState extends State<AjouterAvis> {
+  TextEditingController titreController = TextEditingController();
+  TextEditingController commentaireController = TextEditingController();
+  ValueNotifier<int> ratingNotifier = ValueNotifier(0);
+
+  late Future<Utilisateur> utilisateurDest = UserBD.getUserWhoHelped(widget.annonce.idAnnonce);
+
    @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,18 +42,29 @@ class AjouterAvis extends StatelessWidget {
                   SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        ResumeAnnonce(imagePath: "assets/perceuse.jpeg", title: "Besoin d’une perceuse pour le 24/02/2023", description: "On vous a rendu le service le 17/07/2024"),
+                        ResumeAnnonce(image: widget.annonce.images[0], title: widget.annonce.titreAnnonce, description: widget.descriptionResume),
                         SizedBox(height: 24,),
-                        //UserPreview(pseudo: "Julien Arsouze", nbAvis: 158, nbEtoiles: 3, description: "L'utilisateur qui vous a aidé",),
+                        FutureBuilder(future: utilisateurDest, builder: 
+                          (BuildContext context, AsyncSnapshot<Utilisateur> snapshot) {
+                            if(snapshot.hasData){
+                              return UserPreview(utilisateur: snapshot.data!);
+                            }else{
+                              return Container();
+                            }
+                          }
+                        ),
                         SizedBox(height: 24,),
-                        StarPicker(onRatingChanged: (int newRating) {}, label: "Niveau de satisfaction"),
+                        StarPicker(ratingNotifier: ratingNotifier, label: "Niveau de satisfaction"),
                         SizedBox(height: 22,),
                         CustomTextField(
                             hint: "Votre titre...",
-                            label: "Titre de l'avis"),
+                            label: "Titre de l'avis",
+                            controller: titreController,
+                            ),
                         CustomTextField(
                             hint: "Votre commentaire...",
                             label: "Commentaire",
+                            controller: commentaireController,
                             isArea: true),
                         SizedBox(
                           height: 24,
@@ -106,6 +139,15 @@ class AjouterAvis extends StatelessWidget {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
+                      print("Laisser un avis");
+                      print("Titre: ${titreController.text}");
+                      print("Commentaire: ${commentaireController.text}");
+                      print("Note: ${ratingNotifier.value}");
+                      utilisateurDest.then((value) {
+                        print("idUtilisateur: ${value.idUtilisateur}");
+                        print("pseudoUtilisateur: ${value.nomUtilisateur}");
+                        AvisBD.ajouterAvisAnnonce(widget.annonce.idAnnonce, value.idUtilisateur, titreController.text, commentaireController.text, ratingNotifier.value);
+                      });
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(

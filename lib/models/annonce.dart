@@ -20,6 +20,7 @@ class Annonce {
   bool isSaved;
   List<Uint8List> images = [];
   List<String> categories = [];
+  bool avisLaisse;
 
   static const int EN_COURS = 0;
   static const int AIDE_PLANIFIEE = 1;
@@ -71,6 +72,7 @@ class Annonce {
     required this.utilisateur,
     this.isSaved = false,
     this.prixAnnonce,
+    this.avisLaisse = false,
   });
 
   factory Annonce.fromJson(Map<String, dynamic> json) {
