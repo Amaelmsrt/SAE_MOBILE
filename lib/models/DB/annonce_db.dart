@@ -78,7 +78,8 @@ class AnnonceDB {
     }
   }
 
-  static Future<Annonce> _createAnnonceFromResponse(Map<String, dynamic> annonceData) async {
+  static Future<Annonce> _createAnnonceFromResponse(
+      Map<String, dynamic> annonceData) async {
     Annonce annonce = Annonce.fromJson({...annonceData});
 
     final photos = await supabase
@@ -256,7 +257,6 @@ class AnnonceDB {
           .select('idannonce')
           .eq('idutilisateur', myUUID);
 
-
       List<String> idAnnonces = [];
 
       responseEnregistrer.forEach((element) {
@@ -275,7 +275,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-         nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         return nouvelleAnnonce;
       }).toList();
@@ -294,7 +294,8 @@ class AnnonceDB {
       String? myUUID = await UserBD.getMyUUID();
       final responseAnnonce = await supabase
           .from('annonce')
-          .select('idannonce, titreannonce, esturgente, prix_annonce, etatannonce, dateaideannonce')
+          .select(
+              'idannonce, titreannonce, esturgente, prix_annonce, etatannonce, dateaideannonce')
           .eq('idutilisateur', myUUID)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
@@ -314,9 +315,10 @@ class AnnonceDB {
     }
   }
 
-  static void aiderAnnonce(String idAnnonce, String idObj, String commentaire) async{
+  static void aiderAnnonce(
+      String idAnnonce, String idObj, String commentaire) async {
     // on ajoute dans la table aider
-    // idannonce, idobjet, commentaire, 
+    // idannonce, idobjet, commentaire,
 
     try {
       final response = await supabase.from('aider').insert([
@@ -332,11 +334,36 @@ class AnnonceDB {
 
       // on va mettre a jour le status dans objet
 
-      final responseObjet = await supabase.from('objet').update({
-        'statutobjet': Objet.RESERVE
-      }).eq('idobjet', idObj);
+      final responseObjet = await supabase
+          .from('objet')
+          .update({'statutobjet': Objet.RESERVE}).eq('idobjet', idObj);
     } catch (e) {
       print('Erreur lors de l\'aide de l\'annonce: $e');
     }
+  }
+
+  static Future<List<String>> findAnnonces(String word) async {
+    List<String> annonces = [];
+    final response = await supabase
+        .from('annonce')
+        .select('titreannonce')
+        .ilike('titreannonce', '%$word%')
+        .limit(10) as List;
+    
+    for (var annonce in response) {
+      annonces.add(annonce['titreannonce']);
+    }
+
+    return annonces;
+  }
+
+  static Future<Annonce> fetchAnnonceByTitle(String title) async {
+    final response = await supabase
+        .from('annonce')
+        .select('*')
+        .eq('titreannonce', title)
+        .limit(1) as List;
+
+    return _createAnnonceFromResponse(response[0]);
   }
 }
