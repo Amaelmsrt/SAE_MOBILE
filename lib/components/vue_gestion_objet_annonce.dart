@@ -40,7 +40,7 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
         case Annonce.ANNULEE:
           return "Voir les modalités";
         case Annonce.CLOTUREES:
-          return widget.annonce!.avisLaisse ? "Vous avez laissé un avis" : "Laisser un avis";
+          return widget.annonce!.avisLaisse ? "Voir mon avis" : "Laisser un avis";
         default:
           return "Modifier l'annonce";
       }

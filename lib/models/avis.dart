@@ -2,7 +2,7 @@
 import 'package:allo/models/Utilisateur.dart';
 
 class Avis {
-  int idAvis;
+  String idAvis;
   String titreAvis;
   int noteAvis;
   String messageAvis;
@@ -40,17 +40,3 @@ class Avis {
     };
   }
 }
-// //ancienne version à adapter
-// class Avis{
-//   String? imagePath;
-//   String pseudo, commentaire, date;
-//   int nbEtoiles;
-
-//   Avis({
-//     this.imagePath,
-//     required this.pseudo,
-//     required this.commentaire,
-//     required this.date,
-//     required this.nbEtoiles,
-//   }); 
-// }
