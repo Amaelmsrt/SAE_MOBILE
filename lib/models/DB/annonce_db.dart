@@ -304,6 +304,17 @@ class AnnonceDB {
 
         nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
+        // on va regarder dans la table avis si l'annonce a été notée (si idannonce est present dans la table avis)
+
+        final responseAvis = await supabase
+            .from('avis')
+            .select('idannonce')
+            .eq('idannonce', nouvelleAnnonce.idAnnonce);
+
+        if (responseAvis.length > 0) {
+          nouvelleAnnonce.avisLaisse = true;
+        }
+
         return nouvelleAnnonce;
       }).toList();
 
