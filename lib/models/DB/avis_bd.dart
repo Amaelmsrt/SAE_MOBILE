@@ -11,8 +11,8 @@ class AvisBD{
     double noteMoyenne = 0.0;
 
     for (var avis in response) {
-      nbAvis++;
-      noteMoyenne += avis['note'];
+      nbAvis++;             
+      noteMoyenne += avis['noteavis'];
     }
 
     if (nbAvis > 0) {
@@ -23,5 +23,26 @@ class AvisBD{
       'nbAvis': nbAvis,
       'noteMoyenne': noteMoyenne,
     };
+  }
+
+  static void ajouterAvisAnnonce(String idAnnonce, String idUtilisateur, String titreAvis, String commentaireAvis, int noteAvis) async{
+    // on doit mettre à jour la table avis
+    // titreavis, noteavis, messageavis, idutilisateur_dest, idannonce, idutilisateur_dest (qui vaudra idutilisateur)
+
+    try {
+      final response = await supabase.from('avis').insert([
+        {
+          'titreavis': titreAvis,
+          'noteavis': noteAvis,
+          'messageavis': commentaireAvis,
+          'idutilisateur_dest': idUtilisateur,
+          'idannonce': idAnnonce,
+        }
+      ]);
+
+      print('Response avis: $response');
+    } catch (e) {
+      print('Erreur lors de l\'ajout de l\'avis: $e');
+    }
   }
 }

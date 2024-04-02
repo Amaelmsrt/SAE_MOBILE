@@ -1,13 +1,14 @@
 import 'package:allo/constants/app_colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class StarPicker extends StatefulWidget {
-  final Function(int) onRatingChanged;
+  ValueNotifier<int> ratingNotifier;
   String? label;
 
   StarPicker({
-    required this.onRatingChanged,
+    required this.ratingNotifier,
     this.label,
   });
 
@@ -45,7 +46,7 @@ class _StarPickerState extends State<StarPicker> {
                 onPressed: () {
                   setState(() {
                     _rating = i;
-                    widget.onRatingChanged(_rating);
+                    widget.ratingNotifier.value = i;
                   });
                 },
               ),

@@ -1,12 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:allo/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ResumeAnnonce extends StatelessWidget{
-  String imagePath;
+  Uint8List image;
   String title;
   String description;
 
-  ResumeAnnonce({required this.imagePath, required this.title, required this.description});
+  ResumeAnnonce({required this.image, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +25,8 @@ class ResumeAnnonce extends StatelessWidget{
               // affiche l'image de l'objet avec des bords arrondis
               ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Image.asset(
-                  imagePath,
+                child: Image.memory(
+                  image,
                   width: 65,
                   height: 65,
                   fit: BoxFit.cover,
