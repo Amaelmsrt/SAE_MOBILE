@@ -377,4 +377,30 @@ class AnnonceDB {
 
     return _createAnnonceFromResponse(response[0]);
   }
+
+  static Future<Annonce> getAnnonce(String idAnnonce) async {
+    final response = await supabase
+        .from('annonce')
+        .select('*')
+        .eq('idannonce', idAnnonce)
+        .limit(1) as List;
+
+    return _createAnnonceFromResponse(response[0]);
+  }
+
+  static Future<Annonce> getAnnonceWithUser(String idAnnonce) async {
+    final response = await supabase
+        .from('annonce')
+        .select('*')
+        .eq('idannonce', idAnnonce)
+        .limit(1) as List;
+
+    Annonce annonce = await _createAnnonceFromResponse(response[0]);
+
+    final utilisateur = await UserBD.getUser(response[0]['idutilisateur']);
+
+    annonce.utilisateur = utilisateur;
+
+    return annonce;
+  }
 }

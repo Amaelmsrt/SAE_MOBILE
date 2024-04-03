@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/user_bd.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/objet.dart';
 import 'package:convert/convert.dart';
 import 'package:image_picker/image_picker.dart';
@@ -92,6 +93,22 @@ class ObjetBd {
     } catch (e) {
       print('Erreur lors de la récupération des objets: $e');
       return [];
+    }
+  }
+
+  static Future<Utilisateur?> getProprietaireObjet(String idObjet) async {
+    try {
+      final response = await supabase
+          .from('objet')
+          .select('idutilisateur')
+          .eq('idobjet', idObjet);
+
+      final idUtilisateur = response[0]['idutilisateur'];
+
+      return await UserBD.getUser(idUtilisateur);
+    } catch (e) {
+      print('Erreur lors de la récupération du propriétaire de l\'objet: $e');
+      return null;
     }
   }
 }

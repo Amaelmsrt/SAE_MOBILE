@@ -79,127 +79,135 @@ class _vueMessageState extends State<VueMessage> {
                   mainAxisAlignment: widget.isMine
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
-                  children: (widget.isMine ? [
-                    if (widget.utilisateur.photoDeProfilUtilisateur == null &&
-                        widget.typeMessage != Message.AVIS)
-                      ClipOval(
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: AppColors.lightBlue,
-                          width:
-                              30, // you can adjust width and height to your liking
-                          height:
-                              30, // you can adjust width and height to your liking
-                          child: Text(
-                            widget.utilisateur.nomUtilisateur[0].toUpperCase(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              fontFamily: "NeueRegrade",
+                  children: (widget.isMine
+                      ? [
+                          if (widget.utilisateur.photoDeProfilUtilisateur ==
+                                  null &&
+                              widget.typeMessage != Message.AVIS)
+                            ClipOval(
+                              child: Container(
+                                alignment: Alignment.center,
+                                color: AppColors.lightBlue,
+                                width:
+                                    30, // you can adjust width and height to your liking
+                                height:
+                                    30, // you can adjust width and height to your liking
+                                child: Text(
+                                  widget.utilisateur.nomUtilisateur[0]
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                    fontFamily: "NeueRegrade",
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    if (widget.utilisateur.photoDeProfilUtilisateur != null &&
-                        widget.typeMessage != Message.AVIS)
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: MemoryImage(
-                                widget.utilisateur.photoDeProfilUtilisateur!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    SizedBox(width: 13),
-                    if (widget.typeMessage != Message.DEFAULT)
-                      Flexible(
-                        child: Text(
-                          "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
-                          overflow: TextOverflow.visible,
-                        ),
-                      ),
-                    if (widget.typeMessage == Message.DEFAULT)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        decoration: BoxDecoration(
-                          color: widget.isMine
-                              ? AppColors.lightBlue
-                              : AppColors.lightSecondary,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Flexible(
-                          child: Text(
-                            "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
-                            overflow: TextOverflow.visible,
-                          ),
-                        ),
-                      ),
-                  ].reversed.toList() : [
-                    if (widget.utilisateur.photoDeProfilUtilisateur == null &&
-                        widget.typeMessage != Message.AVIS)
-                      ClipOval(
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: AppColors.lightBlue,
-                          width:
-                              30, // you can adjust width and height to your liking
-                          height:
-                              30, // you can adjust width and height to your liking
-                          child: Text(
-                            widget.utilisateur.nomUtilisateur[0].toUpperCase(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                              fontFamily: "NeueRegrade",
+                          if (widget.utilisateur.photoDeProfilUtilisateur !=
+                                  null &&
+                              widget.typeMessage != Message.AVIS)
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: MemoryImage(widget
+                                      .utilisateur.photoDeProfilUtilisateur!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    if (widget.utilisateur.photoDeProfilUtilisateur != null &&
-                        widget.typeMessage != Message.AVIS)
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: MemoryImage(
-                                widget.utilisateur.photoDeProfilUtilisateur!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    SizedBox(width: 13),
-                    if (widget.typeMessage != Message.DEFAULT)
-                      Flexible(
-                        child: Text(
-                          "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
-                          overflow: TextOverflow.visible,
-                        ),
-                      ),
-                    if (widget.typeMessage == Message.DEFAULT)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        decoration: BoxDecoration(
-                          color: widget.isMine
-                              ? AppColors.lightBlue
-                              : AppColors.lightSecondary,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Flexible(
-                          child: Text(
-                            "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
-                            overflow: TextOverflow.visible,
-                          ),
-                        ),
-                      ),
-                  ]),
+                          SizedBox(width: 13),
+                          if (widget.typeMessage != Message.DEFAULT)
+                            Flexible(
+                              child: Text(
+                                "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
+                          if (widget.typeMessage == Message.DEFAULT)
+                            Container(
+                              padding: EdgeInsets.all(15),
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              decoration: BoxDecoration(
+                                color: widget.isMine
+                                    ? AppColors.lightBlue
+                                    : AppColors.lightSecondary,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Flexible(
+                                child: Text(
+                                  "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ),
+                        ].reversed.toList()
+                      : [
+                          if (widget.utilisateur.photoDeProfilUtilisateur ==
+                                  null &&
+                              widget.typeMessage != Message.AVIS)
+                            ClipOval(
+                              child: Container(
+                                alignment: Alignment.center,
+                                color: AppColors.lightBlue,
+                                width:
+                                    30, // you can adjust width and height to your liking
+                                height:
+                                    30, // you can adjust width and height to your liking
+                                child: Text(
+                                  widget.utilisateur.nomUtilisateur[0]
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 20,
+                                    fontFamily: "NeueRegrade",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (widget.utilisateur.photoDeProfilUtilisateur !=
+                                  null &&
+                              widget.typeMessage != Message.AVIS)
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: MemoryImage(widget
+                                      .utilisateur.photoDeProfilUtilisateur!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          SizedBox(width: 13),
+                          if (widget.typeMessage != Message.DEFAULT)
+                            Flexible(
+                              child: Text(
+                                widget.content,
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
+                          if (widget.typeMessage == Message.DEFAULT)
+                            Container(
+                              padding: EdgeInsets.all(15),
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              decoration: BoxDecoration(
+                                color: widget.isMine
+                                    ? AppColors.lightBlue
+                                    : AppColors.lightSecondary,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Flexible(
+                                child: Text(
+                                  widget.content,
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ),
+                            ),
+                        ]),
                 ),
                 SizedBox(
                   height: widget.typeMessage == Message.DEFAULT ? 0 : 32,
@@ -261,65 +269,79 @@ class _vueMessageState extends State<VueMessage> {
                     widget.aRepondu == false)
                   Row(
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              widget.aRepondu = true;
-                              widget.reponse = false;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 25),
-                            elevation: 0,
-                            backgroundColor: AppColors.lightBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
+                      if (widget.isMine == false)
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                widget.aRepondu = true;
+                                widget.reponse = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 25),
+                              elevation: 0,
+                              backgroundColor: AppColors.lightBlue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Refuser',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: "NeueRegrade",
-                              color: AppColors.dark,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              widget.aRepondu = true;
-                              widget.reponse = true;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 25),
-                            elevation: 0,
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                          child: Text(
-                            'Accepter',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: "NeueRegrade",
-                              color: AppColors.dark,
+                            child: Text(
+                              'Refuser',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "NeueRegrade",
+                                color: AppColors.dark,
+                              ),
                             ),
                           ),
                         ),
-                      )
+                      if (widget.isMine == false) SizedBox(width: 8),
+                      if (widget.isMine == false)
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                widget.aRepondu = true;
+                                widget.reponse = true;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 25),
+                              elevation: 0,
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            child: Text(
+                              'Accepter',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: "NeueRegrade",
+                                color: AppColors.dark,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (widget.isMine == true)
+                        Flexible(
+                          child: Text(
+                            "En attente d'une réponse à votre proposition d'aide.",
+                            style: TextStyle(
+                              color: AppColors.dark,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "NeueRegrade",
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 if (widget.typeMessage == Message.AIDE &&
@@ -328,13 +350,15 @@ class _vueMessageState extends State<VueMessage> {
                     padding: EdgeInsets.all(10),
                     child: Row(
                       children: [
-                        Text(
-                          "Vous avez ${widget.reponse == true ? "accepté" : "refusé"} cette proposition d'aide.",
-                          style: TextStyle(
-                            color: AppColors.dark,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "NeueRegrade",
+                        Flexible(
+                          child: Text(
+                            "${widget.isMine ? "L'utilisateur a " : "Vous avez "}${widget.reponse == true ? "accepté" : "refusé"} cette proposition d'aide.",
+                            style: TextStyle(
+                              color: AppColors.dark,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "NeueRegrade",
+                            ),
                           ),
                         ),
                         SizedBox(width: 10),

@@ -3,17 +3,26 @@ import 'package:allo/components/resume_annonce.dart';
 import 'package:allo/components/user_preview.dart';
 import 'package:allo/components/vue_message.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/message_bd.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
+import 'package:allo/models/message.dart';
+import 'package:allo/models/my_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class PageConversation extends StatelessWidget {
   Utilisateur utilisateur;
+  Annonce annonce;
+  Message? preloadedMessage;
 
-  PageConversation({required this.utilisateur});
+  PageConversation({required this.utilisateur, required this.annonce, this.preloadedMessage});
 
   @override
   Widget build(BuildContext context) {
+    late Future<List<Message>> lesMessages = MessageBD.getMessages(idAnnonce: annonce.idAnnonce);
+
     return Scaffold(
       backgroundColor: AppColors.light,
       body: Stack(
@@ -23,14 +32,53 @@ class PageConversation extends StatelessWidget {
                 EdgeInsets.only(top: 230, bottom: 100, left: 15, right: 15),
             child: Container(
               color: Colors.transparent,
-              child: ListView.builder(
-                reverse: true,
-                itemCount:
-                    20, // Replace with your list of messages
-                itemBuilder: (context, index) {
-                  return index % 3 == 0 ? VueMessage.forDefault(utilisateur: utilisateur,) : index % 2 == 0 ? VueMessage.forAide(utilisateur: utilisateur) : VueMessage.forAvis(utilisateur: utilisateur); // Replace with your message object
-                },
-              ),
+              child:
+                FutureBuilder<List<Message>>(
+                  future: lesMessages,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text("Erreur de connexion"),
+                      );
+                    }
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        Message message = snapshot.data![index];
+                        if (message.typeMessage == Message.DEFAULT){
+                          return VueMessage.forDefault(
+                            utilisateur: message.isMine ? Provider.of<MyUser>(context, listen: false).myUser! : utilisateur,
+                            content: message.contenu,
+                            isMine: message.isMine,
+                            date: message.dateMessage.toString(),
+                            estVu: message.estVu,
+                          );
+                        }
+                        else if (message.typeMessage == Message.AIDE){
+                          return VueMessage.forAide(
+                            utilisateur: message.isMine ? Provider.of<MyUser>(context, listen: false).myUser! : utilisateur,
+                            aRepondu: message.estRepondu,
+                            reponse: message.estAccepte,
+                            isMine: message.isMine,
+                            date: message.dateMessage.toString(),
+                            estVu: message.estVu,
+                          );
+                        }
+                        else {
+                          // a faire
+                          return Container();
+                          //return VueMessage.forAvis(utilisateur: utilisateur, avisLaisse: message,)
+                        }
+                      },
+                    );
+                  },
+                ),
             ),
           ),
           Positioned(
@@ -55,10 +103,10 @@ class PageConversation extends StatelessWidget {
                                 height: 10,
                               ),
                               ResumeAnnonce(
-                                  image: utilisateur.photoDeProfilUtilisateur!,
+                                  image: annonce.images[0],
                                   title:
-                                      "Besoin d'une perceuse pour le 24/07/0245",
-                                  description: "perceuse")
+                                      annonce.titreAnnonce, // Replace with your annonce object
+                                  description: annonce.getEtatStr())
                             ],
                           ));
                     },

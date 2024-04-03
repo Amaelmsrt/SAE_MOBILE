@@ -151,7 +151,7 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                     // Si les données sont chargées, vous pouvez afficher la description de l'annonce
                                     Annonce? annonce = snapshot.data;
                                     return UserPreview(
-                                        utilisateur: annonce!.utilisateur!);
+                                        utilisateur: annonce!.utilisateur!, annonce: widget.annonce,);
                                   }
                                 }),
                             SizedBox(height: 24),

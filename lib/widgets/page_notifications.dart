@@ -4,9 +4,11 @@ import 'package:allo/components/top_selection_menu.dart';
 import 'package:allo/components/vue_notification.dart';
 import 'package:allo/components/vue_notification_message.dart';
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/message_bd.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
+import 'package:allo/models/message.dart';
 import 'package:allo/models/notification.dart';
 import 'package:allo/models/notification_message.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,9 @@ class _HomeState extends State<PageNotifications> {
 
   // fais un exemple de liste avec quelques annonces
   PageController _pageController = PageController();
+
+  late Future<List<Message>> conversations = MessageBD.getConversations();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -78,19 +83,6 @@ class _HomeState extends State<PageNotifications> {
         intitule: "a enregistré votre annonce"),
   ];
 
-  List<NotificationMessage> notifsMessage = [
-    NotificationMessage(
-        pseudo: "Jean",
-        message: "Salut, je suis intéressé par votre annonce",
-        date: "il y a 2 heures",
-        nbNotifs: 2),
-    NotificationMessage(
-        pseudo: "Theo Pavillon",
-        message: "Salut, je suis intéressé par votre annonce",
-        date: "il y a 2 heures",
-        nbNotifs: 2),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -138,24 +130,27 @@ class _HomeState extends State<PageNotifications> {
               ),
                Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
+                child: FutureBuilder<List<Message>>(
+                  future: conversations,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Erreur: ${snapshot.error}');
+                    } else {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          var message = snapshot.data![index];
                           return VueNotificationMessage(
-                            imagePath: notifsMessage[index].imagePath,
-                            pseudo: notifsMessage[index].pseudo,
-                            message: notifsMessage[index].message,
-                            date: notifsMessage[index].date,
-                            nbNotifs: notifsMessage[index].nbNotifs,
+                            message: message,
+                            nbNotifs: 0,
                           );
                         },
-                        childCount: notifsMessage.length,
-                      ),
-                    ),
-                  ],
-                )
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),

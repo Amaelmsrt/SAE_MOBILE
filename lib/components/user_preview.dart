@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/widgets/page_conversation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,8 +11,9 @@ class UserPreview extends StatelessWidget {
   Utilisateur utilisateur;
   String? description;
   bool isTop;
+  Annonce? annonce;
 
-  UserPreview({required this.utilisateur, this.description, this.isTop = false});
+  UserPreview({required this.utilisateur, this.description, this.isTop = false, this.annonce});
 
   @override
   Widget build(BuildContext context) {
@@ -126,13 +128,17 @@ class UserPreview extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
+                          if (annonce == null) {
+                            print("Annonce null");
+                            return;
+                          }
                           // je veux aller sur PageConversation
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => Scaffold(
                                 body:
-                                    PageConversation(utilisateur: utilisateur),
+                                    PageConversation(utilisateur: utilisateur, annonce: annonce!,),
                               ),
                             ),
                           );
