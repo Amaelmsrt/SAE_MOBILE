@@ -10,6 +10,7 @@ import 'package:allo/models/message.dart';
 import 'package:allo/models/my_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PageConversation extends StatefulWidget {
@@ -61,6 +62,8 @@ class _PageConversationState extends State<PageConversation> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       Message message = snapshot.data![index];
+                        String dateFormatee = DateFormat('dd/MM/yyyy à HH:mm')
+                            .format(message.dateMessage);
                       if (message.typeMessage == Message.DEFAULT) {
                         return VueMessage.forDefault(
                           utilisateur: message.isMine
@@ -69,7 +72,7 @@ class _PageConversationState extends State<PageConversation> {
                               : widget.utilisateur,
                           content: message.contenu,
                           isMine: message.isMine,
-                          date: message.dateMessage.toString(),
+                          date: dateFormatee,
                           estVu: message.estVu,
                         );
                       } else if (message.typeMessage == Message.AIDE) {
@@ -82,7 +85,7 @@ class _PageConversationState extends State<PageConversation> {
                           reponse: message.estAccepte,
                           content: message.contenu,
                           isMine: message.isMine,
-                          date: message.dateMessage.toString(),
+                          date: dateFormatee,
                           estVu: message.estVu,
                           idAnnonce: message.annonceConcernee!.idAnnonce,
                         );
