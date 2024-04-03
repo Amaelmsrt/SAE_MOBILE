@@ -1,6 +1,7 @@
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/resume_annonce.dart';
 import 'package:allo/components/user_preview.dart';
+import 'package:allo/components/vue_message.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/Utilisateur.dart';
 import 'package:flutter/material.dart';
@@ -17,20 +18,21 @@ class PageConversation extends StatelessWidget {
       backgroundColor: AppColors.light,
       body: Stack(
         children: [
-          Padding(padding: EdgeInsets.only(top: 230, bottom: 100, left: 15, right: 15),
-          child:
-          Container(
-            color: Colors.red,
-            child: Center(
-              child: Text(
-                'Page de conversation',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          Padding(
+            padding:
+                EdgeInsets.only(top: 230, bottom: 100, left: 15, right: 15),
+            child: Container(
+              color: Colors.transparent,
+              child: ListView.builder(
+                reverse: true,
+                itemCount:
+                    20, // Replace with your list of messages
+                itemBuilder: (context, index) {
+                  return index % 3 == 0 ? VueMessage.forDefault(utilisateur: utilisateur,) : index % 2 == 0 ? VueMessage.forAide(utilisateur: utilisateur) : VueMessage.forAvis(utilisateur: utilisateur); // Replace with your message object
+                },
               ),
             ),
-          ), ),
+          ),
           Positioned(
             top: 45,
             left: 25,
@@ -49,8 +51,14 @@ class PageConversation extends StatelessWidget {
                             children: [
                               UserPreview(
                                   utilisateur: utilisateur, isTop: true),
-                                SizedBox(height: 10,),
-                              ResumeAnnonce(image: utilisateur.photoDeProfilUtilisateur!, title: "Besoin d'une perceuse pour le 24/07/0245", description: "perceuse")
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ResumeAnnonce(
+                                  image: utilisateur.photoDeProfilUtilisateur!,
+                                  title:
+                                      "Besoin d'une perceuse pour le 24/07/0245",
+                                  description: "perceuse")
                             ],
                           ));
                     },
