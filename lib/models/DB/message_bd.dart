@@ -141,10 +141,28 @@ class MessageBD {
       }
 
       messages.sort((a, b) => a.dateMessage.compareTo(b.dateMessage));
-      return messages;
+      return messages.reversed.toList();
     } catch (e) {
       print('Erreur lors de la récupération des messages: $e');
       return [];
+    }
+  }
+
+  static Future<void> sendMessage({required String idAnnonce, required String contenu, required String idReceveur}) async {
+    try {
+      String? myUUID = await UserBD.getMyUUID();
+      final response = await supabase.from('message').insert([
+        {
+          'id_annonce_concernee': idAnnonce,
+          'contenu': contenu,
+          'id_envoyeur': myUUID,
+          'id_receveur': idReceveur,
+        }
+      ]);
+
+      print('Response: $response');
+    } catch (e) {
+      print('Erreur lors de l\'envoi du message: $e');
     }
   }
 }

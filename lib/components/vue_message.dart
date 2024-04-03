@@ -182,8 +182,8 @@ class _vueMessageState extends State<VueMessage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: MemoryImage(widget
-                                      .utilisateur.photoDeProfilUtilisateur!),
+                                  image: MemoryImage(
+                                    widget.utilisateur.photoDeProfilUtilisateur!),
                                   fit: BoxFit.cover,
                                 ),
                               ),
