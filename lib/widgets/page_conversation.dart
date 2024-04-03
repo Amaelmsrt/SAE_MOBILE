@@ -1,4 +1,5 @@
 import 'package:allo/components/custom_text_field.dart';
+import 'package:allo/components/resume_annonce.dart';
 import 'package:allo/components/user_preview.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/Utilisateur.dart';
@@ -16,8 +17,10 @@ class PageConversation extends StatelessWidget {
       backgroundColor: AppColors.light,
       body: Stack(
         children: [
+          Padding(padding: EdgeInsets.only(top: 230, bottom: 100, left: 15, right: 15),
+          child:
           Container(
-            color: Colors.white,
+            color: Colors.red,
             child: Center(
               child: Text(
                 'Page de conversation',
@@ -27,7 +30,7 @@ class PageConversation extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ), ),
           Positioned(
             top: 45,
             left: 25,
@@ -39,12 +42,17 @@ class PageConversation extends StatelessWidget {
                     builder:
                         (BuildContext context, BoxConstraints constraints) {
                       return Positioned(
-                        top: 45,
-                        left: constraints.maxWidth / 2 -
-                            45 / 2, // Center horizontally
-                        child:
-                            UserPreview(utilisateur: utilisateur, isTop: true),
-                      );
+                          top: 45,
+                          left: constraints.maxWidth / 2 -
+                              45 / 2, // Center horizontally
+                          child: Column(
+                            children: [
+                              UserPreview(
+                                  utilisateur: utilisateur, isTop: true),
+                                SizedBox(height: 10,),
+                              ResumeAnnonce(image: utilisateur.photoDeProfilUtilisateur!, title: "Besoin d'une perceuse pour le 24/07/0245", description: "perceuse")
+                            ],
+                          ));
                     },
                   ),
                   Positioned(
@@ -84,8 +92,11 @@ class PageConversation extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: CustomTextField(hint: "Ecrivez votre message...", iconPath: "assets/icons/bulle-message.svg",
-                      sideButtonIconPath: "assets/icons/send-message.svg", sideButtonOnPressed: () {
+                    child: CustomTextField(
+                      hint: "Ecrivez votre message...",
+                      iconPath: "assets/icons/bulle-message.svg",
+                      sideButtonIconPath: "assets/icons/send-message.svg",
+                      sideButtonOnPressed: () {
                         // Send message
                       },
                     ),
