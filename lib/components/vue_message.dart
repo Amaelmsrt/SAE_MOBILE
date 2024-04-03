@@ -389,7 +389,7 @@ class _vueMessageState extends State<VueMessage> {
                       SvgPicture.asset("assets/icons/check.svg"),
                       SizedBox(width: 10),
                       Text(
-                        "Il y a 4 minutes.",
+                        widget.date,
                         style: TextStyle(
                           color: AppColors.dark,
                           fontSize: 14,
@@ -400,7 +400,7 @@ class _vueMessageState extends State<VueMessage> {
                     ]
                   : [
                       Text(
-                        "Il y a 4 minutes.",
+                        widget.date,
                         style: TextStyle(
                           color: AppColors.dark,
                           fontSize: 14,

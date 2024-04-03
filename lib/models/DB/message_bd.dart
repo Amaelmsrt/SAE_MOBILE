@@ -43,10 +43,10 @@ class MessageBD {
         newMessage.isMine = isMine;
         newMessage.annonceConcernee =
             await AnnonceDB.getAnnonceWithUser(element['id_annonce_concernee']);
-        if (!isMine) {
           newMessage.utilisateurEnvoyeur =
+              await UserBD.getUser(element["id_envoyeur"]);
+          newMessage.utilisateurReceveur =
               await UserBD.getUser(element["id_receveur"]);
-        }
 
         String idannonce = element[
             "id_annonce_concernee"]; // Replace with your conversation ID

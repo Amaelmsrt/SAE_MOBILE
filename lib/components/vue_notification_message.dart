@@ -21,7 +21,7 @@ class VueNotificationMessage extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => Scaffold(
                 body: PageConversation(utilisateur: message.isMine
-                    ? message.annonceConcernee!.utilisateur!
+                    ? message.utilisateurReceveur!
                     : message.utilisateurEnvoyeur!, annonce: message.annonceConcernee!, preloadedMessage: message),
               ),
             ),
@@ -32,8 +32,7 @@ class VueNotificationMessage extends StatelessWidget {
             Row(
               children: [
                 if (message.isMine &&
-                        message.annonceConcernee!.utilisateur!
-                                .photoDeProfilUtilisateur ==
+                        message.utilisateurReceveur!.photoDeProfilUtilisateur ==
                             null ||
                     !message.isMine &&
                         message.utilisateurEnvoyeur!.photoDeProfilUtilisateur ==
@@ -48,7 +47,7 @@ class VueNotificationMessage extends StatelessWidget {
                           60, // you can adjust width and height to your liking
                       child: Text(
                         message.isMine
-                            ? message.annonceConcernee!.utilisateur!
+                            ? message.utilisateurReceveur!
                                 .nomUtilisateur[0]
                                 .toUpperCase()
                             : message.utilisateurEnvoyeur!.nomUtilisateur[0]
@@ -62,8 +61,7 @@ class VueNotificationMessage extends StatelessWidget {
                     ),
                   ),
                 if (message.isMine &&
-                        message.annonceConcernee!.utilisateur!
-                                .photoDeProfilUtilisateur !=
+                        message.utilisateurReceveur!.photoDeProfilUtilisateur !=
                             null ||
                     !message.isMine &&
                         message.utilisateurEnvoyeur!.photoDeProfilUtilisateur !=
@@ -75,7 +73,7 @@ class VueNotificationMessage extends StatelessWidget {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: MemoryImage(message.isMine
-                            ? message.annonceConcernee!.utilisateur!
+                            ? message.utilisateurReceveur!
                                 .photoDeProfilUtilisateur!
                             : message.utilisateurEnvoyeur!
                                 .photoDeProfilUtilisateur!),
@@ -93,7 +91,7 @@ class VueNotificationMessage extends StatelessWidget {
                         Text(
                           message.isMine
                               ? message
-                                  .annonceConcernee!.utilisateur!.nomUtilisateur
+                                  .utilisateurReceveur!.nomUtilisateur
                               : message.utilisateurEnvoyeur!.nomUtilisateur,
                           style: TextStyle(
                             fontSize: 16,

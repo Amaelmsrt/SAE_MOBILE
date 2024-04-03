@@ -12,6 +12,7 @@ class Message{
   final DateTime dateMessage;
   final String contenu;
   Utilisateur? utilisateurEnvoyeur;
+  Utilisateur? utilisateurReceveur;
   Annonce? annonceConcernee;
   bool estVu;
   bool isMine;
