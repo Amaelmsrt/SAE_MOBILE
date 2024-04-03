@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:allo/models/Utilisateur.dart';
@@ -306,14 +307,35 @@ class AnnonceDB {
         nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
 
         // on va regarder dans la table avis si l'annonce a été notée (si idannonce est present dans la table avis)
+        int etatAnnonce = annonce['etatannonce'];
 
-        final responseAvis = await supabase
-            .from('avis')
-            .select('idannonce')
-            .eq('idannonce', nouvelleAnnonce.idAnnonce);
+        // on va vérifier si le statut de l'annonce est Aide Planifiée et que la date est passée
+        bool mettreAJourCloture = etatAnnonce == Annonce.AIDE_PLANIFIEE &&
+            DateTime.parse(annonce['dateaideannonce'])
+                .isBefore(DateTime.now());
 
-        if (responseAvis.length > 0) {
-          nouvelleAnnonce.avisLaisse = true;
+        if (mettreAJourCloture) {
+          nouvelleAnnonce.etatAnnonce = Annonce.CLOTUREES;
+          // nouvelleAnnonce.avisLaisse = false; pas besoin de le mettre car c'est par défaut
+        
+          // on va mettre à jour l'etat sur la bd sans faire de await car on s'en fout on connait déjà l'état
+          final responseUpdate = await supabase
+              .from('annonce')
+              .update({'etatannonce': Annonce.CLOTUREES})
+              .eq('idannonce', nouvelleAnnonce.idAnnonce);
+
+          print('Response update: $responseUpdate');
+        } 
+
+        if (etatAnnonce == Annonce.CLOTUREES){
+          final responseAvis = await supabase
+              .from('avis')
+              .select('idannonce')
+              .eq('idannonce', nouvelleAnnonce.idAnnonce);
+
+          if (responseAvis.length > 0) {
+            nouvelleAnnonce.avisLaisse = true;
+          }
         }
 
         return nouvelleAnnonce;
@@ -350,6 +372,27 @@ class AnnonceDB {
           .update({'statutobjet': Objet.RESERVE}).eq('idobjet', idObj);
     } catch (e) {
       print('Erreur lors de l\'aide de l\'annonce: $e');
+    }
+  }
+
+  static void repondreAide({required String idAnnonce, required bool accepter}) async {
+    try {
+      final response = await supabase
+          .from('aider')
+          .update({'estaccepte': accepter, 'estRepondu': true})
+          .eq('idannonce', idAnnonce);
+
+      print('Response aide: $response');
+
+      // on va aussi faire une maj de l'annonce pour changer son etatannonce
+      final responseAnnonce = await supabase
+          .from('annonce')
+          .update({'etatannonce': accepter ? 1 : 0})
+          .eq('idannonce', idAnnonce);
+
+      print('Response annonce: $responseAnnonce');
+    } catch (e) {
+      print('Erreur lors de la réponse à l\'aide: $e');
     }
   }
 

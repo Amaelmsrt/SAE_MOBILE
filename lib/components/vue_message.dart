@@ -1,4 +1,5 @@
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/message.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,9 @@ class VueMessage extends StatefulWidget {
   bool? aRepondu;
   bool? reponse;
 
+  // for avis/aide message
+  String? idAnnonce;
+
   VueMessage.forDefault({
     required this.utilisateur,
     this.content =
@@ -37,6 +41,7 @@ class VueMessage extends StatefulWidget {
     this.date = "Il y a 4 minutes.",
     this.estVu = false,
     this.isMine = false,
+    required this.idAnnonce,
   }) : typeMessage = Message.AVIS; // Value for Avis
 
   VueMessage.forAide({
@@ -48,6 +53,7 @@ class VueMessage extends StatefulWidget {
     this.date = "Il y a 4 minutes.",
     this.estVu = false,
     this.isMine = false,
+    required this.idAnnonce,
   }) : typeMessage = Message.AIDE; // Value for Aide
 
   @override
@@ -273,6 +279,7 @@ class _vueMessageState extends State<VueMessage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
+                              AnnonceDB.repondreAide(accepter: false, idAnnonce:widget.idAnnonce!);
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = false;
@@ -304,6 +311,7 @@ class _vueMessageState extends State<VueMessage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
+                              AnnonceDB.repondreAide(accepter: true, idAnnonce:widget.idAnnonce!);
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = true;

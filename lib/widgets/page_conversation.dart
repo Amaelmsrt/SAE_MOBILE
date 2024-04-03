@@ -69,6 +69,7 @@ class PageConversation extends StatelessWidget {
                             isMine: message.isMine,
                             date: message.dateMessage.toString(),
                             estVu: message.estVu,
+                            idAnnonce: message.annonceConcernee!.idAnnonce,
                           );
                         }
                         else {
