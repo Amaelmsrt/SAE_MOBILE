@@ -24,7 +24,7 @@ class _MesObjetsState extends State<MesObjets> {
     // TODO: implement initState
     super.initState();
     Future.delayed(Duration.zero, () {
-      Provider.of<AppBarTitle>(context, listen: false).setTitle('Mes annonces');
+      Provider.of<AppBarTitle>(context, listen: false).setTitle('Mes objets');
     });
   }
 

@@ -59,7 +59,7 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
                             label: "Description de l'objet",
                             isArea: true, controller: descriptionObjet),
                          ListingCategories(
-                          listeningToStrings: [texteObjet],
+                          listeningToStrings: [texteObjet, descriptionObjet],
                           isSelectable: true,
                           isExpandable: true,
                           selectedCategoriesNotifier: categorieObjet,

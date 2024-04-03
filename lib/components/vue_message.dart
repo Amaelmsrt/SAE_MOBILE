@@ -122,7 +122,7 @@ class _vueMessageState extends State<VueMessage> {
                           if (widget.typeMessage != Message.DEFAULT)
                             Flexible(
                               child: Text(
-                                "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
+                               widget.content,
                                 overflow: TextOverflow.visible,
                               ),
                             ),
@@ -138,7 +138,7 @@ class _vueMessageState extends State<VueMessage> {
                               ),
                               child: Flexible(
                                 child: Text(
-                                  "Le commentaire de l’autre qui souhaite t’aider car il a vu que il pourrait être intéréssé pour t'aider hihihi",
+                                  widget.content,
                                   overflow: TextOverflow.visible,
                                 ),
                               ),
@@ -161,7 +161,7 @@ class _vueMessageState extends State<VueMessage> {
                                       .toUpperCase(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 20,
+                                    fontSize: 10,
                                     fontFamily: "NeueRegrade",
                                   ),
                                 ),

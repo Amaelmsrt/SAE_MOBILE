@@ -337,7 +337,7 @@ class AnnonceDB {
           'idannonce': idAnnonce,
           'idobjet': idObj,
           'commentaire': commentaire,
-          'estAccepte': false
+          'estaccepte': false
         }
       ]);
 

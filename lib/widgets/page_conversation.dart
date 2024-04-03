@@ -65,6 +65,7 @@ class PageConversation extends StatelessWidget {
                             utilisateur: message.isMine ? Provider.of<MyUser>(context, listen: false).myUser! : utilisateur,
                             aRepondu: message.estRepondu,
                             reponse: message.estAccepte,
+                            content: message.contenu,
                             isMine: message.isMine,
                             date: message.dateMessage.toString(),
                             estVu: message.estVu,
