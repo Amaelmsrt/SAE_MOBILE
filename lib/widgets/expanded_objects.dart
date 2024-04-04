@@ -19,7 +19,8 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
   String objectBeingAnimated = "";
   TextEditingController searchController = TextEditingController();
 
-  late Future<List<Objet>> lesObjets = ObjetBd.getMesObjets(onlyDisponibles: true);
+  late Future<List<Objet>> lesObjets =
+      ObjetBd.getMesObjets(onlyDisponibles: true);
 
   Objet? objetSelectionneLocal = null;
 
@@ -64,79 +65,84 @@ class _ExpandedObjectsState extends State<ExpandedObjects> {
                             return Center(child: CircularProgressIndicator());
                           } else {
                             return ListView(
-  children: snapshot.data!.map<Widget>((obj) {
-    bool isSelected =
-        (objetSelectionneLocal != null) &&
-            (obj.idObjet ==
-                objetSelectionneLocal!.idObjet);
-    if (searchController.text.isNotEmpty &&
-        !obj.nomObjet.toLowerCase().contains(
-            searchController.text.toLowerCase()))
-      return Container();
-    return GestureDetector(
-      onTap: () {
-        // Handle tap
-        setState(() {
-          if (objetSelectionneLocal != null && objetSelectionneLocal!.idObjet == obj.idObjet)
-            objetSelectionneLocal = null;
-          else
-            objetSelectionneLocal = obj;
-        });
-      },
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        margin: EdgeInsets.only(bottom: 10.0),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary
-              : Colors.transparent,
-          borderRadius:
-              BorderRadius.circular(10.0),
-        ),
-        padding: EdgeInsets.symmetric(
-            vertical: 8.0, horizontal: 10.0),
-        child: Row(
-          children: <Widget>[
-            // affiche l'image de l'objet avec des bords arrondis
-            ClipRRect(
-              borderRadius: BorderRadius.all(
-                  Radius.circular(10)),
-              child: Image.memory(
-                obj.photoObjet,
-                width: 65,
-                height: 65,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(
-              width: 12,
-            ),
-            Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
-                Text(obj.nomObjet,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      fontFamily: "NeueRegrade",
-                      color: AppColors.dark,
-                    )),
-                Text(obj.descriptionObjet,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      fontFamily: "NeueRegrade",
-                      color: AppColors.dark,
-                    )),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }).toList(),
-);
+                              children: snapshot.data!.map<Widget>((obj) {
+                                bool isSelected =
+                                    (objetSelectionneLocal != null) &&
+                                        (obj.idObjet ==
+                                            objetSelectionneLocal!.idObjet);
+                                if (searchController.text.isNotEmpty &&
+                                    !obj.nomObjet.toLowerCase().contains(
+                                        searchController.text.toLowerCase()))
+                                  return Container();
+                                return GestureDetector(
+                                  onTap: () {
+                                    // Handle tap
+                                    setState(() {
+                                      if (objetSelectionneLocal != null &&
+                                          objetSelectionneLocal!.idObjet ==
+                                              obj.idObjet)
+                                        objetSelectionneLocal = null;
+                                      else
+                                        objetSelectionneLocal = obj;
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 300),
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 10.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        // affiche l'image de l'objet avec des bords arrondis
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          child: Image.memory(
+                                            obj.photoObjet,
+                                            width: 65,
+                                            height: 65,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 12,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(obj.nomObjet,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                    fontFamily: "NeueRegrade",
+                                                    color: AppColors.dark,
+                                                  )),
+                                              Text(obj.descriptionObjet,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 14,
+                                                    fontFamily: "NeueRegrade",
+                                                    color: AppColors.dark,
+                                                  )),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
                           }
                         },
                       ),

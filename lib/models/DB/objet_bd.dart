@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/user_bd.dart';
+import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/objet.dart';
 import 'package:convert/convert.dart';
 import 'package:image_picker/image_picker.dart';
@@ -55,8 +57,53 @@ class ObjetBd {
     }
   }
 
-  static Future<List<Objet>> getMesObjets({onlyDisponibles = false}) async {
+  // on va aller faire le lien avec la table aider pour trouver l'annonce qui correspond à chaque objet
+  // ensuite on va regarder si l'etat de l'annonce est Annonce.CLOTUREES
+  // si oui on va remettre le statut de l'objet à DISPONIBLE
+  static Future<void> majStatusObjet() async {
+    // on va get tous les objets de l'utilisateur qui sont reserves
     try {
+      String? myUUID = await UserBD.getMyUUID();
+
+      final response = await supabase
+          .from('objet')
+          .select('idobjet')
+          .eq('idutilisateur', myUUID)
+          .eq('statutobjet', Objet.RESERVE);
+
+      for (var objet in response) {
+        final idObjet = objet['idobjet'];
+
+        final responseAider = await supabase
+            .from('aider')
+            .select('idannonce')
+            .eq('idobjet', idObjet);
+
+        for (var aider in responseAider) {
+          final idAnnonce = aider['idannonce'];
+
+          final responseAnnonce = await supabase
+              .from('annonce')
+              .select('etatannonce')
+              .eq('idannonce', idAnnonce);
+
+          if (responseAnnonce[0]['etatannonce'] == Annonce.CLOTUREES) {
+            final responseObjet = await supabase
+                .from('objet')
+                .update({'statutobjet': Objet.DISPONIBLE})
+                .eq('idobjet', idObjet);
+          }
+        }
+      }
+    } catch (e) {
+      print('Erreur lors de la mise à jour du statut de l\'objet: $e');
+    }
+  }
+
+  static Future<List<Objet>> getMesObjets({onlyDisponibles = false, onlyReserves = false}) async {
+    try {
+      await majStatusObjet();
+
       String? myUUID = await UserBD.getMyUUID();
 
       var query = supabase
@@ -66,6 +113,10 @@ class ObjetBd {
 
       if (onlyDisponibles) {
         query = query.eq('statutobjet', Objet.DISPONIBLE);
+      }
+
+      if (onlyReserves) {
+        query = query.eq('statutobjet', Objet.RESERVE);
       }
 
       final response = await query;
@@ -92,6 +143,22 @@ class ObjetBd {
     } catch (e) {
       print('Erreur lors de la récupération des objets: $e');
       return [];
+    }
+  }
+
+  static Future<Utilisateur?> getProprietaireObjet(String idObjet) async {
+    try {
+      final response = await supabase
+          .from('objet')
+          .select('idutilisateur')
+          .eq('idobjet', idObjet);
+
+      final idUtilisateur = response[0]['idutilisateur'];
+
+      return await UserBD.getUser(idUtilisateur);
+    } catch (e) {
+      print('Erreur lors de la récupération du propriétaire de l\'objet: $e');
+      return null;
     }
   }
 }

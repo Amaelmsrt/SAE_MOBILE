@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:allo/models/Utilisateur.dart';
@@ -114,6 +115,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .not('idutilisateur', 'eq', myUUID)
+          .eq('etatannonce', Annonce.EN_COURS)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
 
@@ -202,6 +204,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .eq('esturgente', true)
+          .eq('etatannonce', Annonce.EN_COURS)
           .not('idutilisateur', 'eq', myUUID)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
@@ -228,6 +231,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .not('idutilisateur', 'eq', myUUID)
+          .eq('etatannonce', Annonce.EN_COURS)
           .order('idannonce', ascending: false)
           .limit(5);
       print('Response Annonce: $responseAnnonce');
@@ -287,7 +291,35 @@ class AnnonceDB {
     }
   }
 
-  static Future<List<Annonce>> getMesAnnonces() async {
+  static Future<bool> majStatutAnnonceCloturee(String idAnnonce) async {
+    try {
+      final response = await supabase
+          .from('annonce')
+          .select('etatannonce, dateaideannonce')
+          .eq('idannonce', idAnnonce);
+
+      int etatAnnonce = response[0]['etatannonce'];
+      DateTime dateAideAnnonce = DateTime.parse(response[0]['dateaideannonce']);
+
+      if (etatAnnonce == Annonce.AIDE_PLANIFIEE &&
+          dateAideAnnonce.isBefore(DateTime.now())) {
+        final responseUpdate = await supabase
+            .from('annonce')
+            .update({'etatannonce': Annonce.CLOTUREES})
+            .eq('idannonce', idAnnonce);
+        
+
+        print('Response update: $responseUpdate');
+        return true;
+      }
+      print('Response annonce: $response');
+    } catch (e) {
+      print('Erreur lors de la mise à jour de l\'annonce: $e');
+    }
+    return false;
+  }
+
+  static Future<List<Annonce>> getMesAnnonces({bool forMessage=false}) async {
     // on veut juste connaitre l'image de l'annonce, le titre et son etatannonce
 
     try {
@@ -303,17 +335,30 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+        if (!forMessage){
+          nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+        }
 
         // on va regarder dans la table avis si l'annonce a été notée (si idannonce est present dans la table avis)
+        int etatAnnonce = annonce['etatannonce'];
 
-        final responseAvis = await supabase
-            .from('avis')
-            .select('idannonce')
-            .eq('idannonce', nouvelleAnnonce.idAnnonce);
+        // on va vérifier si le statut de l'annonce est Aide Planifiée et que la date est passée
+        bool mettreAJourCloture = await majStatutAnnonceCloturee(nouvelleAnnonce.idAnnonce);
 
-        if (responseAvis.length > 0) {
-          nouvelleAnnonce.avisLaisse = true;
+        if (mettreAJourCloture) {
+          nouvelleAnnonce.etatAnnonce = Annonce.CLOTUREES;
+          // nouvelleAnnonce.avisLaisse = false; pas besoin de le mettre car c'est par défaut
+        } 
+
+        if (etatAnnonce == Annonce.CLOTUREES){
+          final responseAvis = await supabase
+              .from('avis')
+              .select('idannonce')
+              .eq('idannonce', nouvelleAnnonce.idAnnonce);
+
+          if (responseAvis.length > 0) {
+            nouvelleAnnonce.avisLaisse = true;
+          }
         }
 
         return nouvelleAnnonce;
@@ -337,7 +382,7 @@ class AnnonceDB {
           'idannonce': idAnnonce,
           'idobjet': idObj,
           'commentaire': commentaire,
-          'estAccepte': false
+          'estaccepte': false
         }
       ]);
 
@@ -350,6 +395,27 @@ class AnnonceDB {
           .update({'statutobjet': Objet.RESERVE}).eq('idobjet', idObj);
     } catch (e) {
       print('Erreur lors de l\'aide de l\'annonce: $e');
+    }
+  }
+
+  static void repondreAide({required String idAnnonce, required bool accepter}) async {
+    try {
+      final response = await supabase
+          .from('aider')
+          .update({'estaccepte': accepter, 'estRepondu': true})
+          .eq('idannonce', idAnnonce);
+
+      print('Response aide: $response');
+
+      // on va aussi faire une maj de l'annonce pour changer son etatannonce
+      final responseAnnonce = await supabase
+          .from('annonce')
+          .update({'etatannonce': accepter ? 1 : 0})
+          .eq('idannonce', idAnnonce);
+
+      print('Response annonce: $responseAnnonce');
+    } catch (e) {
+      print('Erreur lors de la réponse à l\'aide: $e');
     }
   }
 
@@ -376,5 +442,31 @@ class AnnonceDB {
         .limit(1) as List;
 
     return _createAnnonceFromResponse(response[0]);
+  }
+
+  static Future<Annonce> getAnnonce(String idAnnonce) async {
+    final response = await supabase
+        .from('annonce')
+        .select('*')
+        .eq('idannonce', idAnnonce)
+        .limit(1) as List;
+
+    return _createAnnonceFromResponse(response[0]);
+  }
+
+  static Future<Annonce> getAnnonceWithUser(String idAnnonce) async {
+    final response = await supabase
+        .from('annonce')
+        .select('*')
+        .eq('idannonce', idAnnonce)
+        .limit(1) as List;
+
+    Annonce annonce = await _createAnnonceFromResponse(response[0]);
+
+    final utilisateur = await UserBD.getUser(response[0]['idutilisateur']);
+
+    annonce.utilisateur = utilisateur;
+
+    return annonce;
   }
 }

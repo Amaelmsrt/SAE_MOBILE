@@ -63,7 +63,8 @@ class _ObjectPickerState extends State<ObjectPicker> {
                     SizedBox(
                       width: 12,
                     ),
-                    Column(
+                    Expanded(child: 
+                       Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(value.nomObjet,
@@ -81,6 +82,7 @@ class _ObjectPickerState extends State<ObjectPicker> {
                               color: AppColors.dark,
                             )),
                       ],
+                    )
                     )
                   ],
                 ),

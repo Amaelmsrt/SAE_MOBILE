@@ -88,23 +88,29 @@ class _MesAvisState extends State<MesAvis> {
                   print("data");
                   print(snapshot.data);
                   return Expanded(
-                      child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final dateFormat = DateFormat('dd-MM-yyyy HH:mm');
-                      final formattedDate = dateFormat.format(snapshot.data![index].dateAvis);
+                    child: ListView.separated(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final dateFormat = DateFormat('dd-MM-yyyy HH:mm');
+                        final formattedDate =
+                            dateFormat.format(snapshot.data![index].dateAvis);
 
-                      return VueAvis(
-                        image: snapshot
-                            .data![index].utilisateur.photoDeProfilUtilisateur,
-                        pseudo:
-                            snapshot.data![index].utilisateur.nomUtilisateur,
-                        commentaire: snapshot.data![index].messageAvis,
-                        date: formattedDate,
-                        nbEtoiles: snapshot.data![index].noteAvis,
-                      );
-                    },
-                  ));
+                        return VueAvis(
+                          image: snapshot.data![index].utilisateur
+                              .photoDeProfilUtilisateur,
+                          pseudo:
+                              snapshot.data![index].utilisateur.nomUtilisateur,
+                          commentaire: snapshot.data![index].messageAvis,
+                          date: formattedDate,
+                          nbEtoiles: snapshot.data![index].noteAvis,
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SizedBox(
+                            height: 32); // Adjust the height as needed
+                      },
+                    ),
+                  );
                 }
               },
             )

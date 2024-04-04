@@ -1,6 +1,7 @@
 import 'package:allo/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart'; // Import your color file
 
 class CustomDatePicker extends StatefulWidget {
   final String? label;
@@ -41,7 +42,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           onTap: () async {
             FocusScope.of(context)
                 .requestFocus(new FocusNode()); // to hide the keyboard
-            final DateTime? picked = await showDatePicker(
+            final DateTime? pickedDate = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
               firstDate: DateTime.now(),
@@ -61,18 +62,44 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 );
               },
             );
-            if (picked != null && picked != selectedDate) {
-              setState(() {
-                selectedDate = picked;
-                print(selectedDate.toLocal());
-                widget.dateNotifier.value = selectedDate;
-              });
+            if (pickedDate != null && pickedDate != selectedDate) {
+              final TimeOfDay? pickedTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+                builder: (BuildContext context, Widget? child) {
+                  return Theme(
+                    data: ThemeData.light().copyWith(
+                      primaryColor:
+                          AppColors.accent, //Change this to your desired color
+                      colorScheme: ColorScheme.light(
+                          primary: AppColors
+                              .accent), //Change this to your desired color
+                      buttonTheme:
+                          ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (pickedTime != null) {
+                setState(() {
+                  selectedDate = DateTime(
+                    pickedDate.year,
+                    pickedDate.month,
+                    pickedDate.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  );
+                  print(selectedDate.toLocal());
+                  widget.dateNotifier.value = selectedDate;
+                });
+              }
             }
           },
           child: AbsorbPointer(
             child: TextField(
               controller: TextEditingController(
-                  text: "${selectedDate.toLocal()}".split(' ')[0]),
+                  text: DateFormat('yyyy-MM-dd – kk:mm').format(selectedDate.toLocal())),
               style: TextStyle(color: AppColors.dark),
               decoration: InputDecoration(
                 hintText: widget.hint,
