@@ -81,6 +81,27 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                             fit: BoxFit.cover,
                           ),
                         ),
+                        if (widget.annonce.estUrgente)
+                          Positioned(
+                            right: 15,
+                            bottom: 15,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppColors.danger,
+                                borderRadius: BorderRadius.circular(500000),
+                              ),
+                              child: Text(
+                                'Urgente',
+                                style: TextStyle(
+                                    color: AppColors.dark,
+                                    fontFamily: "NeueRegrade",
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                     Padding(
@@ -151,7 +172,9 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                     // Si les données sont chargées, vous pouvez afficher la description de l'annonce
                                     Annonce? annonce = snapshot.data;
                                     return UserPreview(
-                                        utilisateur: annonce!.utilisateur!, annonce: widget.annonce,);
+                                      utilisateur: annonce!.utilisateur!,
+                                      annonce: widget.annonce,
+                                    );
                                   }
                                 }),
                             SizedBox(height: 24),
@@ -176,13 +199,42 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                   // Si les données sont chargées, vous pouvez afficher la description de l'annonce
                                   Annonce? annonce = snapshot.data;
                                   return Text(
-                                    (annonce?.descriptionAnnonce?.isNotEmpty ?? false) ? annonce!.descriptionAnnonce! : "Pas de description",
+                                    (annonce?.descriptionAnnonce?.isNotEmpty ??
+                                            false)
+                                        ? annonce!.descriptionAnnonce!
+                                        : "Pas de description",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: "NeueRegrade",
                                     ),
                                   );
+                                }
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            FutureBuilder<Annonce>(
+                              future: fetchDetails,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  // Si les données sont en cours de chargement, vous pouvez retourner un indicateur de chargement
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  // Si une erreur s'est produite, vous pouvez retourner un widget d'erreur
+                                  return Text('Une erreur s\'est produite');
+                                } else {
+                                  // Si les données sont chargées, vous pouvez afficher la description de l'annonce
+                                  Annonce? annonce = snapshot.data;
+                                  String dateFormate = DateFormat('dd/MM/yyyy à HH:mm').format(annonce!.dateAideAnnonce!);
+                                  return Text(
+                                      "Pour le ${dateFormate}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppColors.darkSecondary,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: "NeueRegrade",
+                                      ));
                                 }
                               },
                             ),
@@ -200,7 +252,8 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                 } else {
                                   // Si les données sont chargées, vous pouvez afficher la description de l'annonce
                                   Annonce? annonce = snapshot.data;
-                                  return ListingCategories(lesCategories: annonce!.categories);
+                                  return ListingCategories(
+                                      lesCategories: annonce!.categories);
                                 }
                               },
                             ),
@@ -303,7 +356,8 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                   setState(() {
                                     widget.annonce.isSaved =
                                         !widget.annonce.isSaved;
-                                    AnnonceDB.toggleSaveAnnonce(widget.annonce.idAnnonce);
+                                    AnnonceDB.toggleSaveAnnonce(
+                                        widget.annonce.idAnnonce);
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -347,7 +401,9 @@ class _DetailAnnonceState extends State<DetailAnnonce> {
                                 showModalBottomSheet(
                                   context: context,
                                   builder: (context) {
-                                    return PageAider(annonce: widget.annonce,);
+                                    return PageAider(
+                                      annonce: widget.annonce,
+                                    );
                                   },
                                   isScrollControlled: true,
                                   useRootNavigator: true, // Ajoutez cette ligne

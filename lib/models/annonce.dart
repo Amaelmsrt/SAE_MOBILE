@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:allo/components/add_images.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/Utilisateur.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Annonce {
   String idAnnonce;

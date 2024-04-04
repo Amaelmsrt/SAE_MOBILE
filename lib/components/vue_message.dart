@@ -1,7 +1,9 @@
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/message.dart';
+import 'package:allo/widgets/ajouter_avis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -24,6 +26,9 @@ class VueMessage extends StatefulWidget {
   // for avis/aide message
   String? idAnnonce;
 
+  // for avis
+  Annonce? annonce;
+
   VueMessage.forDefault({
     required this.utilisateur,
     this.content =
@@ -42,6 +47,7 @@ class VueMessage extends StatefulWidget {
     this.estVu = false,
     this.isMine = false,
     required this.idAnnonce,
+    required this.annonce,
   }) : typeMessage = Message.AVIS; // Value for Avis
 
   VueMessage.forAide({
@@ -61,6 +67,13 @@ class VueMessage extends StatefulWidget {
 }
 
 class _vueMessageState extends State<VueMessage> {
+
+  void avisAjoute(){
+    setState(() {
+      widget.avisLaisse = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -128,7 +141,7 @@ class _vueMessageState extends State<VueMessage> {
                           if (widget.typeMessage != Message.DEFAULT)
                             Flexible(
                               child: Text(
-                               widget.content,
+                                widget.content,
                                 overflow: TextOverflow.visible,
                               ),
                             ),
@@ -182,8 +195,8 @@ class _vueMessageState extends State<VueMessage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: MemoryImage(
-                                    widget.utilisateur.photoDeProfilUtilisateur!),
+                                  image: MemoryImage(widget
+                                      .utilisateur.photoDeProfilUtilisateur!),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -225,9 +238,19 @@ class _vueMessageState extends State<VueMessage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                widget.avisLaisse = true;
-                              });
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return AjouterAvis(
+                                    annonce: widget.annonce!,
+                                    descriptionResume:
+                                        widget.content,
+                                    onValider: avisAjoute,
+                                  );
+                                },
+                                isScrollControlled: true,
+                                useRootNavigator: true, // Ajoutez cette ligne
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               shadowColor: Colors.transparent,
@@ -279,7 +302,9 @@ class _vueMessageState extends State<VueMessage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              AnnonceDB.repondreAide(accepter: false, idAnnonce:widget.idAnnonce!);
+                              AnnonceDB.repondreAide(
+                                  accepter: false,
+                                  idAnnonce: widget.idAnnonce!);
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = false;
@@ -311,7 +336,8 @@ class _vueMessageState extends State<VueMessage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              AnnonceDB.repondreAide(accepter: true, idAnnonce:widget.idAnnonce!);
+                              AnnonceDB.repondreAide(
+                                  accepter: true, idAnnonce: widget.idAnnonce!);
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = true;

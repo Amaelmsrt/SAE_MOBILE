@@ -3,6 +3,7 @@ import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/DB/objet_bd.dart';
 import 'package:allo/models/DB/user_bd.dart';
 import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/message.dart';
 import 'package:allo/models/objet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -70,12 +71,37 @@ class MessageBD {
             await ObjetBd.getProprietaireObjet(element['idobjet']);
         newMessage.isMine =
             newMessage.utilisateurEnvoyeur!.idUtilisateur == myUUID;
+        
+        newMessage.utilisateurReceveur = newMessage.annonceConcernee!.utilisateur;
 
         String idannonce =
             element["idannonce"]; // Replace with your conversation ID
         if (!messages.containsKey(idannonce) ||
             messages[idannonce]!.dateMessage.isBefore(newMessage.dateMessage)) {
           messages[idannonce] = newMessage;
+        }
+      }
+
+      final responseMesAnnonces = await AnnonceDB.getMesAnnonces(forMessage: true);
+
+      for (var element in responseMesAnnonces) {
+        if (element.etatAnnonce == Annonce.CLOTUREES){
+          Message newMessage = Message(
+            typeMessage: Message.AVIS,
+            dateMessage: element.dateAideAnnonce!,
+            contenu: "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
+            estVu: false,
+            isMine: true,
+            estRepondu: element.avisLaisse
+          );
+
+          newMessage.annonceConcernee = element;
+
+          String idannonce = element.idAnnonce;
+          if (!messages.containsKey(idannonce) ||
+              messages[idannonce]!.dateMessage.isBefore(newMessage.dateMessage)) {
+            messages[idannonce] = newMessage;
+          }
         }
       }
 
@@ -138,6 +164,26 @@ class MessageBD {
             newMessage.utilisateurEnvoyeur!.idUtilisateur == myUUID;
 
         messages.add(newMessage);
+      }
+
+      final responseMesAnnonces = await AnnonceDB.getMesAnnonces(forMessage:true);
+
+      for (var element in responseMesAnnonces) {
+        if (element.etatAnnonce == Annonce.CLOTUREES && element.idAnnonce == idAnnonce){
+          Message newMessage = Message(
+            typeMessage: Message.AVIS,
+            dateMessage: element.dateAideAnnonce!,
+            contenu: "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
+            estVu: false,
+            isMine: true,
+            estRepondu: element.avisLaisse
+          );
+
+          newMessage.annonceConcernee = element;
+
+          messages.add(newMessage);
+          break;
+        }
       }
 
       messages.sort((a, b) => a.dateMessage.compareTo(b.dateMessage));

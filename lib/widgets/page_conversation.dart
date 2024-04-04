@@ -91,7 +91,16 @@ class _PageConversationState extends State<PageConversation> {
                         );
                       } else {
                         // a faire
-                        return Container();
+                        return VueMessage.forAvis(
+                          utilisateur: widget.utilisateur,
+                          idAnnonce: message.annonceConcernee!.idAnnonce,
+                          content: message.contenu,
+                          isMine: message.isMine,
+                          date: dateFormatee,
+                          estVu: message.estVu,
+                          avisLaisse: message.estRepondu,
+                          annonce: widget.annonce,
+                        );
                         //return VueMessage.forAvis(utilisateur: utilisateur, avisLaisse: message,)
                       }
                     },

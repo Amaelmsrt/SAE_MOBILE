@@ -115,6 +115,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .not('idutilisateur', 'eq', myUUID)
+          .eq('etatannonce', Annonce.EN_COURS)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
 
@@ -203,6 +204,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .eq('esturgente', true)
+          .eq('etatannonce', Annonce.EN_COURS)
           .not('idutilisateur', 'eq', myUUID)
           .order('idannonce', ascending: false);
       print('Response Annonce: $responseAnnonce');
@@ -229,6 +231,7 @@ class AnnonceDB {
           .from('annonce')
           .select('idannonce, titreannonce, esturgente, prix_annonce')
           .not('idutilisateur', 'eq', myUUID)
+          .eq('etatannonce', Annonce.EN_COURS)
           .order('idannonce', ascending: false)
           .limit(5);
       print('Response Annonce: $responseAnnonce');
@@ -288,7 +291,35 @@ class AnnonceDB {
     }
   }
 
-  static Future<List<Annonce>> getMesAnnonces() async {
+  static Future<bool> majStatutAnnonceCloturee(String idAnnonce) async {
+    try {
+      final response = await supabase
+          .from('annonce')
+          .select('etatannonce, dateaideannonce')
+          .eq('idannonce', idAnnonce);
+
+      int etatAnnonce = response[0]['etatannonce'];
+      DateTime dateAideAnnonce = DateTime.parse(response[0]['dateaideannonce']);
+
+      if (etatAnnonce == Annonce.AIDE_PLANIFIEE &&
+          dateAideAnnonce.isBefore(DateTime.now())) {
+        final responseUpdate = await supabase
+            .from('annonce')
+            .update({'etatannonce': Annonce.CLOTUREES})
+            .eq('idannonce', idAnnonce);
+        
+
+        print('Response update: $responseUpdate');
+        return true;
+      }
+      print('Response annonce: $response');
+    } catch (e) {
+      print('Erreur lors de la mise à jour de l\'annonce: $e');
+    }
+    return false;
+  }
+
+  static Future<List<Annonce>> getMesAnnonces({bool forMessage=false}) async {
     // on veut juste connaitre l'image de l'annonce, le titre et son etatannonce
 
     try {
@@ -304,27 +335,19 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+        if (!forMessage){
+          nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
+        }
 
         // on va regarder dans la table avis si l'annonce a été notée (si idannonce est present dans la table avis)
         int etatAnnonce = annonce['etatannonce'];
 
         // on va vérifier si le statut de l'annonce est Aide Planifiée et que la date est passée
-        bool mettreAJourCloture = etatAnnonce == Annonce.AIDE_PLANIFIEE &&
-            DateTime.parse(annonce['dateaideannonce'])
-                .isBefore(DateTime.now());
+        bool mettreAJourCloture = await majStatutAnnonceCloturee(nouvelleAnnonce.idAnnonce);
 
         if (mettreAJourCloture) {
           nouvelleAnnonce.etatAnnonce = Annonce.CLOTUREES;
           // nouvelleAnnonce.avisLaisse = false; pas besoin de le mettre car c'est par défaut
-        
-          // on va mettre à jour l'etat sur la bd sans faire de await car on s'en fout on connait déjà l'état
-          final responseUpdate = await supabase
-              .from('annonce')
-              .update({'etatannonce': Annonce.CLOTUREES})
-              .eq('idannonce', nouvelleAnnonce.idAnnonce);
-
-          print('Response update: $responseUpdate');
         } 
 
         if (etatAnnonce == Annonce.CLOTUREES){
