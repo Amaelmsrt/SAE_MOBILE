@@ -98,6 +98,7 @@ class _HomeState extends State<PageProfil> {
               left: 25,
               child: InkWell(
                 onTap: () {
+                  Provider.of<AppBarTitle>(context, listen: false).setTitle("Mon profil");
                   Navigator.pop(context);
                 },
                 child: Container(
