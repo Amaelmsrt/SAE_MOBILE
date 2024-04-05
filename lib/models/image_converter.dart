@@ -13,4 +13,12 @@ class ImageConverter {
     String base64Image = base64Encode(imageBytes);
     return base64Image;
   }
+
+  static Future<XFile> Uint8ListToXFile(Uint8List image) async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File file = File('$tempPath/image.png');
+    await file.writeAsBytes(image);
+    return XFile(file.path);
+  }
 }

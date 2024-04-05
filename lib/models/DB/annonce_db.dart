@@ -20,8 +20,7 @@ class AnnonceDB {
       DateTime dateAideAnnonce,
       List<String> categorieAnnonce,
       bool estUrgente,
-      double remunerationAnnonce
-      ) async {
+      double remunerationAnnonce) async {
     try {
       String? myUUID = await UserBD.getMyUUID();
       final response = await supabase.from('annonce').insert([
@@ -82,6 +81,80 @@ class AnnonceDB {
     }
   }
 
+  static void modifierAnnonce(
+      List<XFile> images,
+      String titreAnnonce,
+      String descriptionAnnonce,
+      DateTime dateAideAnnonce,
+      List<String> categorieAnnonce,
+      bool estUrgente,
+      double remunerationAnnonce,
+      String idAnnonce) async {
+    try {
+      String? myUUID = await UserBD.getMyUUID();
+      final response = await supabase.from('annonce').update({
+        'titreannonce': titreAnnonce,
+        'descriptionannonce': descriptionAnnonce,
+        'datepubliannonce': DateTime.now().toIso8601String(),
+        'dateaideannonce': dateAideAnnonce.toIso8601String(),
+        'esturgente': estUrgente,
+        'etatannonce': 0,
+        'idutilisateur': myUUID,
+        'prix_annonce': remunerationAnnonce
+      }).eq('idannonce', idAnnonce);
+
+      print('Response annonce: $response');
+
+      // on insère dans photo_annonce
+      // photo: bytea
+      // idannonce: uuid
+
+      // on supprime les anciennes images
+
+      final responseDelete = await supabase
+          .from('photo_annonce')
+          .delete()
+          .eq('idannonce', idAnnonce);
+
+      // on supprime les anciennes categories
+
+      for (var image in images) {
+        Uint8List imageBytes = await image.readAsBytes();
+        // Convertir l'image en une chaîne hexadécimale
+        String hexEncoded = hex.encode(imageBytes);
+
+        // Stocker l'image dans la base de données
+        final responseImage = await supabase.from('photo_annonce').upsert([
+          {
+            'photo': '\\x$hexEncoded', // Préfixer la chaîne hexadécimale par \x
+            'idannonce': idAnnonce,
+          }
+        ]).select('photo');
+
+        // on ne connait que le nom(nomcat) de chaque categorie on doit faire l'association avec l'idcat
+        // puis ajouter dans la tablea categoriser_annonce les idcat et idannonce
+
+        for (var categorie in categorieAnnonce) {
+          final responseCategorie = await supabase
+              .from('categorie')
+              .select('idcat')
+              .eq('nomcat', categorie);
+
+          final idCategorie = responseCategorie[0]['idcat'];
+
+          final responseCategoriserAnnonce =
+              await supabase.from('categoriser_annonce').upsert([
+            {'idcat': idCategorie, 'idannonce': idAnnonce}
+          ]).select('idcat');
+        }
+
+        print("finito");
+      }
+    } catch (e) {
+      print('Erreur lors de la modification de l\'annonce: $e');
+    }
+  }
+
   static Future<Annonce> _createAnnonceFromResponse(
       Map<String, dynamic> annonceData) async {
     Annonce annonce = Annonce.fromJson({...annonceData});
@@ -135,6 +208,35 @@ class AnnonceDB {
       print('Erreur lors de la récupération des annonces: $e');
       return [];
     }
+  }
+
+  static Future<Annonce> fetchAnnonceDetailsWithoutUser(
+      String uuidAnnonce) async {
+    // permet de get la description, la date de publication et l'utilisateur de l'annonce
+    final responseAnnonce =
+        await supabase.from('annonce').select('*').eq('idannonce', uuidAnnonce);
+
+    final annonce = responseAnnonce as List;
+
+    Annonce annonceObj = Annonce.fromJson({...annonce[0]});
+
+    // on va get les categories de l'annonce
+
+    final responseCategories = await supabase
+        .from('categoriser_annonce')
+        .select('idcat')
+        .eq('idannonce', uuidAnnonce) as List;
+
+    for (var categorie in responseCategories) {
+      final responseCategorie = await supabase
+          .from('categorie')
+          .select('nomcat')
+          .eq('idcat', categorie['idcat']) as List;
+
+      annonceObj.categories.add(responseCategorie[0]['nomcat']);
+    }
+
+    return annonceObj;
   }
 
   static Future<Annonce> fetchAnnonceDetails(String uuidAnnonce) async {
@@ -306,11 +408,8 @@ class AnnonceDB {
 
       if (etatAnnonce == Annonce.AIDE_PLANIFIEE &&
           dateAideAnnonce.isBefore(DateTime.now())) {
-        final responseUpdate = await supabase
-            .from('annonce')
-            .update({'etatannonce': Annonce.CLOTUREES})
-            .eq('idannonce', idAnnonce);
-        
+        final responseUpdate = await supabase.from('annonce').update(
+            {'etatannonce': Annonce.CLOTUREES}).eq('idannonce', idAnnonce);
 
         print('Response update: $responseUpdate');
         return true;
@@ -322,7 +421,7 @@ class AnnonceDB {
     return false;
   }
 
-  static Future<List<Annonce>> getMesAnnonces({bool forMessage=false}) async {
+  static Future<List<Annonce>> getMesAnnonces({bool forMessage = false}) async {
     // on veut juste connaitre l'image de l'annonce, le titre et son etatannonce
 
     try {
@@ -338,7 +437,7 @@ class AnnonceDB {
       final annonces = (responseAnnonce as List).map((annonce) async {
         Annonce nouvelleAnnonce = Annonce.fromJson({...annonce});
 
-        if (!forMessage){
+        if (!forMessage) {
           nouvelleAnnonce = await _createAnnonceFromResponse(annonce);
         }
 
@@ -346,14 +445,15 @@ class AnnonceDB {
         int etatAnnonce = annonce['etatannonce'];
 
         // on va vérifier si le statut de l'annonce est Aide Planifiée et que la date est passée
-        bool mettreAJourCloture = await majStatutAnnonceCloturee(nouvelleAnnonce.idAnnonce);
+        bool mettreAJourCloture =
+            await majStatutAnnonceCloturee(nouvelleAnnonce.idAnnonce);
 
         if (mettreAJourCloture) {
           nouvelleAnnonce.etatAnnonce = Annonce.CLOTUREES;
           // nouvelleAnnonce.avisLaisse = false; pas besoin de le mettre car c'est par défaut
-        } 
+        }
 
-        if (etatAnnonce == Annonce.CLOTUREES){
+        if (etatAnnonce == Annonce.CLOTUREES) {
           final responseAvis = await supabase
               .from('avis')
               .select('idannonce')
@@ -401,20 +501,20 @@ class AnnonceDB {
     }
   }
 
-  static void repondreAide({required String idAnnonce, required bool accepter}) async {
+  static void repondreAide(
+      {required String idAnnonce, required bool accepter}) async {
     try {
       final response = await supabase
           .from('aider')
-          .update({'estaccepte': accepter, 'estRepondu': true})
-          .eq('idannonce', idAnnonce);
+          .update({'estaccepte': accepter, 'estRepondu': true}).eq(
+              'idannonce', idAnnonce);
 
       print('Response aide: $response');
 
       // on va aussi faire une maj de l'annonce pour changer son etatannonce
       final responseAnnonce = await supabase
           .from('annonce')
-          .update({'etatannonce': accepter ? 1 : 0})
-          .eq('idannonce', idAnnonce);
+          .update({'etatannonce': accepter ? 1 : 0}).eq('idannonce', idAnnonce);
 
       print('Response annonce: $responseAnnonce');
     } catch (e) {
@@ -429,7 +529,7 @@ class AnnonceDB {
         .select('titreannonce')
         .ilike('titreannonce', '%$word%')
         .limit(10) as List;
-    
+
     for (var annonce in response) {
       annonces.add(annonce['titreannonce']);
     }
@@ -455,6 +555,17 @@ class AnnonceDB {
         .limit(1) as List;
 
     return _createAnnonceFromResponse(response[0]);
+  }
+
+  static Future<Annonce> getAnnonceWithDetails(String idAnnonce) async {
+    Annonce annonce = await getAnnonce(idAnnonce);
+    Annonce details = await fetchAnnonceDetailsWithoutUser(idAnnonce);
+
+    annonce.categories = details.categories;
+    annonce.dateAideAnnonce = details.dateAideAnnonce;
+    annonce.descriptionAnnonce = details.descriptionAnnonce;
+
+    return annonce;
   }
 
   static Future<Annonce> getAnnonceWithUser(String idAnnonce) async {

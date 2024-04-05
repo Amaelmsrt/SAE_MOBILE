@@ -7,6 +7,7 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/image_converter.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
@@ -18,6 +19,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AjoutAnnonce extends StatefulWidget {
+  Annonce? annonce;
+
+  AjoutAnnonce({this.annonce});
+
   @override
   State<AjoutAnnonce> createState() => _AjoutAnnonceState();
 }
@@ -42,6 +47,32 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
   ValueNotifier<bool> estUrgente = ValueNotifier<bool>(false);
 
   TextEditingController remunerationAnnonce = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadAnnonceDetails();
+  }
+
+  Future<void> loadAnnonceDetails() async {
+    if (widget.annonce != null) {
+      _texteAnnonceController.text = widget.annonce!.titreAnnonce;
+      descriptionAnnonce.text = widget.annonce!.descriptionAnnonce!;
+      dateAideAnnonce.value = widget.annonce!.dateAideAnnonce!;
+      categorieAnnonce.value = widget.annonce!.categories;
+      categorieNonSelectionnesAnnonce.value = widget.annonce!.categories;
+      estUrgente.value = widget.annonce!.estUrgente;
+      print("Remuneration: ${widget.annonce!.prixAnnonce.toString()}");
+      remunerationAnnonce.text = widget.annonce!.prixAnnonce.toString();
+
+      for (var image in widget.annonce!.images) {
+        XFile xFile = await ImageConverter.Uint8ListToXFile(image);
+        images.value.add(xFile);
+      }
+      setState(() {});
+    }
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -77,7 +108,10 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                             isArea: true,
                             controller: descriptionAnnonce),
                         ListingCategories(
-                          listeningToStrings: [_texteAnnonceController, descriptionAnnonce],
+                          listeningToStrings: [
+                            _texteAnnonceController,
+                            descriptionAnnonce
+                          ],
                           isSelectable: true,
                           isExpandable: true,
                           selectedCategoriesNotifier: categorieAnnonce,
@@ -129,7 +163,10 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
                 alignment: Alignment.centerLeft,
-                child: Text("Nouvelle annonce",
+                child: Text(
+                    widget.annonce != null
+                        ? "Modifier l'annonce"
+                        : "Nouvelle annonce",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -172,7 +209,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () async {
-                      print("Ajout de l'annonce");
+                      print("Ajout/modif de l'annonce");
                       print("nb images: ${images.value.length}");
                       print("Titre: ${_texteAnnonceController.text}");
                       print("Description: ${descriptionAnnonce.text}");
@@ -180,15 +217,32 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
                       print("Remuneration: ${remunerationAnnonce.text}");
-                      AnnonceDB.ajouterAnnonce(
-                          images.value,
-                          _texteAnnonceController.text,
-                          descriptionAnnonce.text,
-                          dateAideAnnonce.value,
-                          categorieAnnonce.value,
-                          estUrgente.value,
-                          remunerationAnnonce.text.isEmpty ? 0 : double.parse(remunerationAnnonce.text)
-                        );
+                      if (widget.annonce == null){
+                        AnnonceDB.ajouterAnnonce(
+                            images.value,
+                            _texteAnnonceController.text,
+                            descriptionAnnonce.text,
+                            dateAideAnnonce.value,
+                            categorieAnnonce.value,
+                            estUrgente.value,
+                            remunerationAnnonce.text.isEmpty
+                                ? 0
+                                : double.parse(remunerationAnnonce.text));
+                      }
+                      else{
+                        print("Annonce ID: ${widget.annonce!.idAnnonce}");
+                        AnnonceDB.modifierAnnonce(
+                            images.value,
+                            _texteAnnonceController.text,
+                            descriptionAnnonce.text,
+                            dateAideAnnonce.value,
+                            categorieAnnonce.value,
+                            estUrgente.value,
+                            remunerationAnnonce.text.isEmpty
+                                ? 0
+                                : double.parse(remunerationAnnonce.text),
+                            widget.annonce!.idAnnonce);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
@@ -201,7 +255,9 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       ),
                     ),
                     child: Text(
-                      "Ajouter l'annonce",
+                      widget.annonce == null
+                          ? "Ajouter l'annonce"
+                          : "Modifier l'annonce",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

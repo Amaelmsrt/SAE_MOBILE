@@ -6,14 +6,12 @@ class CustomCheckBox extends StatefulWidget {
   final String? label;
   final String hint;
   final bool noSpacing;
-  bool isChecked;
   final ValueNotifier<bool>? isCheckedNotifier;
 
   CustomCheckBox(
       {this.label,
       required this.hint,
       this.noSpacing = false,
-      this.isChecked = false,
       required this.isCheckedNotifier
       });
 
@@ -22,7 +20,27 @@ class CustomCheckBox extends StatefulWidget {
 }
 
 class _CustomCheckBoxState extends State<CustomCheckBox> {
+  bool isChecked = false;
   DateTime selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // on va précocher la case si le notifier est à true
+    if (widget.isCheckedNotifier != null) {
+      isChecked = widget.isCheckedNotifier!.value;
+      setState(() {
+        
+      });
+
+      widget.isCheckedNotifier!.addListener(() {
+        setState(() {
+          isChecked = widget.isCheckedNotifier!.value;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +61,9 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
         GestureDetector(
           onTap: () {
             setState(() {
-              widget.isChecked = !widget.isChecked;
+              isChecked = !isChecked;
               if (widget.isCheckedNotifier != null) {
-                widget.isCheckedNotifier!.value = widget.isChecked;
+                widget.isCheckedNotifier!.value = isChecked;
               }
             });
           },
@@ -53,10 +71,10 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
             children: [
               Checkbox(
                 activeColor: AppColors.accent,
-                value: widget.isChecked,
+                value: isChecked,
                 onChanged: (bool? value) {
                   setState(() {
-                    widget.isChecked = value!;
+                    isChecked = value!;
                   });
                 },
               ),

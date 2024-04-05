@@ -36,6 +36,11 @@ class _AddImagesState extends State<AddImages> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    widget.valueNotifier.addListener(() {
+      setState(() {
+      });
+    });
   }
 
   @override

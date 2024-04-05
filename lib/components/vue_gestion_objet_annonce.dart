@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:allo/models/objet.dart';
+import 'package:allo/widgets/ajout_annonce.dart';
 import 'package:allo/widgets/ajouter_avis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -128,6 +130,21 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                   if (widget.isAnnonce) {
                     switch (widget.annonce!.etatAnnonce) {
                       case Annonce.EN_COURS:
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return FutureBuilder(future: AnnonceDB.getAnnonceWithDetails(widget.annonce!.idAnnonce), builder: (context, snapshot){
+                              if(snapshot.hasData){
+                                return AjoutAnnonce(annonce: snapshot.data);
+                              }else{
+                                // un spinner au centre de l'écran
+                                return Center(child: CircularProgressIndicator(),);
+                              }
+                            });
+                          },
+                          isScrollControlled: true,
+                          useRootNavigator: true, // Ajoutez cette ligne
+                        );
                         break;
                       case Annonce.AIDE_PLANIFIEE:
                         break;

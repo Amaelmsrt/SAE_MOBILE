@@ -82,7 +82,7 @@ class Annonce {
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'] ?? 0,
       utilisateur: json['utilisateur'],
-      prixAnnonce: double.parse(json['prixannonce']??'0.0'),
+      prixAnnonce: double.parse(json['prix_annonce'].toString()??'0.0'),
       //utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }
