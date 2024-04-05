@@ -19,7 +19,9 @@ class AnnonceDB {
       String descriptionAnnonce,
       DateTime dateAideAnnonce,
       List<String> categorieAnnonce,
-      bool estUrgente) async {
+      bool estUrgente,
+      double remunerationAnnonce
+      ) async {
     try {
       String? myUUID = await UserBD.getMyUUID();
       final response = await supabase.from('annonce').insert([
@@ -31,6 +33,7 @@ class AnnonceDB {
           'esturgente': estUrgente,
           'etatannonce': 0,
           'idutilisateur': myUUID,
+          'prix_annonce': remunerationAnnonce
         }
       ]).select('idannonce');
 

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
@@ -177,13 +179,16 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       print("Date: ${dateAideAnnonce.value}");
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
+                      print("Remuneration: ${remunerationAnnonce.text}");
                       AnnonceDB.ajouterAnnonce(
                           images.value,
                           _texteAnnonceController.text,
                           descriptionAnnonce.text,
                           dateAideAnnonce.value,
                           categorieAnnonce.value,
-                          estUrgente.value);
+                          estUrgente.value,
+                          remunerationAnnonce.text.isEmpty ? 0 : double.parse(remunerationAnnonce.text)
+                        );
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
