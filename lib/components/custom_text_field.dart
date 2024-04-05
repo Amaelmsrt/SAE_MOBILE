@@ -1,5 +1,7 @@
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/decimal_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Import your color file
 
 class CustomTextField extends StatelessWidget {
@@ -12,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final String? sideButtonIconPath;
   final Function()? sideButtonOnPressed;
+  final bool isPrice;
   CustomTextField(
       {this.label,
       required this.hint,
@@ -21,7 +24,9 @@ class CustomTextField extends StatelessWidget {
       this.isArea = false,
       this.noSpacing = false,
       this.sideButtonIconPath = null,
-      this.sideButtonOnPressed});
+      this.sideButtonOnPressed,
+      this.isPrice = false,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +48,15 @@ class CustomTextField extends StatelessWidget {
           children: [
             Expanded(
               child: TextField(
+                keyboardType: isPrice ? TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
+                inputFormatters: isPrice ? [DecimalInputFormatter()] : [],
                 controller: controller,
                 obscureText: obscureText,
                 minLines: this.isArea ? 5 : 1,
                 maxLines: this.isArea ? 5 : 1,
                 style: TextStyle(color: AppColors.dark),
                 decoration: InputDecoration(
+                  suffixText: isPrice ? "€" : null,
                   hintText: hint,
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 17.0, horizontal: 20.0),

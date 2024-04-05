@@ -39,6 +39,8 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
 
   ValueNotifier<bool> estUrgente = ValueNotifier<bool>(false);
 
+  TextEditingController remunerationAnnonce = TextEditingController();
+
   @override
   bool get wantKeepAlive => true;
 
@@ -91,6 +93,12 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                           label: "Niveau d'urgence",
                           hint: "Annonce urgente",
                           isCheckedNotifier: estUrgente,
+                        ),
+                        CustomTextField(
+                          hint: "0.0",
+                          label: "Rémunération de l'aide",
+                          isPrice: true,
+                          controller: remunerationAnnonce,
                         ),
                         SizedBox(
                           height: 100,
