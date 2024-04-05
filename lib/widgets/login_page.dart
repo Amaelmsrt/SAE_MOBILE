@@ -2,7 +2,7 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/user_bd.dart';
-import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/utilisateur.dart';
 import 'package:allo/models/my_user.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
@@ -26,18 +26,25 @@ class LoginPage extends StatelessWidget {
       if (response.user != null) {
         Utilisateur user = await UserBD.getMyUser();
         provider.Provider.of<MyUser>(context, listen: false).setMyUser(user);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Home()),
+          (Route<dynamic> route) => false,
+        );
       }
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Home()),
-        (Route<dynamic> route) => false,
-      );
     } catch (e) {
+      String errorMessage;
       if (e is AuthException) {
-        print('Erreur d\'authentification: ${e.message}');
+        errorMessage = 'Email ou mot de passe invalide';
       } else {
-        print('Une autre erreur s\'est produite: $e');
+        errorMessage = 'Une autre erreur s\'est produite: $e';
       }
+      print(errorMessage);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

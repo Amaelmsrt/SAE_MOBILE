@@ -34,31 +34,71 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> register(String email, String password, String username) async {
-    print("nouvel utilisateur : $username, $email, $password");
-  final response = await supabase.auth.signUp(email: email, password: password);
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(email)) {
+      showSnackBar(context, 'L\'email est invalide');
+      return;
+    }
 
-  if (response.user == null) {
-    print('Erreur lors de l\'inscription : ${response}');
-    return;
-  }
+    if (password.length < 6) {
+      showSnackBar(
+          context, 'Le mot de passe doit contenir au moins 6 caractères');
+      return;
+    }
 
-  final user = supabase.auth.currentUser;
-  if (user != null) {
-    final insertResponse = await supabase.from('utilisateur').insert([
-      {
-        'idutilisateur': user.id,
-        'nomutilisateur': username,
-        'emailutilisateur': email
+    final usernameResponse = await supabase
+        .from('utilisateur')
+        .select()
+        .eq('nomutilisateur', username)
+        .maybeSingle();
+
+    if (usernameResponse != null) {
+      showSnackBar(context, 'Le nom d\'utilisateur est déjà utilisé');
+      return;
+    }
+
+    try {
+      await supabase.auth.signUp(email: email, password: password);
+    } catch (e) {
+      if (e.toString().contains('The provided email is already in use')) {
+        showSnackBar(context, 'L\'email est déjà utilisé');
+        return;
       }
-    ]);
+    }
 
-    if (insertResponse != null && insertResponse.error != null) {
-      print('Erreur lors de l\'insertion de l\'utilisateur dans la table UTILISATEUR : ${insertResponse.error!.message}');
+    final user = supabase.auth.currentUser;
+    if (user != null) {
+      final insertResponse = await supabase.from('utilisateur').insert([
+        {
+          'idutilisateur': user.id,
+          'nomutilisateur': username,
+          'emailutilisateur': email
+        }
+      ]);
+
+      if (insertResponse != null && insertResponse.error != null) {
+        print(
+            'Erreur lors de l\'insertion de l\'utilisateur dans la table UTILISATEUR : ${insertResponse.error!.message}');
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    } else {
+      showSnackBar(
+          context, 'Une erreur s\'est produite lors de l\'inscription');
     }
   }
 
-  return;
-}
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

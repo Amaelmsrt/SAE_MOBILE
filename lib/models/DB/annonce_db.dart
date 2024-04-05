@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/utilisateur.dart';
 import 'package:allo/models/image_converter.dart';
 import 'package:allo/models/objet.dart';
 import 'package:image_picker/image_picker.dart';
