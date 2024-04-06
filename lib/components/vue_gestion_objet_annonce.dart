@@ -40,24 +40,24 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
         case Annonce.EN_COURS:
           return "Modifier l'annonce";
         case Annonce.AIDE_PLANIFIEE:
-          return "Voir les modalités";
+          return "";
         case Annonce.ANNULEE:
-          return "Voir les modalités";
+          return "";
         case Annonce.CLOTUREES:
           return widget.annonce!.avisLaisse
               ? "Voir mon avis"
               : "Laisser un avis";
         default:
-          return "Modifier l'annonce";
+          return "";
       }
     } else {
       switch (widget.objet!.statutObjet) {
         case Objet.DISPONIBLE:
           return "Aider quelqu'un";
         case Objet.RESERVE:
-          return "Voir les modalités";
+          return "";
         case Objet.INDISPONIBLE:
-          return "Voir les modalités";
+          return "";
         default:
           return "Aider quelqu'un";
       }
@@ -157,7 +157,7 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (!(widget.objet != null && widget.objet!.statutObjet == Objet.DISPONIBLE && widget.objet!.nbAnnoncesCorrespondantes == 0) && !(widget.annonce != null && widget.annonce!.etatAnnonce == Annonce.ANNULEE))
+              if (!(widget.objet != null && widget.objet!.statutObjet == Objet.DISPONIBLE && widget.objet!.nbAnnoncesCorrespondantes == 0) && !(widget.annonce != null && widget.annonce!.etatAnnonce == Annonce.ANNULEE) && !(secondButtonText() == ""))
               GestureDetector(
                 onTap: () {
                   if (widget.isAnnonce) {
