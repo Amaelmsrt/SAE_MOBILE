@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:allo/main.dart';
+import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/DB/categorie_db.dart';
 import 'package:allo/models/DB/user_bd.dart';
 import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/annonce.dart';
@@ -136,12 +138,101 @@ class ObjetBd {
           photoObjet: imgdata,
         );
 
+        if (nouvelObjet.statutObjet == Objet.DISPONIBLE){
+          nouvelObjet.nbAnnoncesCorrespondantes = await getNbAnnoncesCorrespondantes(nouvelObjet.idObjet);
+        }
+        else if (nouvelObjet.statutObjet == Objet.RESERVE){
+          // on vachercher dans aider la date de reservation (date_aide) là où l'idobjet correspond
+
+          final responseAider = await supabase
+              .from('aider')
+              .select('date_aide')
+              .eq('idobjet', nouvelObjet.idObjet);
+
+          DateTime dateAide = DateTime.parse(responseAider[0]['date_aide']);
+
+          nouvelObjet.dateReservation = dateAide;
+        }
+
         objets.add(nouvelObjet);
       }
 
       return objets;
     } catch (e) {
       print('Erreur lors de la récupération des objets: $e');
+      return [];
+    }
+  }
+
+  static Future<int> getNbAnnoncesCorrespondantes(String idObjet) async {
+    try {
+      String myUUID = await UserBD.getMyUUID();
+      Set<String> annonces = {};
+      List<String> Categories = await CategorieDB.getIdCategoriesObjet(idObjet);
+
+      for (String categorie in Categories) {
+        print('categorie: $categorie');
+        final response = await supabase
+            .from('categoriser_annonce')
+            .select('idannonce')
+            .eq('idcat', categorie);
+
+        for (var annonce in response) {
+          final responseAnnonce = await supabase
+              .from('annonce')
+              .select('idannonce, etatannonce, idutilisateur')
+              .eq('idannonce', annonce['idannonce']);
+
+          if (responseAnnonce[0]['etatannonce'] == Annonce.EN_COURS && responseAnnonce[0]['idutilisateur'] != myUUID){
+            annonces.add(annonce['idannonce']);
+          }
+
+        }
+      }
+
+      return annonces.length;
+    } catch (e) {
+      print('Erreur lors de la récupération du nombre d\'annonces correspondantes: $e');
+      return 0;
+    }
+  }
+
+  // même chose que la fonction getNbAnnoncesCorrespondantes mais on va retourner les annonces
+  static Future<List<Annonce>> fetchAnnoncesCorrespondantes(String idObjet) async {
+    try {
+      String myUUID = await UserBD.getMyUUID();
+      Set<String> annonces = {};
+      List<String> Categories = await CategorieDB.getIdCategoriesObjet(idObjet);
+
+      for (String categorie in Categories) {
+        print('categorie: $categorie');
+        final response = await supabase
+            .from('categoriser_annonce')
+            .select('idannonce')
+            .eq('idcat', categorie);
+
+        for (var annonce in response) {
+          final responseAnnonce = await supabase
+              .from('annonce')
+              .select('idannonce, etatannonce, idutilisateur')
+              .eq('idannonce', annonce['idannonce']);
+
+          if (responseAnnonce[0]['etatannonce'] == Annonce.EN_COURS && responseAnnonce[0]['idutilisateur'] != myUUID){
+            annonces.add(annonce['idannonce']);
+          }
+
+        }
+      }
+
+      List<Annonce> annoncesCorrespondantes = [];
+      for (var idAnnonce in annonces){
+        Annonce annonce = await AnnonceDB.getAnnonce(idAnnonce);
+        annoncesCorrespondantes.add(annonce);
+      }
+
+      return annoncesCorrespondantes;
+    } catch (e) {
+      print('Erreur lors de la récupération des annonces correspondantes: $e');
       return [];
     }
   }

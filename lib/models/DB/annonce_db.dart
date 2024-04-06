@@ -507,7 +507,7 @@ class AnnonceDB {
       final response = await supabase
           .from('aider')
           .update({'estaccepte': accepter, 'estRepondu': true}).eq(
-              'idannonce', idAnnonce);
+              'idannonce', idAnnonce).select("idobjet");
 
       print('Response aide: $response');
 
@@ -515,6 +515,10 @@ class AnnonceDB {
       final responseAnnonce = await supabase
           .from('annonce')
           .update({'etatannonce': accepter ? 1 : 0}).eq('idannonce', idAnnonce);
+
+      final responseObjet = await supabase
+          .from('objet')
+          .update({'statutobjet': accepter ? 1 : 0}).eq('idobjet', response[0]['idobjet']);
 
       print('Response annonce: $responseAnnonce');
     } catch (e) {
