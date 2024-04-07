@@ -35,7 +35,8 @@ class MessageBD {
           .from('message')
           .select(
               'idmessage, date_message, contenu, estvu, id_annonce_concernee, id_envoyeur, id_receveur')
-          .or('id_envoyeur.eq.$myUUID, id_receveur.eq.$myUUID')
+          .or('id_envoyeur.eq.$myUUID')
+          .or('id_receveur.eq.$myUUID')
           .order('date_message', ascending: false);
 
       for (var element in response) {
@@ -44,16 +45,20 @@ class MessageBD {
         newMessage.isMine = isMine;
         newMessage.annonceConcernee =
             await AnnonceDB.getAnnonceWithUser(element['id_annonce_concernee']);
-          newMessage.utilisateurEnvoyeur =
-              await UserBD.getUser(element["id_envoyeur"]);
-          newMessage.utilisateurReceveur =
-              await UserBD.getUser(element["id_receveur"]);
+        newMessage.utilisateurEnvoyeur =
+            await UserBD.getUser(element["id_envoyeur"]);
+        newMessage.utilisateurReceveur =
+            await UserBD.getUser(element["id_receveur"]);
 
         String idannonce = element[
-            "id_annonce_concernee"]; // Replace with your conversation ID
-        if (!messages.containsKey(idannonce) ||
-            messages[idannonce]!.dateMessage.isBefore(newMessage.dateMessage)) {
-          messages[idannonce] = newMessage;
+            "id_annonce_concernee"]; 
+        String idAutreUtilisateur = isMine
+            ? element["id_receveur"]
+            : element["id_envoyeur"];
+        String idConversation = idannonce + idAutreUtilisateur;
+        if (!messages.containsKey(idConversation) ||
+            messages[idConversation]!.dateMessage.isBefore(newMessage.dateMessage)) {
+          messages[idConversation] = newMessage;
         }
       }
 
@@ -69,38 +74,74 @@ class MessageBD {
             await AnnonceDB.getAnnonceWithUser(element['idannonce']);
         newMessage.utilisateurEnvoyeur =
             await ObjetBd.getProprietaireObjet(element['idobjet']);
+
+        if (newMessage.utilisateurEnvoyeur!.idUtilisateur != myUUID &&
+            newMessage.annonceConcernee!.utilisateur!.idUtilisateur != myUUID) {
+          continue;
+        }
+
         newMessage.isMine =
             newMessage.utilisateurEnvoyeur!.idUtilisateur == myUUID;
-        
-        newMessage.utilisateurReceveur = newMessage.annonceConcernee!.utilisateur;
+
+        newMessage.utilisateurReceveur =
+            newMessage.annonceConcernee!.utilisateur;
 
         String idannonce =
-            element["idannonce"]; // Replace with your conversation ID
-        if (!messages.containsKey(idannonce) ||
-            messages[idannonce]!.dateMessage.isBefore(newMessage.dateMessage)) {
-          messages[idannonce] = newMessage;
+            element["idannonce"];
+        String idAutreUtilisateur = newMessage.isMine
+            ? newMessage.annonceConcernee!.utilisateur!.idUtilisateur
+            : newMessage.utilisateurEnvoyeur!.idUtilisateur;
+        String idConversation = idannonce + idAutreUtilisateur;
+        if (!messages.containsKey(idConversation) ||
+            messages[idConversation]!.dateMessage.isBefore(newMessage.dateMessage)) {
+          messages[idConversation] = newMessage;
         }
       }
 
-      final responseMesAnnonces = await AnnonceDB.getMesAnnonces(forMessage: true);
+      final responseMesAnnonces =
+          await AnnonceDB.getMesAnnonces(forMessage: true);
 
       for (var element in responseMesAnnonces) {
-        if (element.etatAnnonce == Annonce.CLOTUREES){
+        if (element.etatAnnonce == Annonce.CLOTUREES) {
           Message newMessage = Message(
-            typeMessage: Message.AVIS,
-            dateMessage: element.dateAideAnnonce!,
-            contenu: "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
-            estVu: false,
-            isMine: true,
-            estRepondu: element.avisLaisse
-          );
+              typeMessage: Message.AVIS,
+              dateMessage: element.dateAideAnnonce!,
+              contenu:
+                  "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
+              estVu: false,
+              isMine: true,
+              estRepondu: element.avisLaisse);
 
           newMessage.annonceConcernee = element;
 
+          // on va aller get dans la table avis l'idutilisateur_dest là où l'idannonce = element.idAnnonce
+
+
+          final responseAvis = await supabase
+              .from('avis')
+              .select('idutilisateur_dest')
+              .eq('idannonce', element.idAnnonce);
+
+          String idAutreUtilisateur = responseAvis[0]['idutilisateur_dest'];
+
+          if (idAutreUtilisateur == myUUID){
+            // on va aller regarder dans l'annonce correspondant à l'avis l'idutilisateur
+
+            final responseAnnonceAvis = await supabase
+                .from('annonce')
+                .select('idutilisateur')
+                .eq('idannonce', element.idAnnonce);
+
+            idAutreUtilisateur = responseAnnonceAvis[0]['idutilisateur'];
+          }
+
           String idannonce = element.idAnnonce;
-          if (!messages.containsKey(idannonce) ||
-              messages[idannonce]!.dateMessage.isBefore(newMessage.dateMessage)) {
-            messages[idannonce] = newMessage;
+          String idConversation = idannonce + idAutreUtilisateur;
+          if (!messages.containsKey(idConversation) ||
+              messages[idConversation]!
+                  .dateMessage
+                  .isBefore(newMessage.dateMessage)) {
+            messages[idConversation] = newMessage;
           }
         }
       }
@@ -113,7 +154,10 @@ class MessageBD {
   }
 
   static Future<List<Message>> getMessages(
-      {required String idAnnonce, DateTime? beforeDate, int limit = 10}) async {
+      {required String idAnnonce,
+      DateTime? beforeDate,
+      int limit = 10,
+      required String idUser}) async {
     try {
       String? myUUID = await UserBD.getMyUUID();
       PostgrestFilterBuilder query = supabase
@@ -135,9 +179,21 @@ class MessageBD {
       for (var element in response) {
         Message newMessage = Message.fromDefaultJson(element);
         bool isMine = element['id_envoyeur'] == myUUID;
+
         newMessage.isMine = isMine;
         newMessage.annonceConcernee =
             await AnnonceDB.getAnnonceWithUser(idAnnonce);
+
+        // on regarde si le message nous concerne c'est à dire si on est l'envoyeur ou le receveur
+        // ou si idUser est l'envoyeur ou le receveur
+
+        if (!((element['id_envoyeur'] == myUUID &&
+                element['id_receveur'] == idUser) ||
+            (element['id_envoyeur'] == idUser &&
+                element['id_receveur'] == myUUID))) {
+          continue;
+        }
+
         if (!isMine) {
           newMessage.utilisateurEnvoyeur =
               await UserBD.getUser(element["id_receveur"]);
@@ -160,24 +216,36 @@ class MessageBD {
             await AnnonceDB.getAnnonceWithUser(element['idannonce']);
         newMessage.utilisateurEnvoyeur =
             await ObjetBd.getProprietaireObjet(element['idobjet']);
+
         newMessage.isMine =
             newMessage.utilisateurEnvoyeur!.idUtilisateur == myUUID;
+
+        if (!((newMessage.utilisateurEnvoyeur!.idUtilisateur == myUUID &&
+                newMessage.annonceConcernee!.utilisateur!.idUtilisateur ==
+                    idUser) ||
+            (newMessage.utilisateurEnvoyeur!.idUtilisateur == idUser &&
+                newMessage.annonceConcernee!.utilisateur!.idUtilisateur ==
+                    myUUID))) {
+          continue;
+        }
 
         messages.add(newMessage);
       }
 
-      final responseMesAnnonces = await AnnonceDB.getMesAnnonces(forMessage:true);
+      final responseMesAnnonces =
+          await AnnonceDB.getMesAnnonces(forMessage: true);
 
       for (var element in responseMesAnnonces) {
-        if (element.etatAnnonce == Annonce.CLOTUREES && element.idAnnonce == idAnnonce){
+        if (element.etatAnnonce == Annonce.CLOTUREES &&
+            element.idAnnonce == idAnnonce) {
           Message newMessage = Message(
-            typeMessage: Message.AVIS,
-            dateMessage: element.dateAideAnnonce!,
-            contenu: "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
-            estVu: false,
-            isMine: true,
-            estRepondu: element.avisLaisse
-          );
+              typeMessage: Message.AVIS,
+              dateMessage: element.dateAideAnnonce!,
+              contenu:
+                  "On vous a aidé le ${element.dateAideAnnonce!.day}/${element.dateAideAnnonce!.month}/${element.dateAideAnnonce!.year} à ${element.dateAideAnnonce!.hour}:${element.dateAideAnnonce!.minute}",
+              estVu: false,
+              isMine: true,
+              estRepondu: element.avisLaisse);
 
           newMessage.annonceConcernee = element;
 
@@ -194,7 +262,10 @@ class MessageBD {
     }
   }
 
-  static Future<void> sendMessage({required String idAnnonce, required String contenu, required String idReceveur}) async {
+  static Future<void> sendMessage(
+      {required String idAnnonce,
+      required String contenu,
+      required String idReceveur}) async {
     try {
       String? myUUID = await UserBD.getMyUUID();
       final response = await supabase.from('message').insert([

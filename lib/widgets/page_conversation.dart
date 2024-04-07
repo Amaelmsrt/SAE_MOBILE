@@ -31,7 +31,7 @@ class _PageConversationState extends State<PageConversation> {
   @override
   Widget build(BuildContext context) {
     late Future<List<Message>> lesMessages =
-        MessageBD.getMessages(idAnnonce: widget.annonce.idAnnonce);
+        MessageBD.getMessages(idAnnonce: widget.annonce.idAnnonce, idUser: widget.utilisateur.idUtilisateur);
 
     TextEditingController controllerText = TextEditingController();
 
@@ -191,7 +191,9 @@ class _PageConversationState extends State<PageConversation> {
                             setState(() {
                               controllerText.clear();
                               lesMessages = MessageBD.getMessages(
-                                  idAnnonce: widget.annonce.idAnnonce);
+                                  idAnnonce: widget.annonce.idAnnonce
+                                      , idUser: widget.utilisateur.idUtilisateur
+                                  );
                             });
                           });
                         }

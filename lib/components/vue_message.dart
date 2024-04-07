@@ -304,7 +304,9 @@ class _vueMessageState extends State<VueMessage> {
                             onPressed: () {
                               AnnonceDB.repondreAide(
                                   accepter: false,
-                                  idAnnonce: widget.idAnnonce!);
+                                  idAnnonce: widget.idAnnonce!,
+                                  idUser: widget.utilisateur.idUtilisateur!
+                                  );
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = false;
@@ -337,7 +339,9 @@ class _vueMessageState extends State<VueMessage> {
                           child: ElevatedButton(
                             onPressed: () {
                               AnnonceDB.repondreAide(
-                                  accepter: true, idAnnonce: widget.idAnnonce!);
+                                  accepter: true, idAnnonce: widget.idAnnonce!,
+                                  idUser: widget.utilisateur.idUtilisateur!
+                                  );
                               setState(() {
                                 widget.aRepondu = true;
                                 widget.reponse = true;

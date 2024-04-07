@@ -194,13 +194,13 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
             ),
             Positioned(
               top: 45,
-              left: 100,
+              left: 0,
               child: Container(
                 height: 45,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
                 alignment: Alignment.centerLeft,
-                child: Text(
+                child: Center(child: Text(
                     widget.annonce != null
                         ? "Modifier l'annonce"
                         : "Nouvelle annonce",
@@ -208,7 +208,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       fontFamily: "NeueRegrade",
-                    )),
+                    )),) 
               ),
             ),
             Positioned(
@@ -216,6 +216,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
               right: 25,
               child: InkWell(
                 onTap: () async {
+                  // on regarde si tous les champs sont vides
                   await showDialog<bool>(
                     context: context,
                     builder: (BuildContext context) {
@@ -329,6 +330,8 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                                 TextButton(
                                   child: Text('OK'),
                                   onPressed: () {
+                                    // on supprime le brouillon
+                                    SqfliteService.supprimerAnnonceBrouillon();
                                     Navigator.of(context)
                                         .popUntil((route) => route.isFirst);
                                   },

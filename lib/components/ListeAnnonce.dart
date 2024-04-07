@@ -10,13 +10,14 @@ class ListeAnnonce extends StatelessWidget {
   final String? titre;
   final List<Annonce> annonces;
   final bool isVertical;
+  final hasSidePadding;
 
-  ListeAnnonce({this.titre, required this.annonces, this.isVertical = false});
+  ListeAnnonce({this.titre, required this.annonces, this.isVertical = false, this.hasSidePadding = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.symmetric(horizontal: hasSidePadding ? 16 : 0, vertical: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -44,7 +45,7 @@ class ListeAnnonce extends StatelessWidget {
                   ),
                 ),
               ),
-            if (!isVertical)
+            if (!isVertical && annonces.isNotEmpty)
               Container(
                 height: 215,
                 child: ListView.builder(
@@ -61,7 +62,7 @@ class ListeAnnonce extends StatelessWidget {
                   },
                 ),
               ),
-            if (isVertical)
+            if (isVertical && annonces.isNotEmpty)
               Container(
                 height: 470 ,
                 decoration: BoxDecoration(),

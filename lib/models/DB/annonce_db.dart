@@ -502,12 +502,41 @@ class AnnonceDB {
   }
 
   static void repondreAide(
-      {required String idAnnonce, required bool accepter}) async {
+      {required String idAnnonce, required bool accepter, required String idUser}) async {
     try {
+
+      // on va get toutes les annonces correspondant a idannonce dans la table aider
+
+      String idObjet = "";
+
+      final responseAider = await supabase
+          .from('aider')
+          .select('idobjet')
+          .eq('idannonce', idAnnonce) as List;
+
+      // on va regarder chaque element de la reponse 
+
+      for (var aider in responseAider) {
+        final responseUtilisateur = await supabase
+            .from('objet')
+            .select('idutilisateur')
+            .eq('idobjet', aider['idobjet']) as List;
+
+        if (responseUtilisateur[0]['idutilisateur'] == idUser) {
+          idObjet = aider['idobjet'];
+          break;
+        }
+      }
+
+      if (idObjet.isEmpty) {
+        return;
+      }
+
       final response = await supabase
           .from('aider')
           .update({'estaccepte': accepter, 'estRepondu': true}).eq(
-              'idannonce', idAnnonce).select("idobjet");
+              'idannonce', idAnnonce).eq('idobjet', idObjet).
+              select("idobjet");
 
       print('Response aide: $response');
 

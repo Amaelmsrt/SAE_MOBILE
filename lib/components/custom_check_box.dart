@@ -12,8 +12,7 @@ class CustomCheckBox extends StatefulWidget {
       {this.label,
       required this.hint,
       this.noSpacing = false,
-      required this.isCheckedNotifier
-      });
+      required this.isCheckedNotifier});
 
   @override
   _CustomCheckBoxState createState() => _CustomCheckBoxState();
@@ -30,16 +29,22 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
     // on va précocher la case si le notifier est à true
     if (widget.isCheckedNotifier != null) {
       isChecked = widget.isCheckedNotifier!.value;
-      setState(() {
-        
-      });
+      setState(() {});
 
       widget.isCheckedNotifier!.addListener(() {
-        setState(() {
-          isChecked = widget.isCheckedNotifier!.value;
-        });
+        if (mounted) {
+          setState(() {
+            isChecked = widget.isCheckedNotifier!.value;
+          });
+        }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override

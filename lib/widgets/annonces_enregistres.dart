@@ -76,7 +76,7 @@ class _HomeState extends State<AnnoncesEnregistrees> {
               } else if (snapshot.hasError) {
                 return Text('Erreur: ${snapshot.error}');
               } else {
-                return ListeAnnonce(isVertical: true, annonces: snapshot.data!);
+                return ListeAnnonce(isVertical: true, annonces: snapshot.data!, hasSidePadding: true,);
               }
             }),
       ],

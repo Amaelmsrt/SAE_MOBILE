@@ -32,6 +32,7 @@ class _MyAppState extends State<MyApp> {
     FlutterStatusbarcolor.setNavigationBarColor(Colors.white, animate: true);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Builder(
         builder: (BuildContext context) {
           if (supabase.auth.currentUser != null) {

@@ -116,18 +116,20 @@ class _AjouterObjetState extends State<AjouterObjet>
             ),
             Positioned(
               top: 45,
-              left: 100,
+              left: 0,
               child: Container(
                 height: 45,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
                 alignment: Alignment.centerLeft,
-                child: Text("Nouvel objet",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "NeueRegrade",
-                    )),
+                child: Center(
+                  child: Text("Nouvel objet",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "NeueRegrade",
+                      )),
+                ),
               ),
             ),
             Positioned(
