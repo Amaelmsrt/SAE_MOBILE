@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
@@ -5,6 +7,9 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/objet_bd.dart';
+import 'package:allo/models/image_converter.dart';
+import 'package:allo/models/objet_sqflite.dart';
+import 'package:allo/services/sqflite_service.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -33,6 +38,31 @@ class _AjouterObjetState extends State<AjouterObjet>
       ValueNotifier<List<String>>([]);
 
   ValueNotifier<List<String>> categorieObjet = ValueNotifier<List<String>>([]);
+
+  @override
+  void initState() {
+    super.initState();
+    loadBrouillon();
+  }
+
+  Future<void> loadBrouillon() async {
+    ObjetSQFLite? objetBrouillon = await SqfliteService.getObjetBrouillon();
+    if (objetBrouillon != null) {
+      texteObjet.text = objetBrouillon.nomObjet!;
+      descriptionObjet.text = objetBrouillon.descriptionObjet!;
+      categorieObjet.value = objetBrouillon.categories;
+
+      if (objetBrouillon.photoObjet != null) {
+        XFile xFile =
+            await ImageConverter.Uint8ListToXFile(objetBrouillon.photoObjet!);
+        images.value = [xFile];
+      } else {
+        print("No image found in brouillon");
+      }
+
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +134,49 @@ class _AjouterObjetState extends State<AjouterObjet>
               top: 45,
               right: 25,
               child: InkWell(
-                onTap: () {
+                onTap: () async {
+                  await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Conserver le brouillon ?'),
+                        content: Text(
+                            'Souhaitez-vous laisser ces informations sous forme de brouillon ?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Non'),
+                            onPressed: () async {
+                              await SqfliteService.supprimerObjetBrouillon();
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Oui'),
+                            onPressed: () async {
+                              ObjetSQFLite objetBrouillon = ObjetSQFLite(
+                                nomObjet: texteObjet.text,
+                                descriptionObjet: descriptionObjet.text,
+                              );
+                              for (var image in images.value) {
+                                Uint8List imageCopy = Uint8List.fromList(
+                                    await image.readAsBytes());
+                                objetBrouillon.photoObjet = imageCopy;
+                                print(
+                                    'Saved image: ${objetBrouillon.photoObjet}');
+                              }
+                              for (var categorie in categorieObjet.value) {
+                                objetBrouillon.categories.add(categorie);
+                              }
+                              SqfliteService.ajouterObjetBrouillon(
+                                  objetBrouillon);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
                   Navigator.pop(context);
                 },
                 child: Container(
