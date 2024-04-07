@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart' as provider;
+import 'package:allo/components/custom_flushbar.dart';
 
 class LoginPage extends StatelessWidget {
   TextEditingController _usernameController = TextEditingController();
@@ -39,12 +40,7 @@ class LoginPage extends StatelessWidget {
         errorMessage = 'Une autre erreur s\'est produite: $e';
       }
       print(errorMessage);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
+      CustomFlushbar.showFlushbar(context: context, message: errorMessage);
     }
   }
 

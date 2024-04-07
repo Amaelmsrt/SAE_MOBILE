@@ -318,6 +318,25 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                             remunerationAnnonce.text.isEmpty
                                 ? 0
                                 : double.parse(remunerationAnnonce.text));
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Annonce ajoutée'),
+                              content:
+                                  Text('Votre annonce a bien été ajoutée.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .popUntil((route) => route.isFirst);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       } else {
                         print("Annonce ID: ${widget.annonce!.idAnnonce}");
                         AnnonceDB.modifierAnnonce(

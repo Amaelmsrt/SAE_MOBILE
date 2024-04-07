@@ -16,6 +16,7 @@ import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:allo/components/custom_flushbar.dart';
 
 class AjouterObjet extends StatefulWidget {
   @override
@@ -212,10 +213,45 @@ class _AjouterObjetState extends State<AjouterObjet>
                       print("Description de l'objet: ${descriptionObjet.text}");
                       print("Categories de l'objet: ${categorieObjet.value}");
 
+                      if (texteObjet.text.isEmpty) {
+                        CustomFlushbar.showFlushbar(
+                            context: context,
+                            message:
+                                "Le titre est obligatoire pour ajouter un objet",
+                            title: "Erreur lors de l'ajout de l'objet");
+                        return;
+                      }
+
+                      if (images.value.isEmpty) {
+                        CustomFlushbar.showFlushbar(
+                            context: context,
+                            message:
+                                "Au moins une image est obligatoire pour ajouter un objet",
+                            title: "Erreur lors de l'ajout de l'objet");
+                        return;
+                      }
+
                       ObjetBd.ajouterObjet(images.value.first, texteObjet.text,
                           descriptionObjet.text, categorieObjet.value);
 
-                      Navigator.pop(context);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Objet ajouté'),
+                            content: Text('Votre objet a bien été ajouté.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
