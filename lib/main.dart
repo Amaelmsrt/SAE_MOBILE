@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SqfliteService().initializeDB();
   await Supabase.initialize(
     url: 'https://prkgslozjxihdimuphji.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBya2dzbG96anhpaGRpbXVwaGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA3NzU3NjksImV4cCI6MjAyNjM1MTc2OX0.iAPdkmMLSOTpVQOkGdtlBdjpz56KJ2vMQmIeTl2HWxY',
@@ -27,6 +29,3 @@ void main() async {
 }
 
 final supabase = Supabase.instance.client;
-
-final database = SqfliteService().initializeDB();
-

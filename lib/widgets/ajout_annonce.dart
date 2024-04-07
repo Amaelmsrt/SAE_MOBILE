@@ -9,7 +9,9 @@ import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/annonce.dart';
+import 'package:allo/models/annonce_sqflite.dart';
 import 'package:allo/models/image_converter.dart';
+import 'package:allo/services/sqflite_service.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -55,6 +57,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
     // TODO: implement initState
     super.initState();
     loadAnnonceDetails();
+    loadBrouillon();
   }
 
   Future<void> loadAnnonceDetails() async {
@@ -69,6 +72,25 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
       remunerationAnnonce.text = widget.annonce!.prixAnnonce.toString();
 
       for (var image in widget.annonce!.images) {
+        XFile xFile = await ImageConverter.Uint8ListToXFile(image);
+        images.value.add(xFile);
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> loadBrouillon() async {
+    AnnonceSQFLite annonceBrouillon = await SqfliteService.getAnnonceBrouillon();
+    if (annonceBrouillon != null) {
+      _texteAnnonceController.text = annonceBrouillon.titreAnnonce!;
+      descriptionAnnonce.text = annonceBrouillon.descriptionAnnonce!;
+      dateAideAnnonce.value = annonceBrouillon.dateAideAnnonce!;
+      categorieAnnonce.value = annonceBrouillon.categories;
+      categorieNonSelectionnesAnnonce.value = annonceBrouillon.categories;
+      estUrgente.value = annonceBrouillon.estUrgente;
+      remunerationAnnonce.text = annonceBrouillon.prixAnnonce.toString();
+
+      for (var image in annonceBrouillon.images) {
         XFile xFile = await ImageConverter.Uint8ListToXFile(image);
         images.value.add(xFile);
       }
@@ -209,8 +231,27 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                           ),
                           TextButton(
                             child: Text('Oui'),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
+                            onPressed: () async {
+                              AnnonceSQFLite annonceBrouillon = AnnonceSQFLite(
+                                titreAnnonce: _texteAnnonceController.text,
+                                descriptionAnnonce: descriptionAnnonce.text,
+                                dateAideAnnonce: dateAideAnnonce.value,
+                                estUrgente: estUrgente.value,
+                                prixAnnonce: remunerationAnnonce.text.isEmpty
+                                    ? 0
+                                    : double.parse(remunerationAnnonce.text),
+                              );
+                              for (var image in images.value) {
+                                annonceBrouillon.addImage(
+                                  await image.readAsBytes(),
+                                );
+                              }
+                              for (var categorie in categorieAnnonce.value) {
+                                annonceBrouillon.categories.add(categorie);
+                              }
+                              SqfliteService.ajouterAnnonceBrouillon(
+                                  annonceBrouillon);
+                              Navigator.pop(context);
                             },
                           ),
                         ],
