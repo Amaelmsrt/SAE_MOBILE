@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
+import 'package:allo/components/custom_flushbar.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
@@ -12,6 +13,7 @@ import 'package:allo/models/image_converter.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -72,6 +74,18 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
       }
       setState(() {});
     }
+  }
+
+  bool fieldsOk() {
+    // il faut qu'il y ait au moins une image, un titre
+
+    if (images.value!.isEmpty) {
+      return false;
+    }
+    if (_texteAnnonceController.text.isEmpty) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -217,7 +231,11 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
                       print("Remuneration: ${remunerationAnnonce.text}");
-                      if (widget.annonce == null){
+                      if (!fieldsOk()) {
+                        CustomFlushbar.showFlushbar(context: context, message: "Le titre et au moins une image sont obligatoire pour créer une annonce", title: "Erreur lors de l'ajout de l'annonce");
+                        return;
+                      }
+                      if (widget.annonce == null) {
                         AnnonceDB.ajouterAnnonce(
                             images.value,
                             _texteAnnonceController.text,
@@ -228,8 +246,7 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                             remunerationAnnonce.text.isEmpty
                                 ? 0
                                 : double.parse(remunerationAnnonce.text));
-                      }
-                      else{
+                      } else {
                         print("Annonce ID: ${widget.annonce!.idAnnonce}");
                         AnnonceDB.modifierAnnonce(
                             images.value,
