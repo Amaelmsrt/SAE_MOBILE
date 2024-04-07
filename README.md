@@ -19,7 +19,7 @@ Nous avons utilisé SQFLite pour stocker les données en local. Dans ce cas, la 
 
 ## Les composants
 
-Nous avons créé de nombreux composants pour la partie Front-End du projet, nous permettant d'exploiter des éléments de Flutter en y ajoutant plus de style et de les réutiliser sans devoir les effectuer de nouveau à chaque fois. Nous avons par exemple les textfields customisés ou encore les snackbar customisés.
+Nous avons créé de nombreux composants pour la partie Front-End du projet, nous permettant d'exploiter des éléments de Flutter en y ajoutant plus de style et de les réutiliser sans devoir les effectuer de nouveau à chaque fois. Nous avons par exemple les textfields customisés ou encore les snackbar customisés. Par ailleurs, ils nous sont modulables au maximum pour pouvoir les adapter à chaque situation, comme par exemple les textfields qui peuvent être de différentes tailles, avec ou sans icône, avec ou sans bordure, etc.
 
 ## La page d'accueil
 
