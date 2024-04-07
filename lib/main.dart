@@ -1,6 +1,7 @@
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/index_page_notifications.dart';
 import 'package:allo/models/my_user.dart';
+import 'package:allo/services/sqflite_service.dart';
 import 'package:allo/widgets/my_app.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,3 +27,6 @@ void main() async {
 }
 
 final supabase = Supabase.instance.client;
+
+final database = SqfliteService().initializeDB();
+

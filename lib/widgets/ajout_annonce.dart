@@ -192,7 +192,32 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
               top: 45,
               right: 25,
               child: InkWell(
-                onTap: () {
+                onTap: () async {
+                  await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Conserver le brouillon ?'),
+                        content: Text(
+                            'Souhaitez-vous laisser ces informations sous forme de brouillon ?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Non'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Oui'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
                   Navigator.pop(context);
                 },
                 child: Container(
@@ -232,7 +257,11 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       print("Urgence: ${estUrgente.value}");
                       print("Remuneration: ${remunerationAnnonce.text}");
                       if (!fieldsOk()) {
-                        CustomFlushbar.showFlushbar(context: context, message: "Le titre et au moins une image sont obligatoire pour créer une annonce", title: "Erreur lors de l'ajout de l'annonce");
+                        CustomFlushbar.showFlushbar(
+                            context: context,
+                            message:
+                                "Le titre et au moins une image sont obligatoire pour créer une annonce",
+                            title: "Erreur lors de l'ajout de l'annonce");
                         return;
                       }
                       if (widget.annonce == null) {
