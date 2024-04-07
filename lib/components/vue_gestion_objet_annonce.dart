@@ -1,12 +1,16 @@
 import 'dart:typed_data';
 
 import 'package:allo/constants/app_colors.dart';
+import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:allo/models/objet.dart';
+import 'package:allo/widgets/ajout_annonce.dart';
 import 'package:allo/widgets/ajouter_avis.dart';
+import 'package:allo/widgets/annonces_correspondantes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class VueGestionObjetAnnonce extends StatefulWidget {
   final Annonce? annonce;
@@ -36,26 +40,56 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
         case Annonce.EN_COURS:
           return "Modifier l'annonce";
         case Annonce.AIDE_PLANIFIEE:
-          return "Voir les modalités";
+          return "";
         case Annonce.ANNULEE:
-          return "Voir les modalités";
+          return "";
         case Annonce.CLOTUREES:
-          return widget.annonce!.avisLaisse ? "Vous avez laissé un avis" : "Laisser un avis";
+          return widget.annonce!.avisLaisse
+              ? "Voir mon avis"
+              : "Laisser un avis";
         default:
-          return "Modifier l'annonce";
+          return "";
       }
     } else {
       switch (widget.objet!.statutObjet) {
         case Objet.DISPONIBLE:
           return "Aider quelqu'un";
         case Objet.RESERVE:
-          return "Voir les modalités";
+          return "";
         case Objet.INDISPONIBLE:
-          return "Voir les modalités";
+          return "";
         default:
           return "Aider quelqu'un";
       }
     }
+  }
+
+  String getDescription() {
+    if (widget.isAnnonce) {
+      if (widget.annonce!.etatAnnonce == Annonce.EN_COURS) {
+        return "En attente d'aide";
+      } else if (widget.annonce!.etatAnnonce == Annonce.AIDE_PLANIFIEE) {
+        String dateFormatee = DateFormat('dd/MM/yyyy à HH:mm')
+            .format(widget.annonce!.dateAideAnnonce!);
+        return "Aide planifiée le ${dateFormatee}";
+      } else if (widget.annonce!.etatAnnonce == Annonce.ANNULEE) {
+        return "Annonce annulée";
+      } else if (widget.annonce!.etatAnnonce == Annonce.CLOTUREES) {
+        String dateFormatee = DateFormat('dd/MM/yyyy à HH:mm')
+            .format(widget.annonce!.dateAideAnnonce!);
+        return "On vous a rendu service le ${dateFormatee}";
+      }
+    } else if (!widget.isAnnonce) {
+      if (widget.objet!.statutObjet == Objet.DISPONIBLE) {
+        int nbAnnonces = widget.objet!.nbAnnoncesCorrespondantes;
+        return "${nbAnnonces == 0 ? "Aucune" : nbAnnonces} annonce${nbAnnonces > 1 ? "s" : ""} ${nbAnnonces > 1 ? "correspondent" : nbAnnonces == 1 ? "correspond" : "ne correspond"} à votre objet!";
+      } else if (widget.objet!.statutObjet == Objet.RESERVE) {
+        String dateFormatee = DateFormat('dd/MM/yyyy à HH:mm')
+            .format(widget.objet!.dateReservation!);
+        return "Réservée le ${dateFormatee}";
+      }
+    }
+    return "desc à determiner";
   }
 
   @override
@@ -104,7 +138,7 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                       ),
                     ),
                     Text(
-                      "17 annonces correspondent a votre objet mec ça va ou quoiiiihihihihihihi",
+                      getDescription(),
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
@@ -123,11 +157,32 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              if (!(widget.objet != null && widget.objet!.statutObjet == Objet.DISPONIBLE && widget.objet!.nbAnnoncesCorrespondantes == 0) && !(widget.annonce != null && widget.annonce!.etatAnnonce == Annonce.ANNULEE) && !(secondButtonText() == ""))
               GestureDetector(
                 onTap: () {
                   if (widget.isAnnonce) {
                     switch (widget.annonce!.etatAnnonce) {
                       case Annonce.EN_COURS:
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return FutureBuilder(
+                                future: AnnonceDB.getAnnonceWithDetails(
+                                    widget.annonce!.idAnnonce),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return AjoutAnnonce(annonce: snapshot.data);
+                                  } else {
+                                    // un spinner au centre de l'écran
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                });
+                          },
+                          isScrollControlled: true,
+                          useRootNavigator: true, // Ajoutez cette ligne
+                        );
                         break;
                       case Annonce.AIDE_PLANIFIEE:
                         break;
@@ -141,7 +196,10 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
-                            return AjouterAvis(annonce:widget.annonce!, descriptionResume: "vous a aide le 17/07/204",);
+                            return AjouterAvis(
+                              annonce: widget.annonce!,
+                              descriptionResume: "vous a aidé le ${DateFormat('dd/MM/yyyy').format(widget.annonce!.dateAideAnnonce!)}",
+                            );
                           },
                           isScrollControlled: true,
                           useRootNavigator: true, // Ajoutez cette ligne
@@ -151,10 +209,16 @@ class _VueGestionObjetAnnonceState extends State<VueGestionObjetAnnonce> {
                   } else {
                     switch (widget.objet!.statutObjet) {
                       case Objet.DISPONIBLE:
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return AnnoncesCorrespondantes(idObjet: widget.objet!.idObjet);
+                          },
+                          isScrollControlled: true,
+                          useRootNavigator: true, // Ajoutez cette ligne
+                        );
                         break;
                       case Objet.RESERVE:
-                        break;
-                      case Objet.INDISPONIBLE:
                         break;
                     }
                   }

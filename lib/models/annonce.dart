@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:allo/components/add_images.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/utilisateur.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Annonce {
   String idAnnonce;
@@ -85,7 +82,7 @@ class Annonce {
       estUrgente: json['esturgente'],
       etatAnnonce: json['etatannonce'] ?? 0,
       utilisateur: json['utilisateur'],
-      prixAnnonce: double.parse(json['prixannonce']??'0.0'),
+      prixAnnonce: double.parse(json['prix_annonce'].toString()??'0.0'),
       //utilisateur: Utilisateur.fromJson(json['utilisateur']),
     );
   }

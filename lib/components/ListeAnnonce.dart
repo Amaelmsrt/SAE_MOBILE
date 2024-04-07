@@ -32,6 +32,18 @@ class ListeAnnonce extends StatelessWidget {
                   ),
                 ),
               ),
+            if (annonces.isEmpty)
+              Padding(
+                padding: EdgeInsets.fromLTRB(0,0,0,16),
+                child: Text(
+                  "Aucune annonce trouvée",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "NeueRegrade",
+                  ),
+                ),
+              ),
             if (!isVertical)
               Container(
                 height: 215,

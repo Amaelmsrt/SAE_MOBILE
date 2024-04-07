@@ -49,4 +49,20 @@ class CategorieDB{
     }
     return categories;
   }
+
+  static Future<List<String>> getIdCategoriesObjet(String idObjet) async{
+    // on va récupérer toutes les catégories de l'objet dans categoriser_objet puis on va chercher le nom de chaque catégorie dans la table categorie
+    try{
+      List<String> categories = [];
+      final response = await supabase.from('categoriser_objet').select('idcat').eq('idobjet', idObjet) as List;
+      for (var cat in response) {
+        categories.add(cat['idcat']);
+      }
+      return categories;
+    }
+    catch(e){
+      print('Erreur lors de la récupération des catégories de l\'objet: $e');
+      return [];
+    }
+  }
 }

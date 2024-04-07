@@ -15,8 +15,9 @@ class AjouterAvis extends StatefulWidget {
 
   Annonce annonce;
   String descriptionResume;
+  Function? onValider;
 
-  AjouterAvis({required this.annonce, required this.descriptionResume});
+  AjouterAvis({required this.annonce, required this.descriptionResume, this.onValider});
 
   @override
   State<AjouterAvis> createState() => _AjouterAvisState();
@@ -148,6 +149,7 @@ class _AjouterAvisState extends State<AjouterAvis> {
                         print("pseudoUtilisateur: ${value.nomUtilisateur}");
                         AvisBD.ajouterAvisAnnonce(widget.annonce.idAnnonce, value.idUtilisateur, titreController.text, commentaireController.text, ratingNotifier.value);
                       });
+                      widget.onValider!();
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(

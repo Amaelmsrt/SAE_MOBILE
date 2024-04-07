@@ -1,13 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:allo/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 class VueAvis extends StatelessWidget {
-  String? imagePath;
+  Uint8List? image;
   String pseudo, commentaire, date;
   int nbEtoiles;
 
   VueAvis({
-    this.imagePath,
+    this.image,
     required this.pseudo,
     required this.commentaire,
     required this.date,
@@ -20,7 +22,7 @@ class VueAvis extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (imagePath == null)
+        if (image == null)
           ClipOval(
             child: Container(
               alignment: Alignment.center,
@@ -37,14 +39,14 @@ class VueAvis extends StatelessWidget {
               ),
             ),
           ),
-        if (imagePath != null)
+        if (image != null)
           Container(
             width: 60,
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(imagePath!),
+                image: MemoryImage(image!),
                 fit: BoxFit.cover,
               ),
             ),
@@ -77,9 +79,9 @@ class VueAvis extends StatelessWidget {
                 ]),
                 ],
               ),
-              SizedBox(height: 8,),
+              SizedBox(height: 0,),
               Text(commentaire, style: TextStyle(
-                color: AppColors.darkQuaternary,
+                color: AppColors.darkSecondary,
                 fontSize: 16,
                 fontFamily: "NeueRegrade",
                 fontWeight: FontWeight.w500,
@@ -87,7 +89,7 @@ class VueAvis extends StatelessWidget {
               SizedBox(height: 8,),
               Text(date, style: 
               TextStyle(
-                color: AppColors.darkSecondary,
+                color: AppColors.darkQuaternary,
                 fontSize: 16,
               ),)
             ],

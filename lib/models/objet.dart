@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:allo/constants/app_colors.dart';
+import 'package:flutter/material.dart';
 
 class Objet {
   String idObjet;
@@ -10,6 +11,8 @@ class Objet {
   String descriptionObjet;
   int statutObjet;
   Uint8List photoObjet;
+  int nbAnnoncesCorrespondantes = 0;
+  DateTime? dateReservation = null;
 
   static const DISPONIBLE = 0;
   static const RESERVE = 1;

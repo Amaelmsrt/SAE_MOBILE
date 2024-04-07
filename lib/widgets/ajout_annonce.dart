@@ -1,14 +1,19 @@
+import 'dart:ffi';
+
 import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
+import 'package:allo/components/custom_flushbar.dart';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
+import 'package:allo/models/annonce.dart';
 import 'package:allo/models/image_converter.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -16,6 +21,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AjoutAnnonce extends StatefulWidget {
+  Annonce? annonce;
+
+  AjoutAnnonce({this.annonce});
+
   @override
   State<AjoutAnnonce> createState() => _AjoutAnnonceState();
 }
@@ -38,6 +47,46 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
       ValueNotifier<List<String>>([]);
 
   ValueNotifier<bool> estUrgente = ValueNotifier<bool>(false);
+
+  TextEditingController remunerationAnnonce = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadAnnonceDetails();
+  }
+
+  Future<void> loadAnnonceDetails() async {
+    if (widget.annonce != null) {
+      _texteAnnonceController.text = widget.annonce!.titreAnnonce;
+      descriptionAnnonce.text = widget.annonce!.descriptionAnnonce!;
+      dateAideAnnonce.value = widget.annonce!.dateAideAnnonce!;
+      categorieAnnonce.value = widget.annonce!.categories;
+      categorieNonSelectionnesAnnonce.value = widget.annonce!.categories;
+      estUrgente.value = widget.annonce!.estUrgente;
+      print("Remuneration: ${widget.annonce!.prixAnnonce.toString()}");
+      remunerationAnnonce.text = widget.annonce!.prixAnnonce.toString();
+
+      for (var image in widget.annonce!.images) {
+        XFile xFile = await ImageConverter.Uint8ListToXFile(image);
+        images.value.add(xFile);
+      }
+      setState(() {});
+    }
+  }
+
+  bool fieldsOk() {
+    // il faut qu'il y ait au moins une image, un titre
+
+    if (images.value!.isEmpty) {
+      return false;
+    }
+    if (_texteAnnonceController.text.isEmpty) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -73,7 +122,10 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                             isArea: true,
                             controller: descriptionAnnonce),
                         ListingCategories(
-                          listeningToStrings: [_texteAnnonceController, descriptionAnnonce],
+                          listeningToStrings: [
+                            _texteAnnonceController,
+                            descriptionAnnonce
+                          ],
                           isSelectable: true,
                           isExpandable: true,
                           selectedCategoriesNotifier: categorieAnnonce,
@@ -91,6 +143,12 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                           label: "Niveau d'urgence",
                           hint: "Annonce urgente",
                           isCheckedNotifier: estUrgente,
+                        ),
+                        CustomTextField(
+                          hint: "0.0",
+                          label: "Rémunération de l'aide",
+                          isPrice: true,
+                          controller: remunerationAnnonce,
                         ),
                         SizedBox(
                           height: 100,
@@ -119,7 +177,10 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                 width: MediaQuery.of(context).size.width,
                 color: Colors.transparent,
                 alignment: Alignment.centerLeft,
-                child: Text("Nouvelle annonce",
+                child: Text(
+                    widget.annonce != null
+                        ? "Modifier l'annonce"
+                        : "Nouvelle annonce",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -162,20 +223,43 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () async {
-                      print("Ajout de l'annonce");
+                      print("Ajout/modif de l'annonce");
                       print("nb images: ${images.value.length}");
                       print("Titre: ${_texteAnnonceController.text}");
                       print("Description: ${descriptionAnnonce.text}");
                       print("Date: ${dateAideAnnonce.value}");
                       print("Categorie: ${categorieAnnonce.value}");
                       print("Urgence: ${estUrgente.value}");
-                      AnnonceDB.ajouterAnnonce(
-                          images.value,
-                          _texteAnnonceController.text,
-                          descriptionAnnonce.text,
-                          dateAideAnnonce.value,
-                          categorieAnnonce.value,
-                          estUrgente.value);
+                      print("Remuneration: ${remunerationAnnonce.text}");
+                      if (!fieldsOk()) {
+                        CustomFlushbar.showFlushbar(context: context, message: "Le titre et au moins une image sont obligatoire pour créer une annonce", title: "Erreur lors de l'ajout de l'annonce");
+                        return;
+                      }
+                      if (widget.annonce == null) {
+                        AnnonceDB.ajouterAnnonce(
+                            images.value,
+                            _texteAnnonceController.text,
+                            descriptionAnnonce.text,
+                            dateAideAnnonce.value,
+                            categorieAnnonce.value,
+                            estUrgente.value,
+                            remunerationAnnonce.text.isEmpty
+                                ? 0
+                                : double.parse(remunerationAnnonce.text));
+                      } else {
+                        print("Annonce ID: ${widget.annonce!.idAnnonce}");
+                        AnnonceDB.modifierAnnonce(
+                            images.value,
+                            _texteAnnonceController.text,
+                            descriptionAnnonce.text,
+                            dateAideAnnonce.value,
+                            categorieAnnonce.value,
+                            estUrgente.value,
+                            remunerationAnnonce.text.isEmpty
+                                ? 0
+                                : double.parse(remunerationAnnonce.text),
+                            widget.annonce!.idAnnonce);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
@@ -188,7 +272,9 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                       ),
                     ),
                     child: Text(
-                      "Ajouter l'annonce",
+                      widget.annonce == null
+                          ? "Ajouter l'annonce"
+                          : "Modifier l'annonce",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

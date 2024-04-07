@@ -97,10 +97,10 @@ class _HomeState extends State<Accueil> {
                         toutesLesAnnonces, "Vous pouvez les aider !"),
                     SizedBox(height: 24),
                     buildAnnonceList(
-                        dernieresAnnonces, "Vous pouvez les aider !"),
+                        dernieresAnnonces, "Annonces récentes"),
                     SizedBox(height: 24),
                     buildAnnonceList(
-                        annoncesUrgentes, "Vous pouvez les aider !"),
+                        annoncesUrgentes, "Annonces urgentes"),
                     SizedBox(height: 24),
                   ],
                 ),

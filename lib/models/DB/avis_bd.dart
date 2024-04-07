@@ -1,4 +1,6 @@
 import 'package:allo/main.dart';
+import 'package:allo/models/DB/user_bd.dart';
+import 'package:allo/models/avis.dart';
 
 class AvisBD{
   static Future<Map<String, dynamic>> getAvisUtilisateur(String idUtilisateur) async {
@@ -45,4 +47,39 @@ class AvisBD{
       print('Erreur lors de l\'ajout de l\'avis: $e');
     }
   }
+
+  // permet de savoir les avis nous concernant
+  static Future<List<Avis>> getMesAvis() async {
+    String myUUID = await UserBD.getMyUUID();
+    final response = await supabase
+        .from('avis')
+        .select()
+        .eq('idutilisateur_dest', myUUID);
+
+    List<Avis> mesAvis = [];
+
+    for (var avis in response) {
+
+      // on va get l'annonce correspondante à l'avis (avec idannonce)
+      // puis on va get l'idutilisateur dans l'annonce pour get l'utilisateur
+
+      final responseAnnonce = await supabase
+          .from('annonce')
+          .select()
+          .eq('idannonce', avis['idannonce']);
+
+      Avis monAvis = Avis(
+        idAvis: avis['idavis'],
+        titreAvis: avis['titreavis'],
+        noteAvis: avis['noteavis'],
+        messageAvis: avis['messageavis'],
+        dateAvis: DateTime.parse(avis['dateavis']),
+        utilisateur: await UserBD.getUser(responseAnnonce[0]['idutilisateur']),
+      );
+
+      mesAvis.add(monAvis);
+    }
+
+    return mesAvis;
+  } 
 }
