@@ -80,7 +80,8 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
   }
 
   Future<void> loadBrouillon() async {
-    AnnonceSQFLite annonceBrouillon = await SqfliteService.getAnnonceBrouillon();
+    AnnonceSQFLite? annonceBrouillon =
+        await SqfliteService.getAnnonceBrouillon();
     if (annonceBrouillon != null) {
       _texteAnnonceController.text = annonceBrouillon.titreAnnonce!;
       descriptionAnnonce.text = annonceBrouillon.descriptionAnnonce!;
@@ -225,7 +226,8 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                         actions: <Widget>[
                           TextButton(
                             child: Text('Non'),
-                            onPressed: () {
+                            onPressed: () async {
+                              await SqfliteService.supprimerAnnonceBrouillon();
                               Navigator.of(context).pop(false);
                             },
                           ),
@@ -242,9 +244,9 @@ class _AjoutAnnonceState extends State<AjoutAnnonce>
                                     : double.parse(remunerationAnnonce.text),
                               );
                               for (var image in images.value) {
-                                annonceBrouillon.addImage(
-                                  await image.readAsBytes(),
-                                );
+                                Uint8List imageCopy = Uint8List.fromList(
+                                    await image.readAsBytes());
+                                annonceBrouillon.addImage(imageCopy);
                               }
                               for (var categorie in categorieAnnonce.value) {
                                 annonceBrouillon.categories.add(categorie);

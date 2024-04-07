@@ -1,4 +1,5 @@
 import 'package:allo/models/annonce_sqflite.dart';
+import 'package:allo/models/objet_sqflite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -80,6 +81,8 @@ class SqfliteService {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    await db.delete('PHOTO_ANNONCE');
+    await db.delete('CATEGORIE_ANNONCE');
     for (Uint8List image in annonce.images) {
       await db.insert(
         'PHOTO_ANNONCE',
@@ -96,9 +99,12 @@ class SqfliteService {
     }
   }
 
-  static Future<AnnonceSQFLite> getAnnonceBrouillon() async {
+  static Future<AnnonceSQFLite?> getAnnonceBrouillon() async {
     final Database db = await SqfliteService().initializeDB();
     final List<Map<String, dynamic>> annonce = await db.query('ANNONCE');
+    if (annonce.isEmpty) {
+      return null;
+    }
     final List<Map<String, dynamic>> photos = await db.query('PHOTO_ANNONCE');
     final List<Map<String, dynamic>> categories =
         await db.query('CATEGORIE_ANNONCE');
@@ -116,5 +122,58 @@ class SqfliteService {
       annonceSQFLite.categories.add(categorie['nomCat']);
     }
     return annonceSQFLite;
+  }
+
+  static Future<void> supprimerAnnonceBrouillon() async {
+    final Database db = await SqfliteService().initializeDB();
+    await db.delete('ANNONCE');
+    await db.delete('PHOTO_ANNONCE');
+    await db.delete('CATEGORIE_ANNONCE');
+  }
+
+  static Future<void> ajouterObjetBrouillon(ObjetSQFLite objet) async {
+    final Database db = await SqfliteService().initializeDB();
+    await db.insert(
+      'OBJET',
+      {
+        'nomObjet': objet.nomObjet,
+        'descriptionObjet': objet.descriptionObjet,
+        'photoObjet': objet.photoObjet,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    await db.delete('CATEGORIE_OBJET');
+    for (String categorie in objet.categories) {
+      await db.insert(
+        'CATEGORIE_OBJET',
+        {'nomCat': categorie},
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  static Future<ObjetSQFLite?> getObjetBrouillon() async {
+    final Database db = await SqfliteService().initializeDB();
+    final List<Map<String, dynamic>> objet = await db.query('OBJET');
+    if (objet.isEmpty) {
+      return null;
+    }
+    final List<Map<String, dynamic>> categories =
+        await db.query('CATEGORIE_OBJET');
+    ObjetSQFLite objetSQFlite = ObjetSQFLite(
+      nomObjet: objet[0]['nomObjet'],
+      descriptionObjet: objet[0]['descriptionObjet'],
+      photoObjet: objet[0]['photoObjet'],
+    );
+    for (Map<String, dynamic> categorie in categories) {
+      objetSQFlite.categories.add(categorie['nomCat']);
+    }
+    return objetSQFlite;
+  }
+
+  static Future<void> supprimerObjetBrouillon() async {
+    final Database db = await SqfliteService().initializeDB();
+    await db.delete('OBJET');
+    await db.delete('CATEGORIE_OBJET');
   }
 }

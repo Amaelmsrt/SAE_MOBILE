@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:allo/components/add_images.dart';
 import 'package:allo/components/custom_check_box.dart';
 import 'package:allo/components/custom_date_picker.dart';
@@ -5,6 +7,9 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/components/listing_categories.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/objet_bd.dart';
+import 'package:allo/models/image_converter.dart';
+import 'package:allo/models/objet_sqflite.dart';
+import 'package:allo/services/sqflite_service.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/register_page.dart';
@@ -13,13 +18,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AjouterObjet extends StatefulWidget {
-  
   @override
   State<AjouterObjet> createState() => _AjouterObjetState();
 }
 
-class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClientMixin {
-
+class _AjouterObjetState extends State<AjouterObjet>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -32,8 +36,32 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
   ValueNotifier<List<String>> categorieNonSelectionnesObjet =
       ValueNotifier<List<String>>([]);
 
-  ValueNotifier<List<String>> categorieObjet =
-      ValueNotifier<List<String>>([]);
+  ValueNotifier<List<String>> categorieObjet = ValueNotifier<List<String>>([]);
+
+  @override
+  void initState() {
+    super.initState();
+    loadBrouillon();
+  }
+
+  Future<void> loadBrouillon() async {
+    ObjetSQFLite? objetBrouillon = await SqfliteService.getObjetBrouillon();
+    if (objetBrouillon != null) {
+      texteObjet.text = objetBrouillon.nomObjet!;
+      descriptionObjet.text = objetBrouillon.descriptionObjet!;
+      categorieObjet.value = objetBrouillon.categories;
+
+      if (objetBrouillon.photoObjet != null) {
+        XFile xFile =
+            await ImageConverter.Uint8ListToXFile(objetBrouillon.photoObjet!);
+        images.value = [xFile];
+      } else {
+        print("No image found in brouillon");
+      }
+
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +78,16 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
                       [
                         AddImages(valueNotifier: images, isSingleImage: true),
                         CustomTextField(
-                            hint: "Nom de l'objet...",
-                            label: "Nom de l'objet",
-                            controller: texteObjet 
-                            ,),
+                          hint: "Nom de l'objet...",
+                          label: "Nom de l'objet",
+                          controller: texteObjet,
+                        ),
                         CustomTextField(
                             hint: "Description de l'objet...",
                             label: "Description de l'objet",
-                            isArea: true, controller: descriptionObjet),
-                         ListingCategories(
+                            isArea: true,
+                            controller: descriptionObjet),
+                        ListingCategories(
                           listeningToStrings: [texteObjet, descriptionObjet],
                           isSelectable: true,
                           isExpandable: true,
@@ -104,7 +133,49 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
               top: 45,
               right: 25,
               child: InkWell(
-                onTap: () {
+                onTap: () async {
+                  await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Conserver le brouillon ?'),
+                        content: Text(
+                            'Souhaitez-vous laisser ces informations sous forme de brouillon ?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Non'),
+                            onPressed: () async {
+                              await SqfliteService.supprimerObjetBrouillon();
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Oui'),
+                            onPressed: () async {
+                              ObjetSQFLite objetBrouillon = ObjetSQFLite(
+                                nomObjet: texteObjet.text,
+                                descriptionObjet: descriptionObjet.text,
+                              );
+                              for (var image in images.value) {
+                                Uint8List imageCopy = Uint8List.fromList(
+                                    await image.readAsBytes());
+                                objetBrouillon.photoObjet = imageCopy;
+                                print(
+                                    'Saved image: ${objetBrouillon.photoObjet}');
+                              }
+                              for (var categorie in categorieObjet.value) {
+                                objetBrouillon.categories.add(categorie);
+                              }
+                              SqfliteService.ajouterObjetBrouillon(
+                                  objetBrouillon);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
                   Navigator.pop(context);
                 },
                 child: Container(
@@ -141,13 +212,15 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
                       print("Description de l'objet: ${descriptionObjet.text}");
                       print("Categories de l'objet: ${categorieObjet.value}");
 
-                      ObjetBd.ajouterObjet(images.value.first, texteObjet.text, descriptionObjet.text, categorieObjet.value);
+                      ObjetBd.ajouterObjet(images.value.first, texteObjet.text,
+                          descriptionObjet.text, categorieObjet.value);
 
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 17, horizontal: 40),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 17, horizontal: 40),
                       elevation: 0,
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
