@@ -1,6 +1,6 @@
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/user_bd.dart';
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/my_user.dart';
 import 'package:allo/widgets/home.dart';
 import 'package:allo/widgets/welcome_page.dart';

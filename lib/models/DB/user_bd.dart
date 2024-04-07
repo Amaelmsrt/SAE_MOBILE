@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/avis_bd.dart';
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:convert/convert.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

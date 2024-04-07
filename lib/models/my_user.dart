@@ -1,4 +1,4 @@
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:flutter/foundation.dart';
 
 class MyUser extends ChangeNotifier{

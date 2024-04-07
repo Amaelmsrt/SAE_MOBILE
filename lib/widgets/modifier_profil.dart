@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/user_bd.dart';
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/app_bar_title.dart';
 import 'package:allo/models/my_user.dart';
 import 'package:flutter/material.dart';

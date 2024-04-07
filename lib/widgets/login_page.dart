@@ -2,7 +2,7 @@ import 'package:allo/components/custom_text_field.dart';
 import 'package:allo/constants/app_colors.dart';
 import 'package:allo/main.dart';
 import 'package:allo/models/DB/user_bd.dart';
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:allo/models/my_user.dart';
 import 'package:allo/utils/bottom_round_clipper.dart';
 import 'package:allo/widgets/home.dart';

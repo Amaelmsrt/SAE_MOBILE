@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:allo/constants/app_colors.dart';
-import 'package:allo/models/utilisateur.dart';
+import 'package:allo/models/Utilisateur.dart';
 import 'package:flutter/material.dart';
 
 class Annonce {
