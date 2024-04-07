@@ -7,6 +7,7 @@ import 'package:allo/widgets/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../main.dart';
+import 'package:allo/components/custom_flushbar.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -36,13 +37,15 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> register(String email, String password, String username) async {
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!emailRegex.hasMatch(email)) {
-      showSnackBar(context, 'L\'email est invalide');
+      CustomFlushbar.showFlushbar(
+          context: context, message: 'L\'email est invalide');
       return;
     }
 
     if (password.length < 6) {
-      showSnackBar(
-          context, 'Le mot de passe doit contenir au moins 6 caractères');
+      CustomFlushbar.showFlushbar(
+          context: context,
+          message: 'Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
@@ -50,7 +53,8 @@ class _RegisterPageState extends State<RegisterPage> {
       await supabase.auth.signUp(email: email, password: password);
     } catch (e) {
       if (e.toString().contains('The provided email is already in use')) {
-        showSnackBar(context, 'L\'email est déjà utilisé');
+        CustomFlushbar.showFlushbar(
+            context: context, message: 'L\'email est déjà utilisé');
         return;
       }
     }
@@ -75,18 +79,10 @@ class _RegisterPageState extends State<RegisterPage> {
         );
       }
     } else {
-      showSnackBar(
-          context, 'Une erreur s\'est produite lors de l\'inscription');
+      CustomFlushbar.showFlushbar(
+          context: context,
+          message: 'Une erreur s\'est produite lors de l\'inscription');
     }
-  }
-
-  void showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
   }
 
   @override

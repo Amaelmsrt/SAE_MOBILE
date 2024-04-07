@@ -11,15 +11,15 @@ import 'package:allo/widgets/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:allo/components/custom_flushbar.dart';
 
 class AjouterObjet extends StatefulWidget {
-  
   @override
   State<AjouterObjet> createState() => _AjouterObjetState();
 }
 
-class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClientMixin {
-
+class _AjouterObjetState extends State<AjouterObjet>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -32,8 +32,7 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
   ValueNotifier<List<String>> categorieNonSelectionnesObjet =
       ValueNotifier<List<String>>([]);
 
-  ValueNotifier<List<String>> categorieObjet =
-      ValueNotifier<List<String>>([]);
+  ValueNotifier<List<String>> categorieObjet = ValueNotifier<List<String>>([]);
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +49,16 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
                       [
                         AddImages(valueNotifier: images, isSingleImage: true),
                         CustomTextField(
-                            hint: "Nom de l'objet...",
-                            label: "Nom de l'objet",
-                            controller: texteObjet 
-                            ,),
+                          hint: "Nom de l'objet...",
+                          label: "Nom de l'objet",
+                          controller: texteObjet,
+                        ),
                         CustomTextField(
                             hint: "Description de l'objet...",
                             label: "Description de l'objet",
-                            isArea: true, controller: descriptionObjet),
-                         ListingCategories(
+                            isArea: true,
+                            controller: descriptionObjet),
+                        ListingCategories(
                           listeningToStrings: [texteObjet, descriptionObjet],
                           isSelectable: true,
                           isExpandable: true,
@@ -141,13 +141,50 @@ class _AjouterObjetState extends State<AjouterObjet> with AutomaticKeepAliveClie
                       print("Description de l'objet: ${descriptionObjet.text}");
                       print("Categories de l'objet: ${categorieObjet.value}");
 
-                      ObjetBd.ajouterObjet(images.value.first, texteObjet.text, descriptionObjet.text, categorieObjet.value);
+                      if (texteObjet.text.isEmpty) {
+                        CustomFlushbar.showFlushbar(
+                            context: context,
+                            message:
+                                "Le titre est obligatoire pour ajouter un objet",
+                            title: "Erreur lors de l'ajout de l'objet");
+                        return;
+                      }
 
-                      Navigator.pop(context);
+                      if (images.value.isEmpty) {
+                        CustomFlushbar.showFlushbar(
+                            context: context,
+                            message:
+                                "Au moins une image est obligatoire pour ajouter un objet",
+                            title: "Erreur lors de l'ajout de l'objet");
+                        return;
+                      }
+
+                      ObjetBd.ajouterObjet(images.value.first, texteObjet.text,
+                          descriptionObjet.text, categorieObjet.value);
+
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Objet ajouté'),
+                            content: Text('Votre objet a bien été ajouté.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       shadowColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 17, horizontal: 40),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 17, horizontal: 40),
                       elevation: 0,
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
