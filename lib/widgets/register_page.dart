@@ -46,17 +46,6 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final usernameResponse = await supabase
-        .from('utilisateur')
-        .select()
-        .eq('nomutilisateur', username)
-        .maybeSingle();
-
-    if (usernameResponse != null) {
-      showSnackBar(context, 'Le nom d\'utilisateur est déjà utilisé');
-      return;
-    }
-
     try {
       await supabase.auth.signUp(email: email, password: password);
     } catch (e) {
