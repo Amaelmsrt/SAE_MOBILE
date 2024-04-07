@@ -16,6 +16,33 @@ Nous avons également utilisé le service d'authentification de Supabase afin de
 
 Nous avons utilisé SQFLite pour stocker les données en local. Dans ce cas, la table utilisateur n'était pas nécessaire, nous n'avons gardé que les tables pour les annonces, les objets et leurs catégories respectives. Toutes ces informations nous ont permis de gérer un système de brouillon lorsqu'on crée une annonce ou un objet, sur demande de l'utilisateur, on a le choix de sauvegarder les données en local pour les recharger plus tard. 
 
+# Demonstrations vidéo:
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/4f152105-5129-4cdc-a756-b4e83061e4cc
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/34eb6c68-cac3-42ac-86d7-ce27bad0e840
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/b670bdfd-ec12-40ce-9bc8-2b5d7af19678
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/a2e09a50-2bcc-424f-bf60-4a2ead88d9aa
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/df6a343b-a28d-432e-8b29-d9651fc48ed2
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/7878e165-3917-495e-8b86-72c167baf50e
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/5cea1143-b68b-418b-9c20-2d68ca9585ae
+
+
+https://github.com/Amaelmsrt/SAE_MOBILE/assets/96087993/8fe30228-0228-4d41-a033-10be218a1b79
+
+
 # Les différentes pages et fonctionnalités du projet
 
 ## Les composants
