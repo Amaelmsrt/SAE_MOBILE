@@ -6,7 +6,7 @@ import 'package:allo/constants/app_colors.dart';
 import 'package:allo/models/DB/annonce_db.dart';
 import 'package:allo/models/DB/avis_bd.dart';
 import 'package:allo/models/DB/user_bd.dart';
-import 'package:allo/models/Utilisateur.dart';
+import 'package:allo/models/utilisateur.dart';
 import 'package:allo/models/annonce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
